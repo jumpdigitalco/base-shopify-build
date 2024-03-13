@@ -1,0 +1,74 @@
+//
+//  Typography
+//  _____________________________________________
+.cookie-banner {
+    .cookie-caption{
+        font-size: 12px;
+        line-height: 1.4;
+        letter-spacing: 0.5px;
+    }
+}
+
+//
+//  Common
+//  _____________________________________________
+.cookie-banner {
+    z-index: 1004 !important;
+    border-top: 1px solid $lightGrey2;
+    a {
+        text-decoration: underline;
+    }
+    &.drawer:not(.drawer-modal).drawer-bottom {
+        max-width: 100%;
+        // left: inherit;
+        // right: 0;
+        padding: $smallScreenMargin;
+        background-color: $white;
+        color: $black;
+        .cookie-actions {
+            display: flex;
+            grid-gap: 10px;
+            justify-content: center;
+            button{
+                @include small-cta
+            }
+        }
+        &.opened {
+            @include transform(translateX(0%));
+        }
+    }
+}
+
+//
+//  Medium Screens and Smaller
+//  _____________________________________________
+@include query-medium-down {
+    .cookie-banner {
+        .cookie-actions {
+            margin-top: 20px;
+            flex-direction: column;
+        }
+    }
+}
+
+//
+// Large Screens
+//  _____________________________________________
+@include query-large-up {
+    .cookie-banner {
+        &.drawer:not(.drawer-modal).drawer-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-left: $moduleLargeScreenSidePadding;
+            padding-right: $moduleLargeScreenSidePadding;
+            // @include transform(translate(100%, 50%));
+            &.opened {
+                // @include transform(translate(0, 50%));
+            }
+        }
+        .cookie-actions{
+
+        }
+    }
+} ;

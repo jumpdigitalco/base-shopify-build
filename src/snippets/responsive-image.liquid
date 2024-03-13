@@ -1,0 +1,76 @@
+{% liquid 
+comment
+Expected params:
+image
+
+Optional params:
+mobile_image
+metafields_image - If metafields image, do not use img_url filter
+lazy_load - On by default
+class
+img_class
+img_alt_prefix
+desktop_image_size
+mobile_medium_image_size
+mobile_image_size
+endcomment
+
+if desktop_image_size == blank
+    assign desktop_image_size = '1280x'
+endif
+
+if desktop_large_image_size == blank
+    assign desktop_large_image_size = '1600x'
+endif
+
+if desktop_xlarge_image_size == blank
+    assign desktop_xlarge_image_size = '1920x'
+endif
+
+if mobile_medium_image_size == blank
+    assign mobile_medium_image_size = '767x'
+endif
+
+if mobile_image_size == blank
+    assign mobile_image_size = '414x'
+endif
+
+if mobile_image == blank
+    assign mobile_image = image
+endif
+%}
+{% comment %} 
+<!-- image: {{ image }} --> 
+<!-- mobile_image: {{ mobile_image }} -->
+{% endcomment %}
+
+{% unless image == blank and mobile_image == blank %}
+    {% unless lazy_load == false %}
+        {% assign lazy_load = true %}
+    {% endunless %}
+    {% assign image_url = image %}
+    {% assign mobile_image_url = mobile_image %}
+
+    {% comment %} 
+    {% unless metafields_image %}
+        {% assign image_url = image_url | img_url: desktop_image_size %}
+        {% assign mobile_image_url = mobile_image_url | img_url: mobile_image_size %}
+    {% endunless %} 
+    {% endcomment %}
+
+    <picture{% unless class == blank %} class="{{ class }}"{% endunless %}>
+
+        <source media="(min-width: 1601px)" {% if lazy_load == true %}data-{% endif %}srcset="{{ image_url | img_url: desktop_xlarge_image_size }}" />
+
+        <source media="(min-width: 1281px)" {% if lazy_load == true %}data-{% endif %}srcset="{{ image_url | img_url: desktop_large_image_size }}, {{ image_url | img_url: desktop_large_image_size, scale: 2 }} 2x" />
+
+        <source media="(min-width: 768px)" {% if lazy_load == true %}data-{% endif %}srcset="{{ image_url | img_url: desktop_image_size }}, {{ image_url | img_url: desktop_image_size, scale: 2 }} 2x" />
+
+        <source media="(min-width: 414px) and (max-width: 767px)" {% if lazy_load == true %}data-{% endif %}srcset="{{ mobile_image_url | img_url: mobile_medium_image_size }}, {{ mobile_image_url | img_url: mobile_medium_image_size, scale: 2 }} 2x" />
+
+        <img
+            {% if lazy_load == true %}loading="lazy" data-{% endif %}src="{{ mobile_image_url | img_url: mobile_image_size }}"
+            alt="{{img_alt_prefix}} {{image.alt }}"
+            {% unless img_class == blank %}class="{{ img_class }}"{% endunless %} itemprop="image" />
+    </picture>
+{% endunless %}

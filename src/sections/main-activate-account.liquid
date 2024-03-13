@@ -1,0 +1,55 @@
+<div class="account-wrapper">
+    <div class="account account-activate">
+        <div class="account-body" >
+            <div id="ActiveAccountForm">
+                <h1>{{ 'customer.activate_account.title' | t }}</h1>
+                <p>{{ 'customer.activate_account.subtext' | t }}</p>
+                {% form 'activate_customer_password' %}
+                    <div class="hide" aria-hidden="true">
+                        <input type="text" id="HiddenUserName" name="username" tabindex="-1" value="" autocomplete="username" disabled="disabled" >
+                    </div>
+                    <div class="fieldset">
+                        <div class="field">
+                            <div class="input-wrapper {% if form.errors contains 'password' %}input-error{% endif %}">
+                                <input type="password"
+                                    name="customer[password]"
+                                    id="CustomerPassword"
+                                    class="required"
+                                    placeholder="{{ 'customer.activate_account.password' | t }}" 
+                                    autocomplete="new-password" >
+                                <label for="CustomerPassword">{{ 'customer.activate_account.password' | t }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="fieldset">
+                        <div class="field">
+                            <div class="input-wrapper {% if form.errors contains 'password' %}input-error{% endif %}">
+                                <input type="password"
+                                    name="customer[password_confirmation]"
+                                    id="CustomerPasswordConfirmation"
+                                    class="required"
+                                    placeholder="{{ 'customer.activate_account.password_confirm' | t }}"
+                                    autocomplete="new-password" >
+                                <label for="CustomerPasswordConfirmation">{{ 'customer.activate_account.password_confirm' | t }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    {{ form.errors | default_errors }}
+                    
+                    <div class="actions">
+                        <button type="submit" class="btn">{{ 'customer.activate_account.submit' | t }}</button>
+                        <a href="{{ routes.account_login_url }}">{{ 'customer.activate_account.cancel' | t }}</a>
+                    </div>
+                {% endform %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "Activate Account Page",
+  "class": "main-activate-account"
+}
+{% endschema %}

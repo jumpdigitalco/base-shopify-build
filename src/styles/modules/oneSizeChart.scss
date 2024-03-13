@@ -1,0 +1,175 @@
+//
+//  Common
+//  _____________________________________________
+#SizeChartModal {
+    // display: none;
+}
+.drawer #SizeChartModal {
+    // display: block;
+}
+.size-chart {
+    padding: $smallScreenMargin*2 $smallScreenMargin;
+    background: white;
+    align-items: flex-start;
+    justify-content: flex-start;
+    top: 200px;
+    & > div{
+        width: 100%;
+    }
+
+    .module-intro{
+        margin-bottom: 10px;
+        .headline{
+            font-size: 18px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+    }
+
+    .tabbed-module{
+        .tabbed-title-wrap{
+            border-top: 0;
+            .tabbed-title{
+                font-size: 12px;
+                padding: 10px;
+                line-height: 1;
+                border: 1px solid $mediumGrey2;
+                background-color: transparent;
+                &.active{
+                    color: $white;
+                    border-color: var(--main-color-2);
+                    background-color: var(--main-color-2);
+                }
+                &:not(:last-child){
+                    margin-right: 15px;
+                }
+            }
+        }
+        .tabbed-content-wrap{
+            .tabbed-content{
+                padding-top: 20px;
+            }
+        }
+    }
+    .chart {
+        .chart-row {
+        }
+        .item {
+        }
+    }
+    .chart-actions{
+        margin-top: $smallScreenMargin;
+        line-height: 1.2;
+        font-size: 14px;
+        padding: 20px;
+        text-align: center;
+    }
+    &.bottoms-fit-guide{
+        max-width: 440px;
+        .size-chart{
+            padding-top: 20px;
+        }
+        .module-heading{
+            padding: 0 20px
+        }
+        .tabbed-module{
+            .tabbed-content-wrap{
+                .tabbed-content{
+                    text-align: center;
+                    padding-top: 20px;
+                    margin-top: 20px;
+                    border-top: 1px solid $mediumGrey2;
+                    padding-bottom: 10px;
+                    .caption{
+                        margin-bottom: 20px;
+                    }
+                    ul.slick-dots{
+                        margin: 0;
+                        li{
+                            list-style-type: none;
+                            margin: 0;
+                        }
+                    }
+                }
+            }
+        }
+        .chart-slider{
+            .slick-slide{
+                img{
+                    margin: 0 auto;
+                }
+            }
+        }
+    }
+}//.size-chart
+
+//
+// Small Screens Only
+//  _____________________________________________
+@include query-small {
+}
+
+//
+//  Medium Screens and Smaller
+//  _____________________________________________
+@include query-medium-down {
+    #SizeChartDrawerModal {
+        .drawer-close {
+            // right: -25px;
+            top: 10px;
+        }
+    }
+    .drawer.drawer-modal.size-chart {
+        width: 100%;
+        overflow: scroll;
+        max-height: 100vh;
+        top: 0;
+        bottom: 0;
+        border: 1px solid $mediumGrey2;
+        .tabbed-module{
+            .tabbed-title-wrap{
+                flex-wrap: nowrap;
+                flex-direction: row;
+                overflow-x: scroll;
+                justify-content: flex-start;
+                .tabbed-title{
+                    flex: 0 0 auto;
+                }
+            }
+        }
+        .chart {
+            display: flex;
+            flex-wrap: wrap;
+            .chart-row {
+                width: 33.3333%;
+                margin-bottom: 20px;
+                display: flex;
+                flex-direction: column;
+            }
+            .item {
+            }
+        }
+    }
+}
+
+//
+// Medium Screens Only
+//  _____________________________________________
+@include query-medium {
+}
+
+//
+// Large Screens
+//  _____________________________________________
+@include query-large-up {
+    
+    .drawer.drawer-modal.size-chart {
+        padding: 0;
+        max-width: $mediumScreen;
+        left: 50%;
+        @include transform( translateX(-50%) );
+        &.bottoms-fit-guide{
+            max-width: 440px;
+        }
+    }
+} ;

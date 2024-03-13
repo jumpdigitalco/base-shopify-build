@@ -1,0 +1,347 @@
+//
+//  Typography
+//  _____________________________________________
+.subscribe-modal {
+    .error-msg {
+        // @extend .body-font-2;
+    }
+    .form-intro{
+        .form-title{
+            @include title-font-5;
+            line-height: 1;
+        }
+        .form-subtitle{
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .form-caption{
+            
+        }
+    }
+
+    .subscribe-success{
+
+    }
+
+    .group-terms{
+        line-height: 1.2;
+        font-size: 12px;
+        letter-spacing: 0.5px;
+        label{
+            line-height: 1.2;
+            font-size: 12px;
+            letter-spacing: 0.5px;
+            text-align: left;
+            span{
+                margin-left: 10px;
+            }
+        }
+        .form-terms{
+            text-align: center;
+            font-size: 11px;
+            a{
+                text-decoration: underline;
+            }
+        }
+    }
+}
+
+//
+//  Common
+//  _____________________________________________
+#SubscribeModal {
+    max-height: 0;
+    background-color: white;
+    &.opened{
+        border: 1px solid $lightGrey2;
+        border-radius: 4px;
+        z-index: 1005 !important;
+    }
+}
+
+.subscribe-modal {
+    width: 100%;
+    .form-intro{
+        text-align: left;
+        position: relative;
+
+        .info-wrapper{
+            margin-top: 10px;
+            padding: 20px;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-start;
+        }
+
+        .form-title{
+            margin-bottom: 5px;
+        }
+        .form-subtitle{
+            margin-bottom: 10px;
+        }
+        .form-caption{
+            margin-top: 10px;
+        }
+    }
+
+    .subscribe-success{
+        .subscribe-success-title{
+            margin-bottom: 10px;
+        }
+        .subscribe-success-caption{
+            margin-bottom: 20px;
+            p{
+                margin-bottom: 10px;
+            }
+        }
+    }
+
+    .form-container {
+        form {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+            text-align: center;
+            @include transition(all $slow);
+        }
+
+        .subscribe-form-inner{
+            padding: 30px 20px;
+        }
+
+        .group{
+            width: 100%;
+            margin-bottom: 10px;
+            margin-right: 0;
+            &.group-terms{
+                text-align: center;
+                width: 100%;
+                margin: 15px auto 0;
+                label{
+                    display: inline-flex;
+                    text-align: left;
+                }
+            }
+        }
+
+        input {
+            &:not([type="checkbox"]){
+                width: 100%;
+                padding: 0 $smallScreenMargin;
+                border: 1px solid $mediumGrey;
+                border-radius: 4px;
+                height: 38px;
+                @include transition(all $slow);
+                @include input-placeholder{
+                    font-size: 12px;
+                };
+            }
+        }
+
+        .form-terms{
+            // max-height: 58px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+            // overflow-y: scroll;
+            // padding-right: 20px;
+            // @include scrollbarStyling;
+        }
+
+        button {
+            
+        }
+
+        .submit{
+            @include cta-1;
+            width: 100%;
+        }
+
+        .group-submit{
+            text-align: center;
+            margin-bottom: 0;
+            margin-top: 20px;
+        }
+
+        &.submitted {
+            form {
+                opacity: 0;
+                visibility: hidden;
+            }
+            .global-message {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+
+        .global-message {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            position: relative;
+            opacity: 0;
+            visibility: hidden;
+            overflow: hidden;
+            @include transition(all $slow);
+            &:after {
+                @include icon-fonts($icon-close, $black, 20px);
+                position: absolute;
+                top: 50%;
+                right: 0;
+                @include transform(translateY(-50%));
+            }
+        }
+    }
+}
+
+//
+//  Medium Screens and Smaller
+//  _____________________________________________
+@include query-medium-down {
+    #SubscribeModal {
+        top: 100px;
+        left: $smallScreenMargin;
+        &.opened{
+            right: $smallScreenMargin;
+            // bottom: $smallScreenMargin;
+            bottom: inherit;
+            width: auto;
+            height: auto;
+            overflow: scroll;
+            max-height: 100vh;
+        }
+    }
+    .subscribe-modal {
+        
+        .form-container {
+            .sub-promo {
+                margin-bottom: 20px;
+            }
+            input {
+                font-size: 16px; // Prevent Zooming
+            }
+            button {
+                display: none;
+            }
+            .group {
+                .error-msg {
+                    width: auto;
+                    top: auto;
+                    right: 0;
+                    left: auto;
+                    bottom: 2px;
+                }
+            }
+            .global-message {
+                &:after {
+                }
+            }
+        }
+    }
+}
+
+//
+// Medium Screens Only
+//  _____________________________________________
+@include query-medium {
+    .subscribe-modal {
+        .form-container {
+            .group {
+                &.group-fname {
+                    width: 40%;
+                    float: left;
+                }
+                &.group-lname {
+                    width: 40%;
+                    float: right;
+                    clear: right;
+                }
+                &.group-email {
+                    clear: both;
+                }
+            }
+        }
+    }
+}
+
+//
+// Large Screens
+//  _____________________________________________
+@include query-large-up {
+    #SubscribeModal {
+        max-width: $mediumScreen;
+        overflow-y: auto;
+        left: 50%;
+        top: 50%;
+        @include transform( translate(-50%, -50%) );
+        &.opened{
+            height: auto;
+            max-height: calc(100vh - 40px);
+            bottom: inherit;
+            border-color: #efefef;
+        }
+    }
+    .subscribe-modal {
+        .form-container {
+
+            #subscribe-modal-form{
+                display: flex;
+                .form-intro{
+                    width: 50%;
+                }
+            }
+
+            .subscribe-form-inner{
+                padding: 40px;
+                width: 50%;
+            }
+            
+            input {
+
+            }
+            button {
+                display: inline-block;
+                vertical-align: middle;
+                &:before {
+                    line-height: 27px;
+                }
+            }
+            .group {
+                align-self: center;
+                display: inline-block;
+                vertical-align: middle;
+                margin-right: 10px;
+                &.group-email {
+                    min-width: 240px; // Large Screens
+                }
+            }
+            .submit{
+                width: 100%
+            }
+            .global-message {
+                @include displayFlex;
+                @include prefixer('flex-direction', 'column');
+                @include prefixer('justify-content', 'center');
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100%;
+                width: 100%;
+                text-align: center;
+                padding: 0 30px;
+                background: $white;
+                z-index: 10;
+                &:after {
+                    right: 30px;
+                }
+            }
+        }
+    }
+} ;

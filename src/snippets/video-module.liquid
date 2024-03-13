@@ -1,0 +1,88 @@
+{% comment %}
+<!-- Accepts params suchs as video_url -->
+{% render 'video-module', video_url: settings.video_url %}
+{% endcomment %}
+
+{% comment %} <div class="video-wrapper bg-video"
+    data-video-type=""
+    data-video-id=""
+    data-video-src="{{ settings.video }}">
+    <div class="content-wrapper">
+        <button class="video-ctl paused"></button>
+    </div>
+</div> {% endcomment %}
+{% if block != blank %}
+    {% assign settings = block.settings %}
+{% endif %}
+{%- assign poster = settings.image | img_url: '768x' -%}
+{% assign mobileImage = settings.image | img_url: '768x' | format: 'pjpg' %}
+{% if settings.mobile_image != blank %}
+    {% assign mobileImage = settings.mobile_image | img_url: '768x' | format: 'pjpg' %}
+{% endif %}
+
+{%- assign video = settings.video -%}
+{%- assign id_prefix = 'module-video-' | append: section.id -%}
+
+{%- if video_url != blank -%}
+    {%- assign video = video_url | append: "" -%}
+    
+    {%- assign mobile_video = video -%}
+    {%- if mobile_video != blank -%}
+        {%- assign mobile_video = mobile_video -%}
+    {%- endif -%}
+{%- endif -%}
+
+{% if forloop != blank %}
+    {% assign video_index = forloop.index %}
+{% elsif video_index == blank %}
+    {% assign video_index = 1 %}
+{% endif %}
+
+{% comment %}
+    <!-- CHECK HERE video:{{video}} {{ is_bg_video }} -->
+    <div class="block-container video-block {{classes}}">
+{% endcomment %}
+<div class="video-wrapper{% if is_bg_video %} bg-video{% endif %}">
+    {% if video contains 'youtube' or video contains 'youtu.be' %}
+        {%- if video contains 'youtube' -%}
+            {% assign yt_video = video | split: "=" %}
+        {%- elsif video contains 'youtu.be' -%}
+            {% assign yt_video = video | split: "youtu.be/" %}
+        {%- endif -%}
+        {% comment %} <!--YouTube: {{ yt_video[1] }}--> {% endcomment %}
+        {% if yt_video[1].size > 1 %}
+            <div id="{{id_prefix}}-{{ video_index }}" class="video-box" data-video-id="{{ yt_video[1] }}" data-video-src="{{ video }}" data-mobile-video-src="{{ mobile_video }}" data-video-type="youtube"></div>
+        {% endif %}
+    {% elsif video contains 'vimeo' %}
+        <!--Vimeo: {{ video }}--> 
+        {% assign video = video | replace: 'https://vimeo.com/', 'https://player.vimeo.com/video/' %}
+        {% assign mobile_video = mobile_video | replace: 'https://vimeo.com/', 'https://player.vimeo.com/video/' %}
+        {% assign vm_video = video | split: "/video/" %}
+        {% if vm_video[1].size > 1 %}
+            <div id="{{id_prefix}}-{{ video_index }}" class="video-box" data-video-id="{{ vm_video[1] }}" data-video-src="{{ video }}" data-mobile-video-src="{{ mobile_video }}" data-video-type="vimeo"></div>
+        {% endif %}
+    {% else %}
+        {% comment %} <video id="{{id_prefix}}-{{ forloop.index }}" class="video-box" onError="style.display = 'none';" autoplay="autoplay" data-video-src="{{ settings.video }}">
+            <source src="{{ video }}" type="video/mp4">
+            Video not supported
+        </video> {% endcomment %}
+        <div
+            id="{{id_prefix}}{% if forloop != blank %}-{{ forloop.index }}{% endif %}"
+            class="video-box"
+            data-video-delay="{{ settings.video_delay }}"
+            data-video-type="hosted"
+            data-video-src="{% if video_url != blank %}{{ video_url }}{% else %}{{ settings.video }}{% endif %}">
+        </div>
+    {% endif %}
+    <div class="video-ui paused">
+        <div class="video-ctl"></div>
+        <div class="video-volume"></div>
+    </div>
+    <!-- Image: {{ settings.video }} | {{ poster_image }} | {{ show_poster_image }} -->
+    {% if poster_image == blank %}{% assign poster_image = settings.image %}{% endif %}
+    <!-- Image2: {{ settings.video }} | {{ poster_image }} | {{ show_poster_image }} -->
+    {% if settings.image != blank and show_poster_image == true %}
+        {% render 'responsive-image', class: 'video-poster', image: settings.image, mobile_image: settings.mobile_image %}
+    {% endif %} 
+</div>
+{% comment %}</div>{% endcomment %}

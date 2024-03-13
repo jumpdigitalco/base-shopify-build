@@ -1,0 +1,165 @@
+/*================ Color Variables ================*/
+// $color-primary: {{ settings.color_primary }};
+
+/* 1R Variable */
+    $isUsingWebpack: false;
+    $fontPath: '';
+/* Dimensions */
+
+    // Small Screens
+    // We don't need a small screen breakpoint variable since small is from 0 to $mediumScreen
+    // $smallScreen: 768px;
+    
+    // Medium Screens
+    $mediumScreen: 768px;
+
+    // Large Screens
+    $largeScreen: 1025px;
+    $xLargeScreen: 1200px;
+    $xxLargeScreen: 1440px;
+
+    // Constraints
+    $min: min-width;
+    $max: max-width;
+
+/* Colors */
+    // Theme colors
+    $black: #000000;
+    $white: #ffffff;
+    $lightGrey: #F2F2F2;
+    $lightGrey2: #9D9D9D;
+    $mediumGrey2: #4A4A4A;
+    $mediumGrey2: #F2F2F2;
+    $mediumGrey2: #DADADA;
+    $lightGrey2: #c4c4c4;
+    $lightGrey2: #E0E0E0;
+    $lightGrey2: #979797;
+    $mediumGrey2: #3A3231;
+    $black2: #121212;
+    $primary: #CF1019;
+    $styleLight: $white;
+    $styleDark: $black;
+
+    // Functional block background colors
+    $color-body-bg: $white;
+    $color-body-font: $black;
+    $color-disabled: $lightGrey;
+    $color-disabled-bg: $lightGrey;
+    $color-disabled-border: $lightGrey;
+    $color-error: $primary;
+    $color-error-bg: #000;
+    $color-error-border: $primary;
+    $color-success: #84BD00;
+    $color-success-bg: #000;
+    $color-success-border: #84BD00;
+    $color-border: $lightGrey;
+    
+
+/* CTAs */
+    $color-cta1: $black;
+    $color-cta1-bg: transparent;
+    $color-cta1-border: $black;
+    $color-cta1-active: $white;
+    $color-cta1-bg-active: $black;
+    $color-cta1-border-active: $black;
+    
+    $color-cta2: $white;
+    $color-cta2-bg: transparent;
+    $color-cta2-border: $white;
+    $color-cta2-active: $black;
+    $color-cta2-bg-active: $white;
+    $color-cta2-border-active: $white;
+    
+    $ctaMinWidth: 160px;
+    
+/* Fonts */
+    $baseFontSize: 16px;
+    $baseFontWeight: 400;
+    $baseLineHeight: 1.6;
+
+/* Speeds */
+    $quick: .1s;
+    $fast: .25s;
+    $slow: .45s;
+    $slower: .8s;
+
+/* Sizes */
+    $largeScreenMargin: 25px;
+    $smallScreenMargin: 20px;
+    $sectionGutter: 1px;
+    $maxContentWidth: $xxLargeScreen;
+
+/* Forms & Inputs */
+    $input-wrapper-border: 1px;
+    $input-line-height: 55px;
+    $input-line-height-mobile: 40px;
+    $input-border-radius: 0;
+    $input-check-radio-size: 17px;
+
+/* Header Settings */    
+    $logoSize: 100px;
+    $promoBannerHeight: 30px;
+    $headerLargeScreenHeight: 60px;
+    $headerSmallScreenHeight: 44px;
+    $headerSmallScreenItemHeight: 50px;
+    $headerUtilityBlockGap: 10px;
+
+    $promoText: $white;
+    $promoBackground: $mediumGrey2;
+    
+    $headerDarkText: true;
+    $headerSmallScreenText: $black;
+    $headerSmallScreenBackground: $lightGrey;
+    $headerLargeScreenText: $black;
+    $headerLargeScreenBackground: rgba(243,240,239,0.9);
+    
+    @mixin headerColorStyle() {
+        // More control for overall header text color when not in active state, useful for homepage scrolling.
+        // Apply to header.site-header
+        &.style-light {
+            .header-content {
+                color: $white;
+                .animated-hamburger span {
+                    background: $white;
+                }
+                nav .nav-link span {
+                    &:before{
+                        background-color: $white;
+                    }
+                }
+            }
+        }
+        &.style-dark {
+            .header-content {
+                color: $black;
+                .animated-hamburger span {
+                    background: $black;
+                }
+                nav .nav-link span {
+                    &:before{
+                        background-color: $black;
+                    }
+                }
+            }
+        }
+    }
+    
+/* Footer Settings */  
+    $footerSlimLargeHeight: 55px;
+    
+/* Product Settings */ 
+    $productImageRatio: 3000/2000;
+    $productImageRatioPercentage: $productImageRatio * 100 * 1%;
+    $giftcardImageRatio: 340/538;
+    $giftcardImageRatioPercentage: $giftcardImageRatio * 100 * 1%;
+    $productThumbnailsMax: 6;
+    $productThumbnailsPercentage: (1/$productThumbnailsMax) * 100 * 1%;
+    $productMetafieldTabMax: 3;
+    $productMetafieldTabMaxPercentage: (1/$productMetafieldTabMax) * 100 * 1%;
+    $sizeChartColumnMax: 6;
+    $sizeChartColumnMaxWidth: (1/$sizeChartColumnMax) * 100 * 1%;
+    $sizeChartTabMax: 3;
+    $sizeChartTabWidth: (1/$sizeChartTabMax) * 100 * 1%;
+    
+/* Collection Settings */
+    

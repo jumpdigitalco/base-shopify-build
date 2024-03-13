@@ -1,0 +1,93 @@
+{%- unless for_mobile_menu -%}
+    {% comment %} Blocks for large screen ONLY {% endcomment %}
+    <div
+        class="header-block block-search has-dropdown">
+        <button class="block-title search-toggle">
+            <span class="icon-fallback-text">{{ 'general.search.submit' | t }}</span>
+        </button>
+        {% comment %}
+        <div class="block-content">
+            {% render 'search-form', search_form_id: 'SearchInline' %}
+        </div>
+    {% endcomment %}
+    </div>    
+{%- endunless -%}
+
+<div
+    class="header-block block-wishlist">
+    <a href="/a/wishlist" role="button">
+        <button class="block-title icon-heart" type="button">
+            <span class="icon-fallback-text">Wishlist</span>
+        </button>
+    </a>
+</div>
+
+<div class="header-block block-account has-dropdown{% if customer %} logged-in{% endif %}">
+    <a href="/account" role="button">
+        <button class="block-title">
+            <span class="icon-fallback-text">{{ 'customer.account.title' | t }}</span>
+        </button>
+    </a>
+    <div class="block-content">
+        <div class="block-content-wrap">
+            <ul>
+                {% assign user_dropdown = 'user-dropdown' %}
+                {% if customer != blank %}
+                    {% comment %}Logged In{% endcomment %}
+                    {% for link in linklists[user_dropdown].links %}
+                        <li><a href="{{ link.url }}"> {{ link.title }}</a></li>
+                    {% endfor %}
+                    <li><a href="/account/logout">{{ 'layout.customer.log_out' | t }}</a></li>
+                {% else %}
+                    {% comment %}Logged Out{% endcomment %}
+                    {% assign user_dropdown = 'user-dropdown-logged-out' %}
+                    {% for link in linklists[user_dropdown].links %}
+                        {% assign class = '' %}
+                        {% if link.url contains '/login' %}
+                            {% assign class = class | append: 'login-link' %}
+                        {% endif %}
+                        {% if link.url contains 'membership' %}
+                            {% assign class = class | append: ' membership' %}
+                        {% endif %}
+                        <li><a
+                            href="{{ link.url }}"
+                            class="{{ class }}">
+                            {{ link.title }}
+                        </a></li>
+                    {% endfor %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="header-block block-minicart has-dropdown">
+    <a href="/cart" title="Mini Cart">
+        <button class="block-title{% if cart.item_count > 0 %} has-contents{% endif %}" type="button" aria-controls="MiniCart" aria-expanded="false">
+            <span id="CartTitle">{{- 'layout.cart.title' | t -}}</span>
+            <span id="CartCount" class="minicart-count {% if cart.item_count == 0 %}hidden-count{% endif %}">{{- cart.item_count -}}</span>
+            <span id="CartCost" class="minicart-cost">{{- cart.total_price | money -}}</span>
+        </button>
+    </a>
+    {% comment %} Comment out following 'MiniCartAsDropdown' to use drawer layout on Desktop {% endcomment %}
+    {% comment %}
+    <div id="MiniCartAsDropdown" class="block-content dropdown">
+        <div class="block-content-wrapper">
+            <div class="dropdown-title">
+                {{ 'general.minicart.title' | t }}<span>(<span class="minicart-count">{{cart.item_count}}</span>)</span>
+            </div>
+            <div class="minicart-container"></div>
+        </div>
+    </div>
+    {% endcomment %}
+</div>
+
+<div class="header-block block-mobile-nav">
+    <button aria-controls="NavDrawer" aria-label="Menu" aria-expanded="false" class="block-title menu-toggle hamburger hamburger--slider" type="button">
+      <span class="hamburger-box">
+        <span class="hamburger-inner"></span>
+      </span>
+      <span class="nav-toggle-title">Menu</span>
+    </button>
+</div>
+

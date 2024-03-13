@@ -1,0 +1,132 @@
+//
+//  Typography
+//  _____________________________________________
+#shopify-product-reviews {
+    .spr-summary-caption,
+    .spr-summary-actions {
+        @extend .body-font-2;
+    }
+    .spr-review-header-title {
+        // @extend .body-font-2;
+    }
+    .spr-review-content-body {
+        @extend .body-font-1;
+    }
+    .spr-review-header-byline {
+        font-style: normal;
+        // @extend .body-font-2;
+        .author {
+            @extend .body-font-2;
+        }
+    }
+}
+//
+//  Common
+//  _____________________________________________
+.spr-badge {
+    // Review Badge
+}
+.product-core .spr-badge {
+    // Review Badge within product core on PDP and Quickshop
+}
+.items .item .spr-badge {
+    // Review Badge in product grids
+}
+#shopify-product-reviews {
+    // Review Block
+    margin: 0;
+    width: 100%;
+    .spr-container {
+        border: 0;
+        padding: 0;
+        .spr-review {
+            // List item
+            display: flex;
+            flex-wrap: wrap;
+            .spr-review-header {
+                position: relative;
+                width: 100%;
+                margin: 0;
+                .spr-review-header-starratings,
+                .spr-review-header-title {
+                    margin: 0;
+                }
+                .spr-review-header-byline {
+                    margin: 0;
+                    position: absolute;
+                    top: 0;
+                    @include opacity(1);
+                }
+            }
+            .spr-review-content {
+                margin: 0;
+                margin-top: 20px;
+            }
+            .spr-review-reply,
+            .spr-review-footer {
+                // Not showing replay and report link
+                display: none;
+            }
+        }
+    }
+}
+
+//
+//  Medium Screens and Smaller
+//  _____________________________________________
+@include query-medium-down {
+    #shopify-product-reviews {
+        .spr-header {
+            padding: 0 20px;
+        }
+        .spr-container {
+            .spr-review {
+                padding: 20px;
+                .spr-review-header {
+                    .spr-review-header-starratings,
+                    .spr-review-header-title {
+                        width: 70%;
+                        margin-left: 30%;
+                    }
+                    .spr-review-header-byline {
+                        width: 30%;
+                    }
+                }
+                .spr-review-content {
+                    width: 70%;
+                    margin-left: 30%;
+                }
+            }
+        }
+    }
+}
+
+//
+// Large Screens
+//  _____________________________________________
+@include query-large-up {
+    #shopify-product-reviews {
+        .spr-header {
+            padding: 0 25px;
+        }
+        .spr-container {
+            .spr-review {
+                padding: 25px;
+                .spr-review-header {
+                    .spr-review-header-starratings,
+                    .spr-review-header-title {
+                        width: 80%;
+                        margin-left: 20%;
+                    }
+                    .spr-review-header-byline {
+                        width: 20%;
+                    }
+                }
+                .spr-review-content {
+                    width: 80%;
+                    margin-left: 20%;
+                }
+            }
+        }
+    }
+} ;

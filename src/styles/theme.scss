@@ -1,0 +1,74 @@
+/*============================================================================
+  [replace with theme name] | Built with Slate
+    - You cannot use native CSS/Sass @imports in this file without a build script
+==============================================================================*/
+
+/*================ SETTINGS ================*/
+// @import 'Styles/settings/variables.scss.liquid';
+@import 'Styles/settings/variables-noliquid.scss';
+@import 'Styles/settings/variables-light.scss';
+@import 'Styles/lib/hamburger.scss';
+@import 'node_modules/hamburgers/_sass/hamburgers/hamburgers.scss';
+
+/*================ UTILS ================*/
+@import 'Styles/tools/helpers.scss';
+@import 'Styles/tools/helper-classes.scss';
+
+/*================ COMMON ================*/
+@import 'Styles/global/slate-reset.scss';
+@import 'Styles/global/fonts.scss';
+@import 'Styles/global/icons.scss';
+@import 'Styles/global/components.scss';
+@import 'Styles/global/layout.scss';
+@import 'Styles/global/header.scss';
+@import 'Styles/global/search.scss';
+@import 'Styles/global/footer.scss';
+@import 'Styles/global/promotional.scss';
+
+/*================ LIBS (For any 3rd party add-ons) ================*/
+@import 'Styles/lib/animate.scss';
+@import 'Styles/lib/normalize.scss';
+@import 'Styles/lib/rte.scss';
+@import 'Styles/lib/slick.scss';
+@import 'Styles/lib/aos.scss';
+
+/*================ APP (Shopify and 3rd Parties' APPs) ================*/
+@import 'Styles/app/shopifyReviews.scss';
+@import 'Styles/app/crosssell.scss';
+
+/*================ MODULES ================*/
+@import 'Styles/modules/oneSwatch.scss';
+@import 'Styles/modules/oneCustomScroll.scss';
+@import 'Styles/modules/oneZoom.scss';
+@import 'Styles/modules/oneSubscribe.scss';
+@import 'Styles/modules/oneContact.scss';
+@import 'Styles/modules/oneVideo.scss';
+@import 'Styles/modules/oneDrawer.scss';
+@import 'Styles/modules/oneMobileMenu.scss';
+@import 'Styles/modules/oneSizeChart.scss';
+@import 'Styles/modules/oneCookieBanner.scss';
+// @import 'Styles/modules/oneProductCompare.scss';
+
+/*================ PAGES ================*/
+@import 'Styles/pages/home.scss';
+@import 'Styles/pages/collection.scss';
+@import 'Styles/pages/collection-nav.scss';
+@import 'Styles/pages/collection-grid.scss';
+@import 'Styles/pages/product.scss';
+@import 'Styles/pages/product-quickshop.scss';
+@import 'Styles/pages/product-quickbuy.scss';
+@import 'Styles/pages/product-giftcard.scss';
+@import 'Styles/pages/product-scrolling-grid.scss'; // Uncomment to use default scrolling layout
+@import 'Styles/pages/cart.scss';
+@import 'Styles/pages/search.scss';
+// @import 'Styles/pages/lookbook.scss';
+@import 'Styles/pages/styleguide.scss';
+@import 'Styles/pages/account.scss';
+@import 'Styles/pages/password.scss';
+@import 'Styles/pages/about.scss';
+@import 'Styles/pages/utility.scss';
+@import 'Styles/pages/orders.scss';
+// @import 'Styles/pages/blog.scss';
+// @import 'Styles/pages/blog-article.scss';
+// @import 'Styles/pages/blog-article-content-types.scss';
+@import 'Styles/pages/page-landing.scss';

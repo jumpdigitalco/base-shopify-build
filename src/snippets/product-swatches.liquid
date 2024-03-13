@@ -1,0 +1,140 @@
+{%- comment -%}
+    parameters:
+    product
+    layout
+
+    This block is used to find which index the colors options belongs to.
+    Returns colorNum of 1, 2 or 3. colorNum defaults to 2.
+
+    assign activeClassStr = 'active' to enable pre-select
+{%- endcomment -%}
+{% liquid
+    if layout == 'slider' or layout == 'scrolling'
+        assign atProductPage = true
+    endif
+    assign variantOption = 'color'
+    assign sizeOption = 'size'
+    assign colorNum = 2
+    assign activeClassStr = ''
+
+    comment
+    Confirm variant num of options and if they have values to be selected
+    endcomment
+    assign option_counter = 0
+    for option in product.options_with_values
+        if option.values.size > 1
+            assign option_counter = option_counter | plus: 1
+        endif
+    endfor
+%}
+
+{%- for option in product.options_with_values -%}
+    {%- assign optTitle = option.name | downcase -%}
+    {% capture selectorWrapper %}
+    <div class="selector-wrapper oneswatch oneswatch-{{- option.name | handleize -}}{% if option.values.size < 2 %} single-option{% endif %}{{hideSwatches}}">
+        <div class="swatch-label"><strong>{{ option.name }}</strong></div>
+
+        {%- if optTitle == variantOption -%}
+            {%- assign activeClass = activeClassStr -%}
+            {%- for optionIndex in product.options -%}
+                {%- assign optionName = optionIndex | downcase -%}
+                {%- if optionName == optTitle -%}
+                    {%- assign colorNum = forloop.index -%}
+                {%- endif -%}
+            {%- endfor -%}
+
+            <div class="swatches {{optTitle}}s clearfix" data-option="{{forloop.index | minus: 1}}" data-name="{{optTitle}}">
+                {%- for value in option.values -%}
+
+                    {%- assign variantImg = "" -%}
+                    {%- assign swatchImg = "" -%}
+                    {%- assign new_value = value | replace: 'SM','S' | replace: 'MD','M' | replace: 'LG','L' -%}
+
+                    {%- for variant in product.variants -%}
+                        {%- assign optionIndex = colorNum | minus: 1 -%}
+                        {%- if variant.available and variant.options[optionIndex] contains value -%}
+                            {%- assign variantImg = variant.image.src | product_img_url: 'large' -%}
+                            {%- break -%}
+                        {%- endif -%}
+                    {%- endfor -%}
+
+                    {% comment %} 
+                    {%- if settings.image_swatches_enable -%}
+                    {%- endif -%}{% endcomment %}
+                    {%- for image in product.images -%}
+                        {%- assign imageSrcSections = image.alt | replace: '.png', '' | replace: '.jpg', '' -%}
+                        {%- assign imageSrcSections = imageSrcSections | split: '_' -%}
+                        {%- assign valueCompressed =  value | handleize | replace: '-', '' -%}
+                        {%- if imageSrcSections[4] == 'swatch' and imageSrcSections[2] == optTitle and imageSrcSections[3] == valueCompressed -%}
+                            {%- assign swatchImg = image -%}
+                        {%- endif -%}
+                    {%- endfor -%}
+
+                    <button
+                        data-select="{{ value }}"
+                        data-swatch="{{ swatchImg }}"
+                        data-name="{{ value }}"
+                        data-image="{{ variantImg }}"
+                        type="button"
+                        class="swatch swatch-{{ value | handleize }} {{ activeClass }}">
+                        <span class="visually-hidden">{{optTitle}}: </span>
+                        {%- if swatchImg != blank -%}
+                            <div class="swatch-inner">
+                                <img src="{{ swatchImg | img_url: '50x' }}" alt="{{ value }}" />
+                                <span>{{- new_value -}}</span>
+                            </div>
+                        {%- else -%}
+                            {{- new_value -}}
+                        {%- endif -%}
+                    </button>
+                    {%- assign activeClass = '' -%}
+
+                {%- endfor -%}
+            </div>
+        {%- else -%}
+            {%- assign activeClass = activeClassStr -%}
+            <div class="swatches {{optTitle}}s clearfix" data-option="{{forloop.index | minus: 1}}" data-name="{{optTitle}}">
+                {%- for value in option.values -%}
+                    {%- assign new_value = value | replace: 'SM','S' | replace: 'MD','M' | replace: 'LG','L' -%}
+                    <button
+                        type="button"
+                        data-select="{{ value }}"
+                        data-name="{{ value }}"
+                        class="swatch swatch-{{ value | handleize }} {{ activeClass }}">
+                        <span class="visually-hidden">{{optTitle}}: </span>
+                        {{ new_value }}
+                    </button>
+                    {%- assign activeClass = '' -%}
+                {%- endfor -%}
+            </div>
+        {%- endif -%}
+
+    </div>
+    {% endcapture %}
+
+    {{- selectorWrapper -}}
+
+    {%- unless plp_quickbuy or plp_quickshop-%}
+        {%- if optTitle == sizeOption and atProductPage -%}
+        {% comment %} 
+        <a href="#" class="size-chart-trigger" aria-controls="SizeChartModal" aria-label="Size chart Modal" aria-expanded="false">{{ 'products.product.size_chart_cta' | t }}</a> 
+        {% endcomment %}
+
+        <!-- WAIR PDP Start -->
+        <div class="predict-placement" 
+            data-predict-product-key="{{product.handle}}" 
+            data-predict-product-name="{{ product.title | escape }}" 
+            data-predict-product-img="{{ product.selected_or_first_available_variant.featured_image | default: product.featured_image | img_url: 'x600' }}">
+        </div>
+        <script>
+            //Set custom style Wair btn
+            function asyncLoad1(){
+                document.querySelector(".wair-launch-btn").setAttribute("style","font-weight: bold;font-size: 16px!important; font-family: 'MierA' !important; text-decoration: underline; border: 0 !important; padding: 0 0 1em !important;"),
+                document.querySelector(".wair-launch-btn span").setAttribute("style",'color: #000;letter-spacing: inherit;letter-spacing: 0px;font-family: inherit; -webkit-font-smoothing: none;font-smoothing: none;')
+            }!function(){let t=setInterval((function(){null!==document.querySelector(".wair-launch-btn")&&(clearInterval(t),asyncLoad1())}),100)}();
+        </script>
+        <!-- WAIR PDP End -->
+        {%- endif -%}	
+    {%- endunless -%}
+{%- endfor -%}
+

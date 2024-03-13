@@ -1,0 +1,146 @@
+//
+//  Typography
+//  _____________________________________________
+
+//
+//  Common
+//  _____________________________________________
+
+//
+//  Small + Medium screen sizes - Prev: Tablet and Mobile
+//  _____________________________________________
+@include query-medium-down {
+} //query-medium-down
+
+//
+//  Large screen sizes - Prev: Desktop
+//  _____________________________________________
+@include query-large-up {
+    $selectedHeaderHeight: $headerLargeScreenHeight * 2; // Depends on the header style you choose, it can be X1 or X2
+
+    .product-core{
+        position: sticky;
+        top: var(--contentOffseTop);
+    }
+
+    .product-media .product-media-images{
+        position: sticky;
+        .images-wrapper{
+            
+        }
+        .toggle-images{
+            transform: translateX(-50%);
+            left: 50%;
+            position: absolute;
+            background-color: $white;
+            bottom: -20px;
+            z-index: 1;
+
+            display: none;
+            span{
+                display: flex;
+                align-items: center;
+                &:before {
+                    content: attr(data-show);
+                }
+                &:after{
+                    display: inline-block;
+                    margin-left: 12px;
+                    @include transition(all $fast);
+                    @include icon-fonts($icon-drop-down, inherit, 12px);
+                }
+            }
+        }
+        .image-slide{
+            @include transition(all $fast);
+            &.hide-large{
+                max-height: 0;
+                opacity: 0;
+                visibility: hidden;
+            }
+        }
+        &.expandable{
+            .toggle-images{
+                display: block;
+            }
+        }
+        &.expand{
+            .image-slide{
+                &.hide-large{
+                    max-height: 200vh;
+                    opacity: 1;
+                    visibility: visible;
+                }
+            }
+            .toggle-images{
+                span{
+                    &:before {
+                        content: attr(data-hide);
+                    }
+                    &:after{
+                        @include transform( rotate(-180deg) );
+                    }
+                }
+            }
+        }
+    }
+
+    .product-detail-container.scrolling-grid {
+        // General PDP layout
+        display: flex;
+        flex-wrap: wrap;
+        .product-core-wrapper{
+            padding-bottom: 40px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .product-media {
+            width: calc( (100% / 3) * 2 );
+            align-self: flex-start;
+            // overflow: hidden;
+            &.scrolling {
+                .product-media-images{
+                    border-radius: 4px;
+                    // overflow: hidden;
+                    width: 100%;
+                    .video-wrapper,
+                    .video-box{
+                        border-radius: 0;
+                    }
+                    .images-wrapper{
+                        display: grid;
+                        grid-template-columns: 1fr 1fr;
+                        img{
+                            border-radius: 0;
+                            width: 100%;
+                        }
+                        video{
+                            border-radius: 0;
+                        }
+                    }
+                }
+                .product-media-thumbnails {
+                    display: none;
+                }
+            }
+        }
+        .product-core {
+            right: 0;
+            width: calc( 100% / 3 );
+            padding-bottom: 20px;
+            align-self: flex-start;
+            > div{
+                overflow: scroll;
+                max-height: calc( 100vh - var(--contentOffseTop) );
+            }
+            .product-core-inner {
+                // max-width: 440px;
+                // padding: 20px 40px;
+            }
+        }
+        .product-extra {
+            width: 100%;
+        }
+
+    }
+} //query-large-up

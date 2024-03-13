@@ -1,0 +1,46 @@
+{% assign template_suffix = template | replace: '.', ' ' | truncatewords: 1, '' | handle %}
+
+<!doctype html>
+<html
+    class="no-js supports-no-cookies html-template-{{ template_suffix }}"
+    lang="{{ shop.locale }}">
+    <head>
+        {% comment %}
+            Meta tags
+        {% endcomment %}
+        {% render 'head-code' %}
+
+        {% comment %}
+          Template specific overides
+        {% endcomment %}
+        {{ content_for_header }}
+
+        {% comment %}
+            1R FE Framework including CSS and JS
+        {% endcomment %}
+        {% render 'head-framework' %}
+    </head>
+    <body
+        id="{{ page_title | handle }}"
+        class="template-giftcard"
+        data-tempsuffix="{{ template.suffix }}">
+        <a
+            class="in-page-link visually-hidden skip-link"
+            href="#MainContent">
+            {{ 'general.accessibility.skip_to_content' | t }}
+        </a>
+
+        {% if settings.custom_body_code != blank %}
+            {{ settings.custom_body_code }}
+        {% endif %}
+
+        {% render 'header' %}
+
+        <main role="main" id="MainContent">
+            {{ content_for_layout }}
+        </main>
+        
+        {% render 'footer' %}
+        
+    </body>
+</html>

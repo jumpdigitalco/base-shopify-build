@@ -1,0 +1,51 @@
+<!-- SECTION BLOCKS: {{ section_blocks.size }} -->
+{% unless section_settings.collection == blank and section_blocks.size == 0 %}
+    <!-- Use new carousel -->
+    {% render 'home-featured-products',
+        section_settings: section_settings,
+        section_blocks: section_blocks  %}
+{% comment %}
+<section class="hpmodule hp-featured-products-module simplebar-arrow-scroller {{section_settings.theme}}">
+
+    <div class="module-intro" data-aos="fade-up">
+        <div class="headlines-wrap">
+            {% unless section_settings.subtitle == blank %}<div class="subheadline">{{- section_settings.subtitle -}}</div>{% endunless %}
+            <h2 class="headline">{{ section_settings.title }}</h2>
+            {% unless section_settings.caption == blank %}<div class="caption">{{- section_settings.caption -}}</div>{% endunless %}
+        </div>
+        {% unless section_settings.link == blank %}
+            <a href="{{-section_settings.link-}}" role="button" class="cta {{section_settings.cta_color}}"><span>{{ section_settings.cta }}</span></a>
+        {% endunless %}
+    </div>
+
+    <div class="arrow-box">
+        <div class="collections-wrapper">
+            {%- assign block_collection = collections[section_settings.collection] %}
+            {%- assign col_product_count = block_collection.products_count | times:1 %}
+
+            {% if section_settings.source == 'collection' and col_product_count > 0 %}
+                <div class="collection-products dragscroll" data-simplebar>
+                    {%- for product in block_collection.products limit: section_settings.num_items -%}
+                        {% unless product.tags contains 'in grid promo' or product.tags contains 'in-grid-promo' %}
+                            {% render 'product-grid-item', product: product, iscarousel: true, additional_classes: 'simplebar-scroller-item' %}
+                        {% endunless %}
+                    {%- endfor -%}
+                </div>
+            {% elsif section_settings.source == 'products' and section_blocks.size > 0 %}
+                <div class="collection-products dragscroll" data-simplebar>
+                    {%- for block in section_blocks limit: section_settings.num_items -%}
+                        {% assign product = all_products[block.settings.product] %}
+                        {% unless product.tags contains 'in grid promo' or product.tags contains 'in-grid-promo' %}
+                            {% render 'product-grid-item', product: product, iscarousel: true, additional_classes: 'simplebar-scroller-item' %}
+                        {% endunless %}
+                    {%- endfor -%}
+                </div>
+            {% endif %}
+
+            {% render 'simplebar-scroller-arrows' %}
+        </div><!-- .collections-wrapper -->
+    </div>
+
+</section>
+{% endcomment %}
+{% endunless %}

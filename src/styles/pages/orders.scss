@@ -1,0 +1,209 @@
+//
+//  Typography
+//  _____________________________________________
+.orders-welcome {
+    p {
+        line-height: 21px;
+    }
+    h2 {
+        
+        font-size: 35px;
+        font-weight: 800;
+        letter-spacing: 0;
+    }
+    a[class*='cta'] {
+        
+    }
+}
+
+//
+//  Common
+//  _____________________________________________
+
+.orders-welcome {
+    padding: $smallScreenMargin * 2 $smallScreenMargin $smallScreenMargin * 3;
+    .page-heading {
+        padding-bottom: $smallScreenMargin;
+        margin-bottom: $smallScreenMargin * 2;
+        h1 {
+            // @extend .title-font-2;
+        }
+        .orders-nav {
+            font-size: 14px;
+            @include animation-delay($slow);
+            .orders-actions {
+                .action {
+                    padding: 0 $smallScreenMargin * 3;
+                    margin: 10px;
+                    min-width: 150px;
+                    &.sign-up {
+                        @extend .cta-1;
+                    }
+                    &.sign-in {
+                        @extend .cta-2;
+                        border-color: currentColor;
+                    }
+                }
+            }
+        }
+    } //.page-heading
+
+    .page-panels {
+        .half-column {
+            display: flex;
+            flex-direction: column;
+            background-color: $lightGrey;
+            padding: $smallScreenMargin * 2 $smallScreenMargin;
+            font-size: 14px;
+            margin-bottom: $smallScreenMargin;
+            h2 {
+                line-height: 1;
+                margin-bottom: $smallScreenMargin * 2;
+            }
+            p {
+                margin-bottom: $smallScreenMargin;
+            }
+        }
+        .actions {
+            margin-top: auto;
+            .cta {
+                @include cta-2;
+                &.disabled {
+                    opacity: 0.5;
+                }
+            }
+        }
+    } //.page-panels
+} //.page-wrapper.orders-welcome
+
+//
+//  Small screen sizes - Prev: Mobile only
+//  _____________________________________________
+@include query-small {
+} //query-small
+
+//
+//  Small + Medium screen sizes - Prev: Tablet and Mobile
+//  _____________________________________________
+@include query-medium-down {
+    .page-wrapper.orders-welcome {
+        .page-heading {
+            h1 {
+                margin-bottom: $smallScreenMargin;
+            }
+            .orders-nav {
+                overflow-x: hidden;
+                p {
+                }
+                .orders-actions {
+                    margin: $smallScreenMargin * 2 -10px 0;
+                    display: flex;
+                    .action {
+                        margin: 0 $smallScreenMargin/2;
+                    }
+                }
+            }
+        } //.page-heading
+
+        .page-panels {
+            .half-column {
+                h2 {
+                }
+                p {
+                }
+                .order-track-form,
+                .form-box {
+                }
+                &.race-account {
+                }
+                &.shop-account {
+                }
+            }
+        } //.page-panels
+    } //.page-wrapper.orders-welcome
+} //query-medium-down
+
+//
+//  Medium screen sizes - Prev: Tablet Only
+//  _____________________________________________
+@include query-medium {
+} //query-medium
+
+//
+//  Medium + Large screen sizes - Prev: Tablet and Desktop
+//  _____________________________________________
+@include query-medium-up {
+} //query-medium-up
+
+//
+//  Large screen sizes - Prev: Desktop
+//  _____________________________________________
+@include query-large-up {
+    .page-wrapper.orders-welcome {
+        max-width: $xxLargeScreen;
+        margin: 0 auto;
+        padding: #{$smallScreenMargin * 3} $smallScreenMargin 130px;
+        .page-heading {
+            margin-bottom: $smallScreenMargin * 3;
+            display: flex;
+            justify-content: space-between;
+            h1 {
+                font-size: 36px;
+                line-height: 1.2;
+            }
+            .orders-nav {
+                display: flex;
+                max-width: calc(50% - 10px);
+                p {
+                    width: calc(50% - 10px);
+                    margin-right: $smallScreenMargin;
+                }
+                .orders-actions {
+                    // width: calc(50% - 10px);
+                    margin: 0 -10px;
+                    display: flex;
+                    .action {
+                        width: calc(50% - 10px);
+                        margin: 0 10px;
+                    }
+                }
+            }
+        } //.page-heading
+
+        .page-panels {
+            margin: 0 -10px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+            .half-column {
+                width: calc(50% - #{$smallScreenMargin});
+                margin: 0 $smallScreenMargin/2;
+                padding: $smallScreenMargin * 2 $smallScreenMargin * 6
+                    $smallScreenMargin * 2 $smallScreenMargin * 4;
+                &.race-account {
+                    a {
+                        margin-top: $smallScreenMargin;
+                    }
+                }
+            }
+        } //.page-panels
+    } //.page-wrapper.orders-welcome
+} //query-large-up
+
+//
+//  XLarge down screen sizes - Prev: Small Desktop
+//  _____________________________________________
+@include query-large {
+} //query-large
+
+// 1440px + side paddings of 70px = 1580px
+@media (min-width: 1025px) and (max-width: 1580px) {
+    .page-wrapper.orders-welcome {
+        padding-left: 70px;
+        padding-right: 70px;
+        .page-heading {
+        }
+        .page-panels {
+        }
+    } //.page-wrapper.orders-welcome
+}

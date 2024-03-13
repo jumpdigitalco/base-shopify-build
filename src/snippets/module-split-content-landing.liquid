@@ -1,0 +1,83 @@
+{% if settings.title != blank or settings.caption != blank or settings.image != blank %}
+    <!--settings.negative_margin: {{settings.negative_margin}}-->
+    <section class="module module-split-content{% if settings.hide_small %} hide-small{% endif %}{% if settings.hide_large %} hide-large{% endif %}{% if settings.mobile_padding %} sm-padding{% endif %}{% if settings.desktop_padding %} lg-padding{% endif %}"{% if settings.negative_margin == 0 %} data-aos="fade-up"{% endif %}>
+        <div class="module-container{% if settings.no_container %} full-w{% endif %} mobile-{{ settings.text_align }}
+        desktop-{{ settings.desktop_text_align }} width-{{settings.content_width }}
+        {% if settings.flip_content_mobile %} flip-content-mobile{% endif %}
+        {% if settings.flip_content %} flip-content{% endif %}
+        {% if settings.center_content %} center-content{% endif %}
+        {% if settings.left_offset %} offset-left{% endif %}
+        {% if settings.right_offset %} offset-right{% endif %}
+        ">
+    
+            {% capture module_images %}
+            {% for i in (1..5) %}
+                {%- liquid
+                    assign image_selector = 'image_' | append: i
+                    assign slide_image = settings[image_selector]
+    
+                    assign image_mobile_selector = 'image_mobile_' | append: i
+                    assign image_mobile = settings[image_mobile_selector]
+    
+                    assign image_caption_selector = 'image_caption_' | append: i
+                    assign image_caption = settings[image_caption_selector]
+    
+                    assign image_caption_bottom_selector = 'image_caption_' | append: i
+                    assign image_caption_bottom = settings[image_caption_bottom_selector]
+    
+                    unless slide_image != blank 
+                        continue
+                    endunless
+                    unless image_mobile != blank
+                        assign image_mobile = slide_image
+                    endunless
+    
+                    assign image_count_obj = image_count_obj | plus: 1
+                -%}
+                <picture class="module-single-image{% if forloop.index == 1 and settings.video != blank %} video-block{% endif %}">
+                    {% if settings.image_caption_bottom and image_caption != blank %}<div class="image-caption top hide-small">{{ image_caption }}</div>{% endif %}
+                    <source media="(max-width: 414px)" srcset="{{ image_mobile | img_url: '414x' }}, {{ image_mobile | img_url: '414x', scale: 2 }} 2x" />
+                    <source media="(max-width: 767px)" srcset="{{ image_mobile | img_url: '767x' }}, {{ image_mobile | img_url: '767x', scale: 2 }} 2x" />
+                    <source media="screen" srcset="{{ slide_image | img_url: '1440x' }}, {{ slide_image | img_url: '1440x', scale: 2 }} 2x" />
+                    <img data-src="{{ slide_image | img_url: '1440x' }}" loading="lazy" alt="{{ slide_image.alt }}" />
+    
+                    {% if image_caption != blank %}
+                    <div class="image-caption bottom{% if settings.image_caption_bottom %} hide-large{% endif %}" loading="lazy">{{ image_caption }}</div>
+                    {% endif %}
+    
+                    {% if forloop.index == 1 and settings.video != blank and settings.enable_slider == false %}
+                        {% render 'video-module', settings: settings, is_bg_video: false %}
+                    {% endif %}
+                </picture>
+            {% endfor %}
+            {% endcapture %}
+    
+            <!--image_count_obj: {{image_count_obj}}-->
+    
+            <div class="module-image"{% if image_count_obj > 1 %} data-slick="{slidesToShow: 1, slidesToScroll: 1, autoplay: false}"{% endif %}>
+            {{ module_images }}
+            </div>
+            
+            <div class="module-content{% if settings.subtitle == blank and settings.title == blank and settings.caption == blank %} empty-content{% endif %} {{settings.desktop_text_v_align}}">
+                
+                <div class="content-top-padding"{% if settings.content_top_padding != 0 %} style="padding-top: {{settings.content_top_padding}}%"{% endif %}></div>
+    
+                {% if settings.title != blank %}
+                    <{% if main_title%} }h1{% else %}h4{% endif %} class="headline{% if settings.highlight %} highlight{% endif %}" style="font-size: {{settings.title_font_size}}px;">
+                        {{settings.title}}
+                    </{% if main_title%} }h1{% else %}h4{% endif %}>
+                {% endif %}
+                {% if settings.subtitle != blank %}<div class="subtitle">{{settings.subtitle}}</div>{% endif %}
+                {% if settings.caption != blank %}
+                <div class="caption" style="max-width: {{settings.content_max_width}}px">
+                    {{settings.caption}}
+                    {% if settings.cta != blank and settings.cta_link != blank %}
+                        <br>
+                        <a href="{{settings.cta_link}}" class="{{settings.cta_style}}"{% if settings.cta_color %} style="color: {{settings.cta_color}}"{% endif %}>{{ settings.cta }}</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+    {% endif %}

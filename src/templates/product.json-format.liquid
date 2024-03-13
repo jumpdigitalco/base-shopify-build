@@ -1,0 +1,14 @@
+{%- layout none -%}
+{%- assign list_image_size = '500x' -%}
+{
+    "id": "{{- product.id -}}",
+    "handle": "{{- product.handle -}}",
+    "image": "{{- product.featured_image.src | img_url: list_image_size -}}",
+    "alt": "{{- product.featured_image.alt | escape -}}",
+    "name": "{{- product.title -}}",
+    "url": "{{- product.url -}}",
+    "price": "{{- product.price | money -}}",
+    "type": "{{- product.type -}}",
+    "vendor": "{{- product.vendor -}}",
+    "weight": "{{- product.variants.first.weight | weight_with_unit -}}"
+}

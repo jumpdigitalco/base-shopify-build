@@ -1,0 +1,451 @@
+{% if section.blocks.size > 0 %}
+    {% for block in section.blocks %}
+        <!-- BLOCK TYPE: {{ block.type }} -->
+        {% case block.type %}
+            {% when 'hero' %}
+                {% render 'module-hero', settings: block.settings %}
+            {% when 'heading' %}
+                {% render 'module-heading', settings: block.settings %}
+            {% when 'image_tiles' %}
+                {% render 'module-image-tiles', settings: block.settings %}
+            {% when 'image_grid' %}
+                {% render 'module-image-grid', settings: block.settings %}
+            {% when 'slider_with_buttons' %}
+                {% render 'module-slider_with_buttons', settings: block.settings %}
+            {% when 'collection' %}
+                {% render 'module-collection-highlight', settings: block.settings %}
+            {% when 'product_listing' %}
+                    {%- assign block_collection = collections[block.settings.collection] %}
+                    {%- assign col_product_count = block_collection.products_count | times:1 %}
+                    {% capture scroller_class %}collection-carousel-wrapper{% endcapture %}
+                    {% capture wrapper_class %}collection-products slick-carousel mobile-per-row-{{block.settings.mobile_items_per_row}} desktop-per-row-{{block.settings.desktop_items_per_row}}{% if block.settings.show_arrows %} show-arrows{% endif %}{% endcapture %}
+                    <!--scroller_class:{{scroller_class}}-->
+                    <div class="module collection-{% if block.settings.listing_layout == 'carousel' %}carousel{% else %}products{% endif %}">
+                        {% if block.settings.listing_layout == 'carousel' %}
+                            {% render 'products-carousel',
+                            intro_title: block.settings.title,
+                            intro_caption: settings.caption,
+                            data_aos: 'fade-up',
+                            carousel_type: 'product'
+                            arrow_box_class: 'collections-wrapper',
+                            show_alt_image: block.settings.product_alt_image,
+                            wrapper_class: wrapper_class,
+                            scroller_class: scroller_class,
+                            iterables: block_collection.products %}
+                        {% else %}
+                            {% for product in block_collection.products limit: block.settings.num_items  %}
+                                {% render 'product-grid-item', product: product %}
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+            {% when 'html' %}
+                <div class="module module-html-code">
+                    {% if block.settings.container %}<div class="module-container">{% endif %}
+                    {{block.settings.html_content}}
+                    {% if block.settings.container %}</div>{% endif %}
+                </div>
+            {% when 'carousel' %}
+                {%- assign block_collection = collections[block.settings.collection] %}
+                {%- assign col_product_count = block_collection.products_count | times:1 %}
+                {% assign scroller_class = ' collection-carousel-wrapper module-container ' %}
+                <div class="module collection-carousel">
+                    {% render 'products-carousel',
+                    intro_title: block.settings.title,
+                    intro_caption: settings.caption,
+                    data_aos: 'fade-up',
+                    carousel_type: 'product'
+                    arrow_box_class: 'collections-wrapper',
+                    wrapper_class: 'collection-products slick-carousel',
+                    scroller_class: scroller_class,
+                    iterables: block_collection.products %}
+                </div>
+            {% when 'mix_match' %}
+                {% render 'module-mix-match', settings: block.settings %}
+            {% when 'image_slider' %}
+                <section class="module module-hero img-style-standard">
+                    <div class="slides-wrapper" data-slick="{
+                        'slidesToShow': 1,
+                        'dots': true,
+                        'arrows': false,
+                        'infinite': true,
+                        'autoplay': true
+                    }">
+                    {% for i in (1..3) %}
+                        {% assign title_selector = 'title_' | append: i %}
+                        {% assign title = block.settings[title_selector] %}
+                        {% assign url_selector = 'url_' | append: i %}
+                        {% assign url = block.settings[url_selector] %}
+
+                        {% assign image_selector = 'image_' | append: i %}
+                        {% assign slide_image = block.settings[image_selector] %}
+
+                        {% assign image_mobile_selector = 'image_mobile_' | append: i %}
+                        {% assign image_mobile = block.settings[image_mobile_selector] %}
+
+                        {% unless image_mobile != blank %}
+                            {% assign image_mobile = slide_image %}
+                        {% endunless %}
+
+                        {% if slide_image != blank %}
+                        <div class="slide-wrapper">
+                            <div class="block-container">
+                                {% if url != blank %}
+                                <a href="{{url}}" class="hero-link" title="{{ title }}"></a>
+                                {% endif %}
+
+                                <picture class="slide-image">
+                                    <source media="(max-width: 414px)" srcset="{{ image_mobile | img_url: '414x' }}, {{ image_mobile | img_url: '414x', scale: 2 }} 2x" />
+                                    <source media="(max-width: 767px)" srcset="{{ image_mobile | img_url: '767x' }}, {{ image_mobile | img_url: '767x', scale: 2 }} 2x" />
+                                    <source media="screen" srcset="{{ slide_image | img_url: '1440x' }}, {{ slide_image | img_url: '1440x', scale: 2 }} 2x" />
+                                    <img src="{{ slide_image | img_url: '1440x' }}" alt="{{ slide_image.alt }}" />
+                                </picture>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                    </div>
+                </section>
+            {% when 'split_content' %}
+                {% render 'module-split-content-landing', settings: block.settings, section: section %}
+            {% when 'split_images' %}
+                <section class="hpmodule module-split-hover-image large-width-{{-block.settings.desktop_width-}}">
+                {% for i in (1..2) %}
+                    {% assign title_selector = 'title_' | append: i %}
+                    {% assign title = block.settings[title_selector] %}
+                    {% assign url_selector = 'image_url_' | append: i %}
+                    {% assign url = block.settings[url_selector] %}
+
+                    {% assign image_selector = 'image_' | append: i %}
+                    {% assign slide_image = block.settings[image_selector] %}
+
+                    {% assign image_mobile_selector = 'image_mobile_' | append: i %}
+                    {% assign image_mobile = block.settings[image_mobile_selector] %}
+
+                    {% unless image_mobile != blank %}
+                        {% assign image_mobile = slide_image %}
+                    {% endunless %}
+
+                    {% if slide_image != blank %}
+                    <div class="block-container">
+                        <!--url: {{url}}-->
+                        {% if url != blank %}
+                        <a href="{{url}}" class="image-link" title="{{ title }}"></a>
+                        {% endif %}
+                        <picture class="main-image">
+                            <source media="(max-width: 414px)" srcset="{{ image_mobile | img_url: '414x' }}, {{ image_mobile | img_url: '414x', scale: 2 }} 2x" />
+                            <source media="(max-width: 767px)" srcset="{{ image_mobile | img_url: '767x' }}, {{ image_mobile | img_url: '767x', scale: 2 }} 2x" />
+                            <source media="screen" srcset="{{ slide_image | img_url: '1440x' }}, {{ slide_image | img_url: '1440x', scale: 2 }} 2x" />
+                            <img src="{{ slide_image | img_url: '1440x' }}" alt="{{ slide_image.alt }}" />
+                        </picture>
+                    </div>
+                {% endif %}
+                {% endfor %}
+                </section>
+            {% when 'split_videos' %}
+                    {% if block.settings.show_title and block.settings.title != blank %}
+                    <div class="module module-heading hero-title">
+                        <div class="module-intro">
+                            <div class="headlines-wrap">
+                                <h4 class="headline{% if block.settings.highlight %} highlight{% endif %}">
+                                    {% if block.settings.url_1 != blank %}
+                                    <a href="{{block.settings.url_1}}" title="Visit {{ block.settings.title }}">
+                                    {% endif %}
+                                    {{block.settings.title}}
+                                    {% if block.settings.url_1 != blank %}
+                                    </a>
+                                    {% endif %}
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <section class="module module-split-videos{% if block.settings.with_container %} module-container{% endif %}">
+                    {% for i in (1..2) %}
+                        {% assign url_selector = 'url_' | append: i %}
+                        {% assign url = block.settings[url_selector] %}
+    
+                        {% assign image_selector = 'image_' | append: i %}
+                        {% assign slide_image = block.settings[image_selector] %}
+    
+                        {% assign image_mobile_selector = 'image_mobile_' | append: i %}
+                        {% assign image_mobile = block.settings[image_mobile_selector] %}
+
+                        {% assign video_selector = 'video_' | append: i %}
+                        {% assign video_url = block.settings[video_selector] %}
+    
+                        {% unless image_mobile != blank %}
+                            {% assign image_mobile = slide_image %}
+                        {% endunless %}
+    
+                        {% if video_url != blank %}
+                        <div class="block-container">
+                            <!--url: {{url}}-->
+                            {% if url != blank %}
+                            <a href="{{url}}" class="image-link" title="{{ title }}"></a>
+                            {% endif %}
+                            {% comment %}
+                            <picture class="main-image">
+                                <source media="(max-width: 414px)" data-srcset="{{ image_mobile | img_url: '414x' }}, {{ image_mobile | img_url: '414x', scale: 2 }} 2x" />
+                                <source media="(max-width: 767px)" data-srcset="{{ image_mobile | img_url: '767x' }}, {{ image_mobile | img_url: '767x', scale: 2 }} 2x" />
+                                <source media="screen" data-srcset="{{ slide_image | img_url: '1440x' }}, {{ slide_image | img_url: '1440x', scale: 2 }} 2x" />
+                                <img data-src="{{ slide_image | img_url: '1440x' }}" alt="{{ slide_image.alt }}" />
+                            </picture> 
+                            {% endcomment %}
+
+                            {%- assign id_prefix = 'module-split-video-' | append: forloop.index -%}
+
+                            {%- if video_url != blank -%}
+                                {%- assign video = video_url -%}
+                                
+                                {%- assign mobile_video = video_url -%}
+                                {%- if mobile_video != blank -%}
+                                    {%- assign mobile_video = mobile_video -%}
+                                {%- endif -%}
+                            {%- endif -%}
+
+                            {% if forloop != blank %}
+                                {% assign video_index = forloop.index %}
+                            {% elsif video_index == blank %}
+                                {% assign video_index = 1 %}
+                            {% endif %}
+                            <div class="video-wrapper">
+                                {% if video contains 'youtube' or video contains 'youtu.be' %}
+                                    {%- if video contains 'youtube' -%}
+                                        {% assign yt_video = video | split: "=" %}
+                                    {%- elsif video contains 'youtu.be' -%}
+                                        {% assign yt_video = video | split: "youtu.be/" %}
+                                    {%- endif -%}
+                                    {% comment %} <!--YouTube: {{ yt_video[1] }}--> {% endcomment %}
+                                    {% if yt_video[1].size > 1 %}
+                                        <div id="{{id_prefix}}-{{ video_index }}" class="video-box" data-video-id="{{ yt_video[1] }}" data-video-src="{{ video }}" data-mobile-video-src="{{ mobile_video }}" data-video-type="youtube"></div>
+                                    {% endif %}
+                                {% elsif video contains 'vimeo' %}
+                                    {% comment %} <!--Vimeo: {{ video }}--> {% endcomment %}
+                                    {% assign video = video | replace: 'https://vimeo.com/', 'https://player.vimeo.com/video/' %}
+                                    {% assign mobile_video = mobile_video | replace: 'https://vimeo.com/', 'https://player.vimeo.com/video/' %}
+                                    {% assign vm_video = video | split: "/video/" %}
+                                    {% if vm_video[1].size > 1 %}
+                                        <div id="{{id_prefix}}-{{ video_index }}" class="video-box" data-video-id="{{ vm_video[1] }}" data-video-src="{{ video }}" data-mobile-video-src="{{ mobile_video }}" data-video-type="vimeo"></div>
+                                    {% endif %}
+                                {% else %}
+                                    {% comment %} <video id="{{id_prefix}}-{{ forloop.index }}" class="video-box" onError="style.display = 'none';" autoplay="autoplay" data-video-src="{{ settings.video }}">
+                                        <source src="{{ video }}" type="video/mp4">
+                                        Video not supported
+                                    </video> {% endcomment %}
+                                    <div
+                                        id="{{id_prefix}}{% if forloop != blank %}-{{ forloop.index }}{% endif %}"
+                                        class="video-box"
+                                        data-video-delay="{{ settings.video_delay }}"
+                                        data-video-src="{% if video_url != blank %}{{ video_url }}{% else %}{{ settings.video }}{% endif %}">
+                                    </div>
+                                {% endif %}
+                                <div class="video-ui paused">
+                                    <div class="video-ctl"></div>
+                                    <div class="video-volume"></div>
+                                </div>
+                                
+                                {% if slide_image != blank %}
+                                    {% render 'responsive-image', image: slide_image, mobile_image: image_mobile %}
+                                {% endif %} 
+                            </div><!--.video-wrapper-->
+
+                        </div>
+                    {% endif %}
+                    {% endfor %}
+                    </section>
+            {% when 'featured_images' %}
+                <section class="module image-blocks-module display-{{block.settings.display_option}}">
+                    {%- if block.settings.header != blank or block.settings.caption != blank or block.settings.cta_text != blank -%}
+                    {% capture module_heading %}
+                        <div class="module-intro position-{{block.settings.header_position}}">
+                            <div class="headlines-wrap">
+                            {% if block.settings.header != blank %}<h4 class="headline{% if block.settings.highlight %} highlight{% endif %}">{{block.settings.header}}</h4>{% endif %}
+                            {% if block.settings.caption != blank %}<div class="caption">{{block.settings.caption}}</div>{% endif %}
+                            {% if block.settings.cta_url != blank %}
+                            <a href="{{block.settings.cta_url}}" class="module-cta cta-link-1">{{ block.settings.cta_text }}</a>
+                            {% endif %}
+                            </div>
+                        </div>
+                    {%- endcapture -%}
+                    {%- endif -%}
+                    {%- if block.settings.header_position == 'top' -%}
+                    {{module_heading}}
+                    {%- endif -%}
+                
+                    <div class="blocks-wrapper block-size-{{block.settings.columns_desktop}} small-grid-{{block.settings.columns_mobile}} large-grid-{{block.settings.columns_desktop}}{% if block.settings.cta_under_image %} cta-under-image{% endif %}" style="grid-gap: {{block.settings.image_grid_gap}}px">                    
+                    {% capture featured_images %}
+                    {% for i in (1..3) %}
+                        {%- liquid
+                            assign media_type_selector = 'media_type_' | append: i
+                            assign media_type = block.settings[media_type_selector]
+
+                            assign video_embed_selector = 'video_embed_' | append: i
+                            assign video_embed = block.settings[video_embed_selector]
+
+                            assign image_selector = 'image_' | append: i
+                            assign slide_image = block.settings[image_selector]
+
+                            assign image_hover = ''
+                            assign image_hover_selector = 'image_hover_' | append: i
+                            if block.settings[image_hover_selector] != blank 
+                                assign image_hover = block.settings[image_hover_selector]
+                            endif
+            
+                            assign image_mobile_selector = 'image_mobile_' | append: i
+                            assign image_mobile = block.settings[image_mobile_selector]
+            
+                            assign image_title_selector = 'image_title_' | append: i
+                            assign image_title = block.settings[image_title_selector]
+            
+                            assign image_link_selector = 'image_link_' | append: i
+                            assign image_link = block.settings[image_link_selector]
+            
+                            assign image_cta_selector = 'image_cta_' | append: i
+                            assign image_cta = block.settings[image_cta_selector]
+            
+                            unless slide_image != blank 
+                                continue
+                            endunless
+                            unless image_mobile != blank
+                                assign image_mobile = slide_image
+                            endunless
+            
+                            assign image_count_obj = image_count_obj | plus: 1
+                        -%}
+                        <div class="image-block{% if image_hover != blank %} with-hover{% endif %}{% if video_embed != blank and media_type == 'video' %} is-video{% endif %}">
+                            {% if video_embed != blank and media_type == 'video' %} 
+                                {{video_embed}}
+
+                                {% if image_title != blank or image_cta != blank %}
+                                    <div class="image-block__content">
+                                        {% if image_title != blank %}<div class="image-block__title">{{ image_title }}</div>{% endif %}
+                                        {% if image_cta != blank %}<div class="image-block__cta cta-link-1">{{ image_cta }}</div>{% endif %}
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <a class="image-block__link" href="{{ image_link }}" title="{{ image_title }}">
+                                    {% render 'responsive-image', image: slide_image, mobile_image: image_mobile, class: 'main-image' %}
+
+                                    {% if image_hover != blank %}
+                                        {% render 'responsive-image', image: image_hover, class: 'hover-image hide-small' %}
+                                    {% endif %}
+
+                                    {% if image_title != blank or image_cta != blank %}
+                                        <div class="image-block__content">
+                                            {% if image_title != blank %}<div class="image-block__title">{{ image_title }}</div>{% endif %}
+                                            {% if image_cta != blank %}<div class="image-block__cta cta-link-1">{{ image_cta }}</div>{% endif %}
+                                        </div>
+                                    {% endif %}
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    {% endcapture %}
+                
+                    {% if image_count_obj > 0 %}
+                    {{ featured_images }}
+                    {% endif %}
+                    </div>
+                
+                    {%- if block.settings.header_position == 'bottom' -%}
+                    {{module_heading}}
+                    {%- endif -%}
+                </section>
+            {% when 'split_with_products' %}
+                <section class="hpmodule module-split-with-products {{ block.settings.title | handle }}{% if block.settings.flip_content_mobile %} flip-mobile{% endif %}{% if block.settings.flip_content %} flip-desktop{% endif %}{% if block.settings.hide_info %} hide-product-info{% endif %} format-{{block.settings.layout_type}}{% if block.settings.num_items == 1 %} split-with-1-prod{% endif %}{% if block.settings.mobile_stack %} stack{% endif %}">
+    
+                    {%- if block.settings.image != blank -%}
+                    <div class="split-block image-block">
+                        {%- if block.settings.link != blank -%}
+                            <a class="image-link" href="{{ block.settings.link }}" title="{{ block.settings.title }}">
+                        {%- endif -%}
+                        {% assign mobile_image = block.settings.image %}
+                        {% if block.settings.image_mobile != blank %}
+                            {% assign mobile_image = block.settings.image_mobile %}
+                        {% endif %}
+                        <picture class="main-image">
+                            <source media="(max-width: 414px)" srcset="{{ mobile_image | img_url: '414x' }}, {{ mobile_image | img_url: '414x', scale: 2 }} 2x" />
+                            <source media="(max-width: 767px)" srcset="{{ mobile_image | img_url: '767x' }}, {{ mobile_image | img_url: '767x', scale: 2 }} 2x" />
+                            <source media="screen" srcset="{{ block.settings.image | img_url: '1440x' }}, {{ block.settings.image | img_url: '1440x', scale: 2 }} 2x" />
+                            <img src="{{ block.settings.image | img_url: '1440x' }}" alt="{{ block.settings.image.alt }}" />
+                        </picture>
+                        {%- if block.settings.link != blank -%}
+                        </a>
+                        {%- endif -%}
+                    </div>
+                    {%- endif -%}
+                
+                    {% comment %} 
+                    {% if block.settings.collection != blank %}
+                    {% endif %} 
+                    {% endcomment %}
+
+                    {%- assign layout_type = block.settings.num_items | times:1 %}
+                    {%- assign block_collection = collections[block.settings.collection] %}
+                    {%- assign col_product_count = block_collection.products_count | times:1 %}
+                    {%- assign show_button = block.settings.show_button %}
+                    {%- assign button_cta = block.settings.cta %}
+
+                    <div class="split-block featured-products-wrapper">
+                        {% if block.settings.title != '' %}<div class="module-title">{{block.settings.title}}</div>{% endif %}
+
+                        <div class="featured-products collection-products products-{{layout_type}}">
+                            {% if block.settings.source == 'collection' and col_product_count > 0 %}
+                                {% for product in block_collection.products limit: block.settings.num_items %}
+                                    <div class="article-wrapper">
+                                    {% render 'product-grid-item',
+                                    product: product,
+                                    iscarousel: true,
+                                    show_alt_image: true,
+                                    additional_classes: '' %}
+
+                                    <div class="cta-wrap">
+                                        <a href="{{ product.url }}" class="cta-1" role="button"><span>{{ block.settings.cta }}</span></a>
+                                    </div>
+                                    </div>
+                                {% endfor %}
+                            {% elsif block.settings.source == 'products' %}
+                                {% assign product_array = '' %}
+            
+                                {% for i in (1..6) %}
+                                    {% assign feat_product_selector = 'product_' | append: i %}
+                                    {% assign feat_product = block.settings[feat_product_selector] %}
+                                    {% assign feat_product_obj =  all_products[ feat_product] %}
+
+                                    <!--product:{{feat_product_obj.handle}}-->            
+                                    {% unless feat_product_obj != blank %}
+                                        {% continue %}
+                                    {% endunless %}
+
+                                    <div class="article-wrapper">
+                                    {% render 'product-grid-item',
+                                    product: feat_product_obj,
+                                    iscarousel: true,
+                                    show_alt_image: true,
+                                    show_button: show_button,
+                                    button_cta: button_cta,
+                                    additional_classes: '' %}
+
+                                    <div class="cta-wrap">
+                                        <a href="{{ feat_product_obj.url }}" class="cta-1" role="button"><span>{{ block.settings.cta }}</span></a>
+                                    </div>
+                                    </div>
+                                {% endfor %}
+                    
+                            {% endif %}
+                        </div>
+
+                        {% comment %}
+                        {% if block.settings.cta != blank %}
+                            <div class="cta-wrap">
+                                <a href="{{ block.settings.cta_link }}" class="cta-1" role="button"><span>{{ block.settings.cta }}</span></a>
+                            </div>
+                        {% endif %}
+                        {% endcomment %}
+                    </div>
+                </section>
+            {% when 'featured_videos' %}
+            {% endcase %}    
+    {% endfor %}
+{% endif %}

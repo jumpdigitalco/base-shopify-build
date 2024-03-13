@@ -1,0 +1,143 @@
+<section class="module module-split-hover-image {{ section.settings.title | handle }}">
+    {% if section.blocks.size > 1 %}
+    {% for block in section.blocks %}
+    <div class="block-container">
+
+        {% if block.settings.link != blank %}
+            <a href="{{block.settings.link}}" class="image-link" title="{{ block.settings.image.alt }}"></a>
+        {% endif %}
+
+        <div class="image-container{% if block.settings.image_hover != blank %} with-hover{% endif %}">
+            {% assign mobile_image = block.settings.image %}
+            {% if block.settings.image_mobile != blank %}
+                {% assign mobile_image = block.settings.image_mobile %}
+            {% endif %}
+            <picture class="main-image">
+                <source media="(max-width: 414px)" srcset="{{ mobile_image | img_url: '414x' }}, {{ mobile_image | img_url: '414x', scale: 2 }} 2x" />
+                <source media="(max-width: 767px)" srcset="{{ mobile_image | img_url: '767x' }}, {{ mobile_image | img_url: '767x', scale: 2 }} 2x" />
+                <source media="screen" srcset="{{ block.settings.image | img_url: '1440x' }}, {{ block.settings.image | img_url: '1440x', scale: 2 }} 2x" />
+                <img src="{{ block.settings.image | img_url: '1440x' }}" alt="{{ block.settings.image.alt }}" />
+            </picture>
+
+            {% comment %} Hover image {% endcomment %}
+            {% if block.settings.image_hover != blank %}
+            <picture class="hover-image">
+                <img src="{{ block.settings.image_hover | img_url: '1440x' }}" alt="{{ block.settings.image_hover.alt }}" />
+            </picture>
+            {% endif %}
+        </div>
+
+        {% unless block.settings.hide_content %}
+        <div class="image-wrapper {{ block.settings.text_align }} {{ block.settings.vertical_text_position }} {{ block.settings.text_color }}" data-aos="fade-up" data-aos-duration="1500">
+            {% if block.settings.title != blank %}
+            <h3 class="headline">{{ block.settings.title }}</h3>
+            {% endif %}
+            {% if block.settings.link != blank %}
+            <div class="cta-wrap">
+                <button class="cta-outline"><span>{{ block.settings.cta }}</span></button>
+            </div>
+            {% endif %}
+        </div>
+        {% endunless %}
+    </div>
+    {% endfor %}
+    {% endif %}
+</section>
+
+{% schema %}
+{
+    "name": "Split Hover Image",
+    "max_blocks": 2,
+    "settings": [
+    ],
+    "blocks": [
+        {
+            "type": "image_block",
+            "name": "Image Block",
+            "settings": [
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Image"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image_hover",
+                    "label": "Hover Image"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image_mobile",
+                    "label": "Mobile Image"
+                },
+                {
+                    "type": "checkbox",
+                    "default": false,
+                    "id": "hide_content",
+                    "label": "Hide Content and show the image only"
+                },
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Title"
+                },
+                {
+                    "type": "text",
+                    "id": "cta",
+                    "label": "CTA Text"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Link"
+                },
+                {
+                    "type": "header",
+                    "content": "Text Alignment"
+                },
+                {
+                    "type": "radio",
+                    "options": [
+                        { "value": "text-left", "label": "Left" },
+                        { "value": "text-center", "label": "Center" },
+                        { "value": "text-right", "label": "Right" }
+                    ],
+                    "default": "text-center",
+                    "id": "text_align",
+                    "label": "Text Alignment"
+                },
+                {
+                    "type": "radio",
+                    "options": [
+                        { "value": "theme-dark", "label": "Light" },
+                        { "value": "theme-light", "label": "Dark" }
+                    ],
+                    "default": "theme-light",
+                    "id": "text_color",
+                    "label": "Font Color"
+                },
+                {
+                    "type": "radio",
+                    "options": [
+                        { "value": "vertical-pos-top", "label": "Top" },
+                        { "value": "vertical-pos-center", "label": "Center" },
+                        { "value": "vertical-pos-bottom", "label": "Bottom" }
+                    ],
+                    "default": "vertical-pos-center",
+                    "id": "vertical_text_position",
+                    "label": "Vertical text position"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Split Hover Image",
+            "category": "Homepage",
+            "settings": {
+
+            }
+        }
+    ]
+}
+{% endschema %}

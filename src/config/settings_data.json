@@ -1,0 +1,48 @@
+{
+  "current": {
+    "webpack_dev_server_enable": true,
+    "gtm_id": "",
+    "footer_mega_title": "About Uss",
+    "sections": {
+      "promo-banner": {
+        "type": "promo-banner",
+        "settings": {
+        }
+      },
+      "header-countdown": {
+        "type": "header-countdown",
+        "settings": {
+          "header_countdown_enable": false,
+          "header_countdown_background": "#000000",
+          "header_countdown_color": "theme-dark",
+          "header_countdown_text": "",
+          "header_countdown_mobile_text": "",
+          "header_countdown_link": "",
+          "header_countdown_cta": "",
+          "header_countdown_active_from": "",
+          "header_countdown_active_to": ""
+        }
+      },
+      "navigation": {
+        "type": "navigation",
+        "settings": {
+          "nav_divider": "2",
+          "nav_menu_handle": "main-menu"
+        }
+      }
+    },
+    "content_for_index": [
+
+    ],
+    "blocks": {
+      
+    }
+  },
+  "presets": {
+    "Default": {
+      "content_for_index": [
+
+      ]
+    }
+  }
+}

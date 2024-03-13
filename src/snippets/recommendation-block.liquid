@@ -1,0 +1,30 @@
+{% comment %}
+*
+* @param {String} title
+* @param {String} link
+* @param {String} cta
+* @param {String} image
+* @param {[String: String]} block_settings
+*
+{% endcomment %}
+
+{% unless block_settings == blank %}
+    {% unless title != blank or block_settings.title == blank %}{% assign title = block_settings.title %}{% endunless %}
+    {% unless link != blank or block_settings.link == blank %}{% assign link = block_settings.link %}{% endunless %}
+    {% unless cta != blank or block_settings.cta == blank %}{% assign cta = block_settings.cta %}{% endunless %}
+    {% unless image != blank or block_settings.image == blank %}{% assign image = block_settings.image %}{% endunless %}
+{% endunless %}
+
+<div class="reco-block reco">
+    <a href="{{ link }}" alt="{{ cta }}">
+        <picture>
+            <source media="(max-width: 414px)" data-srcset="{{ image | img_url: '414x', format: 'pjpg' }}, {{ image | img_url: '414x', scale: 2, format: 'pjpg' }} 2x" />
+            <source media="(max-width: 767px)" data-srcset="{{ image | img_url: '767x', format: 'pjpg' }}, {{ image | img_url: '767x', scale: 2, format: 'pjpg' }} 2x" />
+            <img data-src="{{ image | img_url: '767x', format: 'pjpg' }}" alt="{{ title }}" />
+        </picture>
+        <h4>{{ title }}</h4>
+        <div class="cta-wrap">
+            <button class="reco-btn"><span>{{ cta }}</span></button>
+        </div>
+    </a>
+</div>

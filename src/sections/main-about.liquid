@@ -1,0 +1,61 @@
+{% comment %}
+    Re-use search result style by using the search restule DOM element classes for 404 page.
+{% endcomment %}
+<div class="page-about-wrapper">
+
+    <div class="page-404-intro {{settings.utility_404_text_color}}">
+        <h1 class="title">{{ settings.utility_404_title }}</h1>
+        <div class="subtitle">{{ settings.utility_404_subtitle }}</div>
+        <div class="caption">{{ settings.utility_404_caption }}</div>
+            
+        {% if settings.utility_404_cta != blank or settings.utility_404_cta_2 != blank %}
+        <div class="cta-wrap">
+            {% if settings.utility_404_cta != blank %}
+            <a href="{{ settings.utility_404_cta_link }}" title="View {{ settings.utility_404_title }}" class="cta-{{-settings.utility_404_cta_style-}}"><span>{{ settings.utility_404_cta }}</span></a>
+            {% endif %}
+
+            {% if settings.utility_404_cta_2 != blank %}
+            <a href="{{ settings.utility_404_cta_link_2 }}" title="View {{ settings.utility_404_title }}" class="cta-{{-settings.utility_404_cta_style_2-}}"><span>{{ settings.utility_404_cta_2 }}</span></a>
+            {% endif %}
+        </div>
+        {% endif %}
+
+    </div>
+
+    {% if settings.utility_404_background_image_desktop != blank %}
+        {% assign mobile_img = settings.utility_404_background_image_desktop %}
+        {% if settings.utility_404_background_image_mobile != blank %}
+        {% assign mobile_img = settings.utility_404_background_image_mobile %}
+        {% endif %}
+        {% render 'responsive-image',
+                    image: settings.utility_404_background_image_desktop,
+                    mobile_image: mobile_img,
+                    class: 'page-404-image-wrapper',
+                    img_class: 'page-404-image',
+                    desktop_image_size: '1920x',
+                    mobile_image_size: '828x' %}
+    {% endif %}
+    
+</div>
+    
+{%- assign block_collection = collections[settings.utility_404_collection] %}
+{%- assign col_product_count = block_collection.products_count | times:1 %}
+{% if col_product_count > 0 %}
+{% render 'products-carousel',
+    intro_title: settings.utility_404_recom_title,
+    data_aos: 'fade-up',
+    offset_right: true,
+    carousel_type: 'product'
+    arrow_box_class: 'collections-wrapper',
+    wrapper_class: 'collection-products slick-carousel',
+    scroller_class: '',
+    intro_link: block_collection.url,
+    intro_cta: 'View More',
+    iterables: block_collection.products %}
+{% endif %}
+
+{% schema %}
+{
+  "name": "About page"
+}
+{% endschema %}

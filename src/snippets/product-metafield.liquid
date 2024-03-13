@@ -1,0 +1,189 @@
+{% assign metafields = product.metafields["globals"] %}
+{% assign allowed_metafields = settings.product_metafields | split: ',' %}
+
+{% assign excludeSpecs = false %}
+{%- if layout == 'tab' -%}
+    {%- assign counter = 1 -%}
+    {%- assign has_metafields = false -%}
+    {%- assign setting_prefix = 'product_global_info_' -%}
+    {%- assign global_info_titles = '' -%}
+    {%- assign global_info_contents = '' -%}
+    {% comment %} Metafields Contents {% endcomment %}
+
+    {%- for item in allowed_metafields -%}
+        {%- if metafields contains item and product.metafields["globals"][item].value != blank -%}
+            {% assign title = item | replace: '_', ' ' | replace: 'care recommendations', 'care and composition' | capitalize %}
+            {% if title == 'Model info' %}{% continue %}{% endif %}
+            
+            {% capture global_info_title %}
+                <div class="tabbed-title tabbed-title-{{counter}}" data-target="tabbed-{{counter}}">{{title}}</div>
+            {% endcapture %}
+            {% assign global_info_titles = global_info_titles | append: global_info_title %}
+
+            {% capture global_info_content %}
+            <div class="tabbed-content tabbed-content-{{counter}}" data-target="tabbed-{{counter}}" id="tabbed-{{counter}}">
+                <div class="content-inner">
+                    {{ product.metafields["globals"][item].value | newline_to_br }}
+                </div>
+            </div>
+            {% endcapture %}
+            {% assign global_info_contents = global_info_contents | append: global_info_content %}
+
+            {% assign counter = counter | plus: 1 %}
+        {%- endif -%}
+    {%- endfor -%}
+
+    {% comment %} PDP Global Info {% endcomment %}
+    {%- for i in (1..2) -%}
+        {% assign activate_box = setting_prefix | append: 'activate_' | append: i %}
+        {% assign title_handle = setting_prefix | append: 'title_' | append: i %}
+        {% assign content_handle = setting_prefix | append: 'content_' | append: i %}
+
+        {% assign activate = settings[activate_box] %}
+        {% assign title = settings[title_handle] %}
+        {% assign title = title | replace: '_', ' ' | replace: 'care recommendations', 'care and composition' | capitalize %}
+        {% assign content = settings[content_handle] %}
+        
+        {% capture global_info_title %}
+        <div class="tabbed-title tabbed-title-{{counter}}" data-target="tabbed-{{counter}}">{{title}}</div>
+        {% endcapture %}
+        {% assign global_info_titles = global_info_titles | append: global_info_title %}
+
+        {% capture global_info_content %}
+        <div class="tabbed-content tabbed-content-{{counter}}" data-target="tabbed-{{counter}}" id="tabbed-{{counter}}">
+            <div class="content-inner">
+                {{content}}
+            </div>
+        </div>
+        {% endcapture %}
+        {% assign global_info_contents = global_info_contents | append: global_info_content %}
+        
+        {%- assign counter = counter | plus: 1 -%}
+    {%- endfor -%}
+
+    <div class="tabbed-module metafield-tabs">
+        <div class="tabbed-title-wrap">
+            <div class="tabbed-title tabbed-title-0 active" data-target="tabbed-0">Description</div>
+            {{global_info_titles}}
+        </div>
+        <div class="tabbed-content-wrap">
+            <div class="tabbed-content active" data-target="tabbed-0" id="tabbed-0">
+                <div class="content-inner product-description" itemprop="description">
+                    <div class="product-description-inner">
+                    {{ product.description }}
+                    </div>
+                    
+                    {%- if isPreOrder -%}
+                    <p class="pre-order-message">{{ product_preorder_msg }}</p>    
+                    {%- endif -%}
+                    
+                    {%- if isFinalSale -%}
+                    <p class="final-sale-message">{{ product_finalsale_msg }}</p>    
+                    {%- endif -%}
+                </div>
+            </div>
+
+            {{global_info_contents}}
+        </div>
+    </div>
+
+
+{%- elsif layout == 'stacked' -%}
+    {%- assign has_metafields = false -%}
+
+    {%- for metaKey in allowed_metafields -%}
+        {%- if metafields[metaKey] != blank -%}
+            {%- assign tabbedTitle = metaKey | replace: '-', ' ' -%}
+            {% unless tabbedTitle == 'sizing' or tabbedTitle == 'warranty' %}
+            {%- assign has_metafields = true -%}
+            {%- break -%}
+            {% endunless %}
+        {%- endif -%}
+    {%- endfor -%}
+    {%- if has_metafields -%}
+    <div class="product-stacked-content">
+        <div class="stacked-nav">
+            {% render 'product-metafield-stacked', metafields: metafields, allowed_metafields: allowed_metafields, tabtitle: true, with_reviews: with_reviews  %}
+        </div>
+        <div class="stacked-content-wrap">
+            {% render 'product-metafield-stacked', metafields: metafields, allowed_metafields: allowed_metafields, tabcontent: true %}
+        </div>
+    </div>
+    {%- endif -%}
+{%- elsif layout == 'accordion' -%}
+    {% liquid 
+        assign counter = 1
+        assign has_metafields = false
+
+        assign setting_prefix = 'product_global_info_'
+        assign global_info_titles = ''
+        assign global_info_contents = ''
+    %}
+
+    <div class="accordion-container tab-accordion-system">
+        
+        <div class="system">
+            {% comment %} {% if forloop.last %} system-title-last{% endif %} {% endcomment %}
+            <div class="system-title system-title-{{ counter }}" data-target="system-{{- counter -}}">{{ 'products.product.description' | t }}</div>
+
+            <div class="system-content" data-target="system-{{- counter -}}">
+                <div class="content-inner product-description" itemprop="description">
+                    <div class="product-description-inner">
+                    {{ product.description }}
+                    </div>
+                    
+                    {%- if isPreOrder -%}
+                    <p class="pre-order-message">{{ product_preorder_msg }}</p>    
+                    {%- endif -%}
+                    
+                    {%- if isFinalSale -%}
+                    <p class="final-sale-message">{{ product_finalsale_msg }}</p>    
+                    {%- endif -%}
+                </div>
+            </div>
+        </div>
+        {%- assign counter = counter | plus: 1 -%}
+
+
+        {%- for item in allowed_metafields -%}
+        {%- if metafields contains item and product.metafields["globals"][item].value != blank -%}
+            {%- assign systemTitle = item -%}
+            <div class="system">
+                {% comment %} {% if forloop.last %} system-title-last{% endif %} {% endcomment %}
+                <div class="system-title system-title-{{ counter }}" data-target="system-{{- counter -}}">{{ systemTitle | replace: '_', ' ' | replace: 'care recommendations', 'care and composition' | capitalize }}</div>
+
+                <div class="system-content" data-target="system-{{- counter -}}">
+                    <div class="content-inner">
+                        {{ product.metafields["globals"][item].value | newline_to_br }}
+                    </div>
+                </div>
+            </div>
+
+            {% assign counter = counter | plus: 1 %}
+        {%- endif -%}
+        {%- endfor -%}
+
+        {% assign setting_prefix = 'product_global_info_' %}
+        {% for i in (1..2) %}
+            {% assign activate_box = setting_prefix | append: 'activate_' | append: i %}
+            {% assign title_handle = setting_prefix | append: 'title_' | append: i %}
+            {% assign content_handle = setting_prefix | append: 'content_' | append: i %}
+
+            {% assign activate = settings[activate_box] %}
+            {% assign title = settings[title_handle] %}
+            {% assign content = settings[content_handle] %}
+
+            {% if activate == false and title == blank and content == blank %}{% continue %}{% endif %}
+            <div class="system">
+                {% comment %} {% if forloop.last %} system-title-last{% endif %} {% endcomment %}
+                <div class="system-title system-title-{{ counter }}" data-target="system-{{- counter -}}">{{ title }}</div>
+                <div class="system-content" data-target="system-{{- counter -}}">
+                    <div class="content-inner">                        
+                        {{ content }}
+                    </div>
+                </div>
+            </div>
+            {% assign counter = counter | plus: 1 %}
+        {% endfor %}
+    </div>
+{%- endif -%}

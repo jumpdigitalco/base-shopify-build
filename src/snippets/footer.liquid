@@ -1,0 +1,167 @@
+<footer class="site-footer" role="contentinfo">
+    
+    {% if settings.custom_footer_code != blank %}
+        {{ settings.custom_footer_code }}
+    {% endif %}
+    
+    <div class="footer-part footer-mega">
+        <div class="footer-wrapper">
+
+            {% if settings.footer_logo != blank %}
+                {% assign footer_logo = settings.footer_logo %}
+                {% assign footer_logo_mobile = settings.footer_logo %}
+                {% if settings.footer_mobile_logo != blank %}
+                    {% assign footer_logo_mobile = settings.footer_mobile_logo %}
+                {% endif %}
+                <div class="footer-block footer-logo">
+                    {% render 'responsive-image',
+                        image: footer_logo,
+                        lazy_load: true,
+                        class: 'main-view',
+                        mobile_image: footer_logo_mobile,
+                        img_class: 'footer-logo-img',
+                        desktop_image_size: '500x',
+                        mobile_image_size: '300x',
+                        img_alt_prefix: 'Footer Logo Image' %}
+                </div>
+            {% endif %}
+
+            {%- for i in (1..3) -%}
+                {% assign setting_prefix = 'footer_mega_' %}
+                {% assign footer_menu_title_prefix = setting_prefix | append: 'title_' | append: i %}
+                {% assign footer_menu_prefix = setting_prefix | append: 'linklist_' | append: i %}
+        
+                {% assign footer_mega_title = settings[footer_menu_title_prefix] %}
+                {% assign footer_mega_linklist = settings[footer_menu_prefix] %}
+                {% if linklists[footer_mega_linklist].links.size > 0 %}
+                <div class="footer-block footer-menu">
+                    <div class="footer-block-title">{{footer_mega_title}}</div>
+                    
+                    <div class="footer-block-menu link-wrapper">
+                    {% for link in linklists[footer_mega_linklist].links %}
+                        {% assign linkTitle = link.title | downcase %}
+                        <div class="link-block {{ link.handle }} {%- if link.levels > 0 -%} has-children{%- endif -%}">
+                            {%- if link.levels > 0 -%} 
+                                <p class="link-title">{{ link.title }}</p>
+                            {% else %}
+                            <a class="link link-{{ link.title | handleize }}" href="{{ link.url }}"{% if link.url contains 'http' %} target="_blank" title="Opens in a new window/tab"{% endif %}>{{ link.title }}</a>
+                            {% endif %}
+                            
+                            {% for sublink in link.links %}
+                            {%- if sublink.url == '/' -%}
+                            <p class="info">{{ sublink.title }}</p>
+                            {%- else -%}
+                            <a class="link link-{{ sublink.title | handleize }}" href="{{ sublink.url }}"{% if link.url contains 'http' %} target="_blank" title="Opens in a new window/tab"{% endif %}>{{ sublink.title }}</a>
+                            {%- endif -%}
+                            {% endfor %}
+                        </div>
+                    {% endfor %}
+                    </div>
+                </div>
+                {% endif %} 
+            {% endfor %}
+    
+            <div class="footer-block footer-menu footer-subscription">
+                {% comment %}
+                {% assign newsletterSignupLink = '#' %}
+                {% if settings.footer_newletter_link != blank %}
+                {% assign newsletterSignupLink = settings.footer_newletter_link %}
+                {% endif %}
+                <a href="{{newsletterSignupLink}}" class="footer-block-title{% if newsletterSignupLink == '#' %}subscribe-modal-trigger{% endif %}" {% if newsletterSignupLink != '#' %} target="_blank"aria-controls="SubscribeModal" aria-label="Open Subscribe to Newsletter Modal"{% endif %}>
+                    {{ settings.footer_newletter_title }}
+                </a> 
+                {% endcomment %}
+                <div class="footer-block-title">{{settings.footer_newletter_title}}</div>
+                
+                <div class="footer-block-menu link-wrapper">
+                {% form 'customer' %}
+                        <p class="newsletter-desc">
+                            {% if form.posted_successfully?  %}
+                                {{ 'general.newsletter_form.confirmation' | t }}
+                            {%- else -%}
+                                {{ 'general.newsletter_form.description' | t }}
+                            {% endif %}
+                        </p>
+                        <div class="newsletter footer-newsletter">
+                            <input type="hidden" name="contact[tags]" value="newsletter,footer">
+                            <div class="input-wrapper group group-email {% if form.posted_successfully? %}posted{% endif %}">
+                                <input 
+                                    id="Email" 
+                                    class="required email"
+                                    type="email" 
+                                    name="contact[email]" 
+                                    aria-label="{{ 'general.newsletter_form.newsletter_email' | t }}"
+                                    value="{% if customer %}{{ customer.email }}{% endif %}" 
+                                    placeholder="{{ 'general.newsletter_form.newsletter_email' | t }}" 
+                                    autocorrect="off" 
+                                    autocapitalize="off" >
+                                <button type="submit" class="news-cta">
+                                    <span>{{ 'general.newsletter_form.submit' | t }}</span>
+                                </button>
+                                <span class="error-msg">{{ form.errors | default_errors }}</span>
+                            </div>
+                            <div class="input-wrapper">
+                                <input type="checkbox" id="newsletter-accept-terms" name="newsletter-accept-terms" value="true" />
+                                <label for="newsletter-accept-terms">
+                                    <span>{{ 'general.newsletter_form.terms_validation' | t }}</span>
+                                </label>
+                            </div>
+                        </div> 
+                {% endform %}
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+    <div class="footer-part footer-slim">
+        <div class="footer-wrapper">
+            
+            <div class="footer-block social-wrapper">
+                <div class="social-heading">{{ settings.footer_socials_text }}</div>
+                <div class="social-links">
+                    {%- assign footer_social_linklist = settings.footer_social_linklist -%}
+                    {% if linklists[footer_social_linklist].links.size > 0 %}
+                        {% for social in linklists[footer_social_linklist].links %}
+                            {%- assign social_handle = social.title | handleize -%}
+                            <a class="social-link social icon-{{ social_handle }}" href="{{ social.url }}" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: social.title }} - Opens in a new window/tab" target="_blank">
+                                <span class="visually-hidden">{{ social.title }}</span>
+                            </a>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            </div>
+
+            {% section 'localization-selectors' %}
+
+            {% if settings.show_payment_icons %}
+            {% unless shop.enabled_payment_types == empty %}
+            <div class="footer-block payment-icons">
+                <ul class="payments-list">
+                    {% comment %} <img loading="lazy" data-src="https://media.sezzle.com/branding/2.0/Sezzle_Logo_FullColor.svg" width="80" height="22"  /> {% endcomment %}
+                    {% for type in shop.enabled_payment_types %}
+                      <li class="icon--payment">
+                        {{ type | payment_type_svg_tag }}
+                      </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% endunless %}
+            {% endif %}
+
+            <div class="footer-block copyright">
+                {{ 'now' | date: "%Y" }} &copy; {{ settings.footer_copyright }}
+            </div>
+            <div class="footer-block bottom-menu link-wrapper">
+                {%- assign footer_slim_linklist = settings.footer_slim_linklist -%}
+                {% if linklists[footer_slim_linklist].links.size > 0 %}
+                {% for link in linklists[footer_slim_linklist].links %}
+                <a class="link" href="{{ link.url }}">{{ link.title }}</a>
+                {% endfor %}
+                {% endif %}
+                <a class="link build-by" href="https://jumpdigital.co" target="_blank" title="Visit Jump Digital - Opens in a new tab">Build by Jump Digital</a>
+                <a class="link powered-by" href="https://shopify.com" target="_blank">Powered by Shopify</a>
+            </div>
+        </div>
+    </div>
+</footer>

@@ -1,0 +1,17 @@
+{% if section.blocks.size > 0 %}
+    {% for block in section.blocks %}
+        <!-- BLOCK TYPE: {{ block.type }} -->
+        {% case block.type %}
+            {% when 'hero' %}
+                {% render 'module-hero', settings: block.settings %}
+            {% when 'heading' %}
+                {% render 'module-heading', settings: block.settings %}
+            {% when 'image_tiles' %}
+                {% render 'module-image-tiles', settings: block.settings %}
+            {% when 'split_content' %}
+                {% render 'module-split-content', settings: block.settings, section: section %}
+            {% when 'split_images' %}
+                {% render 'module-split-images', settings: block.settings %}
+        {% endcase %}
+    {% endfor %}
+{% endif %}

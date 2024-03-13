@@ -1,0 +1,47 @@
+{%- if settings.predictive_search_enabled -%}
+<predictive-search>
+{%- endif -%}
+<form action="/search" method="get" role="search" class="search-form">
+    <!-- Uncomment to search products only. -->
+    <input type="hidden" name="type" value="product">
+    <input type="hidden" name="options[prefix]" value="last">
+    <input 
+        type="search" 
+        name="q" 
+        id="{{ search_form_id }}"
+        value="{{ search.terms | escape }}"
+        placeholder="{{ 'general.search.placeholder' | t }}"
+        {%- if settings.predictive_search_enabled -%}
+          role="combobox"
+          aria-expanded="false"
+          aria-owns="predictive-search-results"
+          aria-controls="predictive-search-results"
+          aria-haspopup="listbox"
+          aria-autocomplete="list"
+          autocorrect="off"
+          autocomplete="off"
+          autocapitalize="off"
+          spellcheck="false"
+        {%- endif -%}>
+    <button type="reset" class="reset__button field__button{% if search.terms == blank %} hidden{% endif %}" aria-label="{{ 'general.search.reset' | t }}">
+        <span class="icon-fallback-text">{{ 'general.search.reset' | t }}</span>
+    </button>
+    <button type="submit" class="search__button btn" aria-label="{{ 'general.search.search' | t }}">
+        <span class="icon-fallback-text">{{ 'general.search.submit' | t }}</span>
+    </button>
+
+    {%- if settings.predictive_search_enabled -%}
+        <div class="predictive-search predictive-search--header" tabindex="-1" data-predictive-search>
+          <div class="predictive-search__loading-state">
+            <svg aria-hidden="true" focusable="false" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+              <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+            </svg>
+          </div>
+        </div>
+
+        <span class="predictive-search-status visually-hidden" role="status" aria-hidden="true"></span>
+    {%- endif -%}
+</form>
+{%- if settings.predictive_search_enabled -%}
+</predictive-search>
+{%- endif -%}

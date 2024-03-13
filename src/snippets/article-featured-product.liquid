@@ -1,0 +1,62 @@
+{%- if handle != blank -%}
+{% comment %} Product Data {% endcomment %}
+{% assign product = all_products[handle] %}
+
+{%- assign excludeSaleBadge = false -%}
+{%- if all_tags contains settings.product_sale_badge_exclude -%}
+{%- assign excludeSaleBadge = true -%}
+{%- endif -%}
+
+<article 
+    class="featured-product {{layout}}" 
+    data-handle="{{ product.handle }}" 
+    data-id="{{ product.id }}" 
+    itemtype="http://schema.org/Product" 
+    data-aos="fade-{{layout}}">
+    <div class="product-image-wrapper">
+
+        <a class="product-link" href="{{ product.url }}" itemprop="url">
+            {% assign main_view_img = product.featured_image.src %}
+            <picture class="main-view">
+                <source media="(max-width: 414px)" srcset="{{ main_view_img | img_url: '414x', format: 'pjpg' }}, {{ main_view_img | img_url: '414x', scale: 2, format: 'pjpg' }} 2x">
+                <source media="(max-width: 768px)" srcset="{{ main_view_img | img_url: '768x', format: 'pjpg' }}, {{ main_view_img | img_url: '768x', scale: 2, format: 'pjpg' }} 2x">
+                <source media="only screen" srcset="{{ main_view_img | img_url: '414x', format: 'pjpg' }}, {{ main_view_img | img_url: '414x', scale: 2, format: 'pjpg' }} 2x">
+                <img class="product-image" src="{{ main_view_img | img_url: '414x', format: 'pjpg' }}" alt="{{ product.featured_image.alt | escape }}" itemprop="image">
+            </picture>
+        </a>
+
+        <div class="product-badges-wrapper">
+            {%- assign hasSpecialPrice = false -%}
+            {% if product.compare_at_price_max > product.price %}
+                {%- assign hasSpecialPrice = true -%}
+            {% endif %}    
+            {%- if sold_out -%}
+                <p class="out-of-stock product-badge">{{ 'products.product.sold_out' | t }}</p>
+            {%- elsif hasSpecialPrice and excludeSaleBadge == false -%}
+                <p class="sale-badge product-badge">Sale</p>
+            {%- endif -%}
+
+            {%- render 'product-badge', product: product -%}
+
+            {%- if isPreOrder -%}
+            <div class="product-preorder-badge">
+                <span>{{ preOrderBadge }}</span>
+            </div>
+            {%- endif -%}
+            {%- if isFinalSale -%}
+            <div class="product-finalsale-badge">
+                <span>{{ finalSaleBadge }}</span>
+            </div>
+            {%- endif -%}
+        </div>
+
+    </div>
+    <div class="product-info-wrapper">
+        <p class="product-name cta-link-1" itemprop="name">{{ product.title }}</p>
+        <p class="product-vendor body-font-subdued">{{ product.vendor }}</p>
+        
+        {%- render 'product-price', product: product -%}
+        <a class="product-cta" href="{{ product.url }}" itemprop="url">Shop</a>
+    </div>
+</article>
+{%- endif -%}

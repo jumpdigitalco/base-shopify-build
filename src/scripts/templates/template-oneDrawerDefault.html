@@ -1,0 +1,19 @@
+<div
+    id="<%= content.id %>"
+    class="drawer drawer-modal <%= content.classes %>"
+    role="dialog"
+>
+    <button class="drawer-close as-overlay" type="button">
+        <span class="visually-hidden"
+            >{{ 'general.accessibility.close_modal' | t }}</span
+        >
+    </button>
+    <div class="drawer-content">
+        <button class="drawer-close" type="button">
+            <span class="visually-hidden"
+                >{{ 'general.accessibility.close_modal' | t }}</span
+            >
+        </button>
+        <%= content.body %>
+    </div>
+</div>

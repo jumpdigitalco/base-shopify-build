@@ -1,0 +1,57 @@
+{%- assign block_collection = collections[shop_collection] %}
+{%- assign col_product_count = block_collection.products_count | times: 1 %}
+{% assign headline_title = settings.article_featured_collection_title %}
+
+{% if offset_right == blank %}{% assign offset_right = false %}{% endif %}
+{% if full_width_scrollbar == blank %}{% assign full_width_scrollbar = false %}{% endif %}
+
+{% if cta_class == blank %}
+  {% assign cta_class = 'cta red' %}
+{% endif %}
+
+{% if headline != blank %}
+  {% assign headline_title = headline %}
+{% endif %}
+
+{% if col_product_count > 0 %}
+  {% render 'simplebar-carousel',
+    limit: settings.article_featured_collection_item_limit,
+    scroller_class: 'module collection-module hpmodule hp-featured-products-module simplebar-arrow-scroller',
+    wrapper_class: 'collections-wrapper',
+    intro_title: headline_title,
+    show_intro_cta: show_cta,
+    intro_link: block_collection.url,
+    intro_cta_style: cta_class,
+    carousel_type: 'product',
+    offset_right: offset_right,
+    full_width_scrollbar: full_width_scrollbar,
+    iterables: block_collection.products %}
+
+{% comment %}
+<section class="module collection-module hpmodule hp-featured-products-module simplebar-arrow-scroller">
+
+  <div class="module-intro" data-aos="fade-up">
+    <div class="headlines-wrap">
+      <h2 class="headline">{{ headline_title }}</h3>
+    </div>
+    {% if show_cta != blank %}
+    <a class="{{ cta_class }}" href="{{ block_collection.url }}" role="button"><span>{{show_cta}}</span></a>
+    {% endif %}
+  </div>
+
+  <div class="arrow-box">
+    <div class="collections-wrapper">
+      <div class="collection-products dragscroll" data-simplebar>
+        {%- for product in block_collection.products limit: settings.article_featured_collection_item_limit -%}
+        {% unless product.tags contains 'in grid promo' or product.tags contains 'in-grid-promo' %}
+          {% render 'product-grid-item', product: product, iscarousel: true, additional_classes: 'simplebar-scroller-item' %}
+        {% endunless %}
+        {%- endfor -%}
+      </div>
+
+      {% render 'simplebar-scroller-arrows' %}
+    </div><!-- .collections-wrapper -->
+  </div>
+</section>
+{% endcomment %}
+{% endif %}

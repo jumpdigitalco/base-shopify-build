@@ -1,0 +1,202 @@
+<section class="module module-hero img-style-standard">
+    <div class="slides-wrapper slick{% if settings.hide_arrows %} hide-arrows{% endif %}{% if settings.hide_dots %} hide-dots{% endif %}" data-speed="{{settings.autoplay_speed}}">
+            {% capture featured_images %}
+            {% for i in (1..3) %}
+                {%- liquid
+                    assign image_selector = 'image_' | append: i
+
+                    if image_selector == 'image_1'
+                        assign image_selector = 'image'
+                    endif
+                    assign slide_image = settings[image_selector]
+    
+                    assign image_mobile_selector = 'image_mobile_' | append: i
+                    if image_mobile_selector == 'image_mobile_1'
+                        assign image_mobile_selector = 'image_mobile'
+                    endif
+                    assign image_mobile = settings[image_mobile_selector]
+    
+                    assign image_video_selector = 'video_' | append: i
+                    if image_video_selector == 'video_1'
+                        assign image_video_selector = 'video'
+                    endif
+                    assign image_video = settings[image_video_selector]
+    
+                    assign image_video_mobile_selector = 'video_mobile_' | append: i
+                    assign image_video_mobile = settings[image_video_mobile_selector]
+
+                    unless image_video_mobile != blank
+                        assign image_video_mobile = image_video
+                    endunless
+    
+                    assign image_show_content_selector = 'show_content_' | append: i
+                    assign image_show_content = settings[image_show_content_selector]
+    
+                    assign image_link_selector = 'url_' | append: i
+                    if image_link_selector == 'url_1'
+                        assign image_link_selector = 'url'
+                    endif
+                    assign image_link = settings[image_link_selector]
+    
+                    assign image_subheadline_selector = 'subheadline_' | append: i
+                    assign image_subheadline = settings[image_subheadline_selector]
+                    assign image_hide_subheadline_selector = 'hide_subheadline_' | append: i
+                    assign image_hide_subheadline = settings[image_hide_subheadline_selector]
+                    assign image_hide_subheadline_mobile_selector = 'hide_subheadline_mobile_' | append: i
+                    assign image_hide_subheadline_mobile = settings[image_hide_subheadline_mobile_selector]
+    
+                    assign image_headline_selector = 'headline_' | append: i
+                    assign image_headline = settings[image_headline_selector]
+
+                    assign image_caption_selector = 'caption_' | append: i
+                    assign image_caption = settings[image_caption_selector]
+
+                    assign image_text_color_selector = 'text_color_' | append: i
+                    assign image_text_color = settings[image_text_color_selector]
+
+                    assign image_bg_shadow_color_selector = 'bg_shadow_color_' | append: i
+                    assign image_bg_shadow_color = settings[image_bg_shadow_color_selector]
+
+                    assign image_cta_selector = 'cta_' | append: i
+                    assign image_cta = settings[image_cta_selector]
+
+                    assign image_cta_link_selector = 'cta_link_' | append: i
+                    assign image_cta_link = settings[image_cta_link_selector]
+
+                    assign image_cta_style_selector = 'cta_style_' | append: i
+                    assign image_cta_style = settings[image_cta_style_selector]
+
+                    assign image_text_align_selector = 'text_align_' | append: i
+                    assign image_text_align = settings[image_text_align_selector]
+
+                    assign image_mobile_text_align_selector = 'mobile_text_align_' | append: i
+                    assign image_mobile_text_align = settings[image_mobile_text_align_selector]
+
+                    assign image_text_position_selector = 'text_position_' | append: i
+                    assign image_text_position = settings[image_text_position_selector]
+
+                    assign image_vertical_text_position_selector = 'vertical_text_position_' | append: i
+                    assign image_vertical_text_position = settings[image_vertical_text_position_selector]
+
+                    assign image_mobile_vertical_text_position_selector = 'mobile_vertical_text_position_' | append: i
+                    assign image_mobile_vertical_text_position = settings[image_mobile_vertical_text_position_selector]
+    
+                    unless slide_image != blank 
+                        continue
+                    endunless
+                    unless image_mobile != blank
+                        assign image_mobile = slide_image
+                    endunless
+    
+                    assign image_count_obj = image_count_obj | plus: 1
+                -%}
+            <div class="slide-wrapper">
+            <div class="block-container {{image_text_align}} {{image_text_color}} {% if image_video != blank %} video-block{% endif %}">
+                {% if image_link != blank %}
+                <a href="{{image_link}}" class="hero-link" title="Visit {{ image_headline }}"></a>
+                {% endif %}
+    
+                <picture class="slide-image">
+                    <source media="(max-width: 414px)" srcset="{{ image_mobile | img_url: '414x' }}, {{ image_mobile | img_url: '414x', scale: 2 }} 2x" />
+                    <source media="(max-width: 767px)" srcset="{{ image_mobile | img_url: '767x' }}, {{ image_mobile | img_url: '767x', scale: 2 }} 2x" />
+                    <source media="screen" srcset="{{ slide_image | img_url: '1440x' }}, {{ slide_image | img_url: '1440x', scale: 2 }} 2x" />
+                    <img src="{{ slide_image | img_url: '1440x' }}" alt="{{ image_headline }}" />
+                </picture>
+    
+                {% if image_video != blank %}
+                    {%- assign video = image_video -%}
+                    {%- assign id_prefix = 'module-hero-video' -%}
+                    {%- assign video_index = forloop.index -%}
+                    <div class="video-wrapper bg-video">
+                        {% if video contains 'youtube' or video contains 'youtu.be' %}
+                            {%- if video contains 'youtube' -%}
+                                {% assign yt_video = video | split: "=" %}
+                            {%- elsif video contains 'youtu.be' -%}
+                                {% assign yt_video = video | split: "youtu.be/" %}
+                            {%- endif -%}
+                            {% comment %} <!--YouTube: {{ yt_video[1] }}--> {% endcomment %}
+                            {% if yt_video[1].size > 1 %}
+                                <div id="{{id_prefix}}-{{ video_index }}" class="video-box" data-video-id="{{ yt_video[1] }}" data-video-src="{{ video }}" data-mobile-video-src="{{ image_video_mobile }}" data-video-type="youtube"></div>
+                            {% endif %}
+                        {% elsif video contains 'vimeo' %}
+                            {% comment %} <!--Vimeo: {{ video }}--> {% endcomment %}
+                            {% assign video = video | replace: 'https://vimeo.com/', 'https://player.vimeo.com/video/' %}
+                            {% assign mobile_video = image_video_mobile | replace: 'https://vimeo.com/', 'https://player.vimeo.com/video/' %}
+                            {% assign vm_video = video | split: "/video/" %}
+                            {% if vm_video[1].size > 1 %}
+                                <div id="{{id_prefix}}-{{ video_index }}" class="video-box" data-video-id="{{ vm_video[1] }}" data-video-src="{{ video }}" data-mobile-video-src="{{ mobile_video }}" data-video-type="vimeo"></div>
+                            {% endif %}
+                        {% else %}
+                            {% comment %} <video id="{{id_prefix}}-{{ forloop.index }}" class="video-box" onError="style.display = 'none';" autoplay="autoplay" data-video-src="{{ settings.video }}">
+                                <source src="{{ video }}" type="video/mp4">
+                                Video not supported
+                            </video> {% endcomment %}
+                            <div
+                                id="{{id_prefix}}{% if forloop != blank %}-{{ forloop.index }}{% endif %}"
+                                class="video-box"
+                                data-video-delay="{{ settings.video_delay }}"
+                                data-video-src="{% if video_url != blank %}{{ video_url }}{% else %}{{ image_video }}{% endif %}"
+                                data-mobile-video-src="{{ image_video_mobile }}" >
+                            </div>
+                        {% endif %}
+                        <div class="video-ui paused">
+                            <div class="video-ctl"></div>
+                            <div class="video-volume"></div>
+                        </div>
+                        
+                        {% if slide_image != blank %}
+                            {% render 'responsive-image', image: slide_image, mobile_image: image_mobile %}
+                        {% endif %} 
+                    </div><!--.video-wrapper-->
+                {% endif %}
+    
+                {% if image_show_content %}
+                    <div class="image-overlay {{ image_text_align }} {{ image_mobile_text_align }} {{ image_vertical_text_position }} {{ image_mobile_vertical_text_position }} {{ image_text_position }} {{ image_bg_shadow_color }}">
+                    <div class="inner-wrapper" data-aos="fade-up" data-aos-duration="1500">
+    
+                        {% if image_subheadline != blank %}
+                            <h3 class="subheadline{% if image_hide_subheadline %} hide-desktop{% endif %}{% if image_hide_subheadline_mobile %} hide-mobile{% endif %}">{{ image_subheadline }}</h3>
+                        {% endif %}
+                        {% if image_headline != blank %}
+                            <h2 class="headline">{{ image_headline }}</h2>
+                        {% endif %}
+                        {% if image_caption != blank %}
+                            <p class="caption">{{ image_caption }}</p>
+                        {% endif %}
+                        {% if image_cta != blank %}
+                            <div class="cta-wrap">
+                                {% comment %} <a href="{{ block.settings.link }}" title="View {{ block.settings.headline }}" class="cta-{{-block.settings.cta_style-}}"><span>{{ block.settings.cta }}</span></a> {% endcomment %}
+                                <button class="cta-{{-image_cta_style-}}"><span>{{ image_cta }}</span></button>
+                            </div>
+                        {% endif %}
+                    </div>
+                    </div>
+                {% endif %}
+            </div>
+            </div>
+            {% endfor %}
+            {% endcapture %}
+
+            {% if image_count_obj > 0 %}
+                {{ featured_images }}
+            {% endif %}
+    </div>
+</section>
+
+{% if settings.show_title and settings.title != blank %}
+<div class="module module-heading hero-title">
+    <div class="module-intro">
+        <div class="headlines-wrap">
+            <h4 class="headline{% if settings.highlight %} highlight{% endif %}">
+                {% if settings.url != blank %}
+                <a href="{{settings.url}}" title="Visit {{ settings.title }}">
+                {% endif %}
+                {{settings.title}}
+                {% if settings.url != blank %}
+                </a>
+                {% endif %}
+            </h4>
+        </div>
+    </div>
+</div>
+{% endif %}

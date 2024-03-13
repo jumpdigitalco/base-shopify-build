@@ -1,0 +1,14 @@
+{
+	"name": "Blog",
+	"wrapper": "div.blog-wrapper",
+	"sections": {
+		"main-blog": {
+			"type": "main-blog",
+			"settings": {
+			}
+		}
+	},
+	"order": [
+	  "main-blog"
+	]
+}

@@ -1,0 +1,30 @@
+<!--'template:'{{template}}-->
+{%- if template contains 'product' or template == 'cart' -%}
+    {% comment %} Sezzle {% endcomment %}
+    <script type="text/javascript">
+    //"targetXPath": ".product-core-block/.price-box/.product-real-price",
+    
+    {% comment %} let sezzleWidgetMessage = "or 4 payments of %%price%% with %%logo%% %%info%%"; {% endcomment %}
+    let sezzleWidgetFontSize = 12;
+    
+    //"targetXPath": ".totals-table/.row:last-child/.column:last-child/[data-cart-total]",
+    //"altVersionTemplate": sezzleWidgetMessage.replace('of', 'starting at'),
+    
+    document.sezzleConfig = {
+        configGroups: [
+            {
+                "targetXPath": ".product-price/.money",
+                "widgetType": 'product-page',
+                "urlMatch": "product",
+                "fontSize": sezzleWidgetFontSize
+            },
+            {
+                "targetXPath": ".totals-table/.row/.total-price/span",
+                "urlMatch": "cart",
+                "fontSize": sezzleWidgetFontSize
+            }
+        ]
+    }
+    </script>
+    <script src='https://widget.sezzle.com/v1/javascript/price-widget?uuid=63fb48a6-5682-45d7-891b-40e194cdb947'></script>
+{% endif %}

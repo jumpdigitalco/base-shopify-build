@@ -1,0 +1,11 @@
+<div class="page-grid-item search-item object-type-{{ page.object_type }}">
+    <h3 class="grid-item__header"><a class="" href="{{ page.url }}" role="button">{{ page.title }}</a></h3>
+    {% assign page_content = page.content | slice: 0, 150 %}
+    {% if page_content != blank %}
+        {% if page.content.size > 150 %}
+            {% assign page_content = page_content | append: '...' %}
+        {% endif %}
+        <p class="grid-item__excerpt">{{ page_content }}</p> 
+    {% endif %}
+    <a class="grid-item__cta" href="{{ page.url }}" role="button">Learn More</a>
+</div>

@@ -1,0 +1,6 @@
+{% unless css_url == blank %}
+{% if settings.async_load_theme_css %}
+    <link rel="preload" as="style" href="{{ css_url }}">
+{% endif %}
+{{ css_url | stylesheet_tag }}
+{% endunless %}

@@ -1,0 +1,167 @@
+<!--Blog view render-->
+<div class="blog-container {{ blog.title | handleize }}">
+  <div class="blog-custom-bg"></div>
+  
+  {%- render 'breadcrumb' -%}
+
+  {% comment %} Note: No category: tag exclusion, we will remove the prefix 'category:' further in the code {% endcomment %}
+  {% assign tagExclusionArray = 'featured,author:,dev:,wp:,wp_author:,' | append: settings.article_excluded_tags | downcase | split: "," %}
+
+  {% for tag in blog.all_tags %}
+    {% assign lowerCaseTag = tag | downcase %}
+    {% assign includeTag = true %}
+    {% comment %} Exclude per tag {% endcomment %}
+    {% for excludedTag in tagExclusionArray %}
+      {% if lowerCaseTag contains excludedTag %}
+        {% assign includeTag = false %}
+        {% break %}
+      {% endif %}
+    {% endfor %}
+
+    {% if includeTag %}
+      {% assign tagsToShow = tagsToShow | append: tag | append: ',' %}
+    {% endif %}
+  {% endfor %}
+
+  {% assign allTags = tagsToShow | split: ',' %}
+  {% assign tags_number = allTags | size %}
+
+  {%- assign blog_title = blog.title -%}
+  {% comment %} 
+  {% if current_tags %}
+    {% capture blog_title %}{{ blog.title | link_to: blog.url }} &mdash; {{ current_tags.first }}{% endcapture %}
+  {% endif %}
+  {% endcomment %}
+
+<div class="blog-heading">
+    {% if section.settings.heading_image %}
+    <img class="heading-image" src="{{ section.settings.heading_image | img_url: '400x' }}" />
+    {% endif %}
+    <h1 class="blog-title">{{ blog_title }}</h1>
+    {% assign blog_caption = section.settings.caption %}
+    {% assign blog_caption_mobile = blog_caption %}
+
+    {% if section.settings.caption_mobile != blank %}
+    {% assign blog_caption_mobile = section.settings.caption_mobile %}
+    {% endif %}
+
+    {% if blog_caption != blank %}
+    <div class="blog-caption">
+      <div class="hide-medium-down">{{blog_caption}}</div>
+      <div class="hide-large-up">{{blog_caption_mobile}}</div>
+    </div>  
+    {% endif %}
+</div>
+
+  {% comment %} Featured Article {% endcomment %}
+  {% assign articleSearchHandle = section.settings.hero_article %}
+  {% assign cta_caption = 'blogs.article.read_more' | t %}
+      
+  {% if section.settings.hero_cta != blank %}
+    {% assign cta_caption = section.settings.hero_cta %}
+  {% endif %}
+
+  {% if section.settings.show_custom and section.settings.image != blank  %}
+      {% assign hero_title = section.settings.headline %}
+      {% assign hero_image = section.settings.image %}
+      {% assign hero_image_mobile = hero_image %}
+
+      {% if section.settings.image_mobile != blank %}
+        {% assign hero_image_mobile = section.settings.image_mobile %}
+      {% endif %}
+
+      {% assign hero_link = section.settings.hero_link %}
+  {% elsif articleSearchHandle != '' %}
+      {% assign article = articles[articleSearchHandle] %}
+      {% assign hero_title = article.title %}
+      {% assign hero_image = article.image %}
+      {% assign hero_image_mobile = article.image %}
+      {% assign hero_link = article.url %}
+  {% endif %}
+
+    {% if hero_title != blank and hero_image != blank %}
+
+      <header role="banner" class="blog-hero theme-{{ section.settings.hero-color-theme }} align-{{ section.settings.hero_text_alignment }}">
+
+        <span class="absolute-image desktop-image" role="img" aria-label="{{ hero_title }}"style="background-image:url('{{ hero_image | img_url: '1440x' }}');"></span>
+        <span class="absolute-image mobile-image" role="img" aria-label="{{ hero_title }}" style="background-image:url('{{ hero_image_mobile | img_url: '768x' }}');"></span>
+
+        <a href="{{hero_link}}" title="{{ hero_title }}" class="article-link" tabindex="0"></a>
+        <div class="article-info">
+          <div class="inner-wrapper">
+            {% if article.tags.size > 0 %}
+              {%- capture article_category -%}
+              {%- for tag in article.tags -%}
+                {%- if tag contains 'category:' -%}
+                  <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag | remove: 'category:' }}</a>
+                  {%- break -%}
+                {%- endif -%}
+              {%- endfor -%}
+              {%- endcapture -%}
+              {% if article_category != blank %}
+              <div class="subheadline">{{ article_category }}</div>
+              {% endif %}
+            {% endif %}
+            <h2 class="headline">{{ hero_title }}</h2>
+            {% comment %} {% if article.excerpt != blank %}
+            <p class="caption">{{ article.excerpt }}</p>
+            {% endif %} {% endcomment %}
+            <div class="cta-wrap">
+                <a href="{{ hero_link }}" title="{{ hero_title }}" class="cta-solid" tabindex="0" role="button" tabindex="0"><span>{{ cta_caption }}</span></a>
+            </div>
+          </div>    
+        </div>
+      </header>
+    {% endif %}
+
+
+
+
+  {% comment %} Check for a specific list of tags to show in the nav {% endcomment %}
+  {% assign tagNavTags = allTags %}
+
+  {% if blog.url contains '1' %}
+      {% if settings.blog_tagnav_tags_training != blank %}
+        {% assign tagNavSpecificTags = settings.blog_tagnav_tags_training %}
+      {% endif %}
+  {% endif %}
+  <!--tagNavSpecificTags:{{tagNavSpecificTags}}-->
+  {% if tagNavSpecificTags != blank %}
+    {% assign tagNavTags = tagNavSpecificTags | split: ',' %}
+  {% endif %}
+
+  {% assign lowerCaseCurrentTags = current_tags | downcase %}
+  <!--lowerCaseCurrentTags: {{lowerCaseCurrentTags}}-->
+  {% if tagNavTags.size > 0 %}
+  <nav class="tag-nav">
+    <div class="selected-tag">{% if tags_number < 1 %}View All{% else %}{{ tagNavTags.first }}{% endif %}</div>
+    <ul>
+      <li><a href="{{ blog.url }}" class="view-all {% unless current_tags %}active{% endunless %}">All</a></li>
+      {% for tag in tagNavTags %}
+          {% assign lowerCaseTag = tag | downcase %}
+          <!--lowerCaseTag: {{lowerCaseTag}}-->
+          {% if lowerCaseCurrentTags contains lowerCaseTag %}{% assign current_tag_title = tag | remove: 'category:' %}{% endif %}
+          <li><a {% if lowerCaseCurrentTags contains lowerCaseTag %}class="active"{% endif %} href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag | remove: 'category:' }}</a></li>
+      {% endfor %}
+    </ul>
+  </nav>
+  {% endif %}
+
+  <div class="current-tag-title" data-aos="fadeUp">
+    <h3>{%- if current_tag_title != blank -%}
+    {{current_tag_title}}
+    {%- else -%}
+    All posts
+    {%- endif -%}</h3>
+  </div>
+
+  {% render 'blog-article-grid',
+    paginate: paginate,
+    current_tags: current_tags,
+    section: section %}
+
+</div><!--.blog-container-->
+
+<div class="blog-bottom">
+</div>
+<!--END: Blog view render-->

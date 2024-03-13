@@ -1,0 +1,32 @@
+
+{% comment %} 
+  Display author bio
+  args: author_source, author_name, author_bio, author_image, author_source
+{% endcomment %}
+
+<div id="article-author-bio" class="article-author-info" data-aos="fade-up">
+  <div class="author-bio-wrapper">
+  
+    {% if author_image != blank %}
+        <picture class="author-image">
+          {% if author_source == 'user' %}
+            <source media="only screen" srcset="{{ author_image | img_url: '300x' | format: 'pjpg' }}, {{ author_image | img_url: '300x', scale: 2, format: 'pjpg' }} 2x">
+            <img src="{{ author_image | img_url: '300x' | format: 'pjpg' }}" alt="{{ author_name }}">
+          {% else %}
+            <img src="{{ author_image }}" alt="{{ author_name }}">
+          {% endif %}
+        </picture>
+
+    {% endif %}
+
+    <div class="author-bio">
+        {% if author_name != blank %}
+          <h4 class="author-name">{{ author_name }}</h4>
+        {% endif %}
+        {% if author_bio != blank %}
+            {{ author_bio }}
+        {% endif %}
+    </div>
+
+  </div>
+</div>

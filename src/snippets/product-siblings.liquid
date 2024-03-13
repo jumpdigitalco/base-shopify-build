@@ -1,0 +1,87 @@
+
+{% comment %} <!--productColorHex: {{productColorHex}}--> {% endcomment %}
+{% for collection in product.collections %}
+    {% assign words = collection.title | downcase | split: '_similars:' %}
+    {% assign hasLinkedCollection = words | size %}
+    {% if hasLinkedCollection > 1 %}
+    {% comment %}
+    - We found linked collection, so render the linked products below
+    - Set rule to prevent rendering corrent product using: sibling.handle != product.handle 
+    - Linked collection should bind to variant option such as color, we use color as default binding
+    {% endcomment %}
+    
+    {% comment %}
+    Image naming convention : sku_[sku]_[variant_option]_[variant_option_value]_[index_or_swatch].[file_extension]
+        e.g. sku_test002_color_pink_swatch.png
+        e.g. sku_test002_color_pink_02.png
+    {% endcomment %}
+    
+        {%- assign swatchImageHtml = '' -%}
+        {%- assign swatchImageLabel = 'Colors' -%}
+        {%- assign swatchImageValue = '' -%}
+        {%- assign media_index_variant_value = 3 -%}
+        {%- assign media_index_indexing_or_swatch = 4 -%}
+
+        <div class="product-siblings">
+            <div class="current-sibling">
+                <strong>{{swatchImageLabel}} </strong>
+                {% for poption in product.options_with_values %}
+                    {% if poption.name == swatchImageLabel %}
+                        {% assign current_color_name = poption.values[0] %}
+                    {% endif %}
+                {% endfor %}
+                <span>{{ current_color_name }}</span>
+            </div>
+            <div class="sibling-list">
+                {% for sibling in collection.products limit: 30 %}
+                {%- assign swatchImageHtml = '' -%}
+                <a class="sibling-item{% if sibling.handle == product.handle %} active{% endif %}{% unless sibling.available %} disabled{% endunless %}"
+                    href="{% if sibling.available %}{{ sibling.url }}{% else %}#{% endif %}"{% if layout == 'quickshop' %} data-ajax="true"{% endif %} >
+
+                    {%- if sibling.handle == product.handle -%}
+                    {%- assign swatchImageValue = imageSrcSections[media_index_variant_value] | downcase -%} 
+                    {%- endif -%}
+
+                    {% for sibling_img in sibling.images %}
+                        {% comment %}{% endcomment %} <!--sibling_img.src.alt: {{sibling_img.src.alt}}-->
+                        {% if sibling_img.src.alt contains settings.product_sibling_view_tag or sibling_img.src.alt contains "Similar" %}
+                            {% assign sibling_image = sibling_img.src %}
+                            {% break %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if sibling_image != blank and sibling.images[2] != blank %}
+                        {% assign sibling_image = sibling.images[2].src %}
+                    {% else %}
+                        {% assign sibling_image = sibling.featured_image.src %}
+                    {% endif %}
+
+                    {% capture swatchImageHtml %}<div class="sibling-inner sibling-image"><img loading="lazy" data-src="{{ sibling_image | img_url: '120x', format: 'pjpg' }}" alt="{{sibling.title}}" /></div>{% endcapture %}
+
+                    {% if swatchImageHtml == '' %}
+                        {% for tag in sibling.tags %}
+                        {% if tag contains 'hex:' %}
+                            {% assign sibling_color = tag | replace: 'hex:','#' | replace: ' ','' %}
+                            {% break %}
+                        {% endif %}
+                        {% endfor %}
+                        <!--productColorHex: {{productColorHex}}-->
+                        <div class="sibling-inner sibling-color" style="background-color:{{- sibling_color -}}"></div>
+                    {% endif %}
+                    {{- swatchImageHtml -}}
+
+                    {% for option in sibling.options_with_values %}
+                        {% if option.name == swatchImageLabel %}
+                            {% assign drop_title = option.values[0] %}
+                            {% assign drop_title_assigned = true %}
+                        {% endif %}
+                    {% endfor %}
+
+                    <span class="sibling-title">{{ drop_title }}</span>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    {% break %}
+    {% endif %}
+{% endfor %}

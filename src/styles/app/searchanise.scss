@@ -1,0 +1,22 @@
+//
+//  Typography
+//  _____________________________________________
+
+//
+//  Common
+//  _____________________________________________
+
+
+//
+//  Small + Medium screen sizes - Prev: Tablet and Mobile
+//  _____________________________________________
+@include query-medium-down {
+
+};
+
+//
+//  Large screen sizes - Prev: Desktop
+//  _____________________________________________
+@include query-large-up {
+    
+};

@@ -1,0 +1,102 @@
+<script type="text/javascript">
+    Shopify.queryParams = {};
+    Shopify.collectionHandle = '{{ collection.handle }}';
+</script>
+{% liquid
+    comment
+        plp_layout: Collection Layout, take options 'one-column' or 'two-columns'
+        plp_banner_layout Collection banner Layout, take options 'full' or 'split'
+        plp_quickbuy: In grid quickshop, no ajax request.
+        plp_quickshop: In modal quickshop, done via ajax request.
+    endcomment
+    assign plp_pagination = settings.collection_pagination
+    assign plp_layout = 'one-column'
+    assign plp_quickbuy = true
+    assign plp_quickshop = false
+    assign plp_banner_layout = 'full'
+    if collection.metafields.plp.request_passkey
+        assign plp_passkey = collection.metafields.plp.passkey
+    endif 
+%}
+{% paginate collection.products by plp_pagination %}
+
+{% if collection.metafields.plp.request_passkey and collection.metafields.plp.passkey != '' %}
+    <div class="collection-requires-pass loading not-authorized" data-collection="{{collection.handle }}">
+        <div class="module-intro small-container">
+            <div class="headlines-wrap">
+            {% if settings.passkey_title != blank %}<h3 class="headline">{{settings.passkey_title}}</h3>{% endif %}
+            {% if settings.passkey_caption != blank %}<div class="caption">{{settings.passkey_caption}}</div>{% endif %}
+            <div class="input-wrapper">
+                <input type="text"
+                    name="passkey"
+                    id="collection-passkey"
+                    class="required" 
+                    placeholder="Enter the pre shared passcode"
+                    spellcheck="false"
+                    autocomplete="off"
+                    autocapitalize="off" >
+            </div>
+            <button class="module-cta cta-2-dark">{{settings.passkey_cta}}</button>
+            </div>
+        </div>
+        <script>
+            GlobalObj.collection_passKey = "{{collection.metafields.plp.passkey}}";
+        </script>
+    </div>
+{% endif %}
+<div class="product-collection {{ plp_layout }}" 
+    data-layout="{{ plp_layout }}" 
+    data-url="{{ collection.url }}"
+    data-quickbuy="{%- if plp_quickbuy -%}true{%- endif -%}" 
+    data-quickshop="{%- if plp_quickshop -%}true{%- endif -%}" >
+
+    {%- render 'collection-banner', collection: collection, layout: plp_banner_layout -%}
+
+    <div class="collection-intro text-block">
+        {%- render 'breadcrumb' -%}
+
+        <h1 class="collection-title">{{ collection.title | replace: '_similars:', '' }}</h1>
+        {% if collection.description != blank %}
+            <div class="collection-desc">{{ collection.description }}</div>
+        {% endif %}
+    </div>
+        
+    {% comment %} {%- render 'collection-nav', collection: collection, layout: plp_layout -%} {% endcomment %}
+    {% assign parent_category_menu = collection.metafields.global['parent-category-menu'] %}
+    <div class="collection-nav one-column">
+        <nav class="nav">
+            {% render 'collection-filtering', layout: layout %}
+            {% render 'collection-nav', layout: layout %}
+        </nav>
+    </div>
+    
+    {%- include 'collection-grid', layout: plp_layout, list_image_size: '1400x' -%}
+    
+    {% if paginate.pages > 1 %}
+        {% render 'pagination', paginate: paginate %}
+    {% endif %}
+
+    {%- if collection.metafields.custom.seo_description != blank -%}
+    <div class="collection-intro text-block bottom">
+        <div class="collection-desc">
+            {{ collection.metafields.custom.seo_summary }}
+            {{ collection.metafields.custom.seo_description }}
+        </div>        
+    </div>
+    <button class="toggle-description cta-outline"><span data-hide="{{ 'collections.general.show_less' | t }}" data-show="{{ 'collections.general.show_more' | t }}"></span></button>
+    {% endif %}
+    
+    {% render 'banner-blocks-grid-collection', collection: collection %}
+
+    <div class="collection-recommended">
+        <limespot></limespot>
+    </div>
+
+</div>
+{% endpaginate %}
+
+{% schema %}
+{
+  "name": "Collection page"
+}
+{% endschema %}

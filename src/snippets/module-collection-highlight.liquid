@@ -1,0 +1,38 @@
+<section class="module module-collection-highlight" data-aos="fade-up">
+    <div class="module-container">
+        <div class="module-intro position-top">
+            <div class="headlines-wrap">
+            {% if settings.title != blank %}<h4 class="headline">{{settings.title}}</h4>{% endif %}
+            </div>
+        </div>
+
+        <div class="module-split {{settings.content_position}}">
+            <div class="collection-description">{{settings.description}}</div>
+
+            {% assign mobile_image = settings.image %}
+            {% if settings.image_mobile != blank %}
+                {% assign mobile_image = settings.image_mobile %}
+            {% endif %}
+
+            <picture class="collection-image">
+                <source media="(max-width: 414px)" srcset="{{ mobile_image | img_url: '414x', format: 'pjpg' }}, {{ mobile_image | img_url: '414x', scale: 2, format: 'pjpg' }} 2x" />
+                <source media="(max-width: 767px)" srcset="{{ mobile_image | img_url: '767x', format: 'pjpg' }}, {{ mobile_image | img_url: '767x', scale: 2, format: 'pjpg' }} 2x" />
+                <source media="screen" srcset="{{ settings.image | img_url: '1440x', format: 'pjpg' }}, {{ settings.image | img_url: '1440x', scale: 2, format: 'pjpg' }} 2x" />
+                <img src="{{ settings.image | img_url: '1440x', format: 'pjpg' }}" alt="{{ settings.title }}" />
+            </picture>
+        </div>
+
+        {%- assign block_collection = collections[settings.collection] %}
+        {%- assign col_product_count = block_collection.products_count | times:1 %}
+        <div class="module-carousel col-count-{{col_product_count}}">
+            {% render 'products-carousel',
+                data_aos: 'fade-up',
+                carousel_type: 'product'
+                arrow_box_class: 'collections-wrapper',
+                wrapper_class: 'collection-products collection-carousel',
+                scroller_class: scroller_class,
+                iterables: block_collection.products %}
+        </div>
+
+    </div>
+</section>

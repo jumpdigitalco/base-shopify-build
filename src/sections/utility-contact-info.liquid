@@ -1,0 +1,57 @@
+{% schema %}
+{
+    "name": "Utility Contact Info",
+    "max_blocks": 3,
+    "blocks": [
+        {
+            "type": "info_block",
+            "name": "Info Block",
+            "settings": [
+                {
+                    "type": "radio",
+                    "options": [
+                        { "value": "info-tel", "label": "Telephone" },
+                        { "value": "info-mail", "label": "Mailing" },
+                        { "value": "info-email", "label": "E-Mail" }
+                    ],
+                    "id": "info_type",
+                    "label": "Info Type"
+                },
+                {
+                    "type": "text",
+                    "id": "info_title",
+                    "label": "Info Title"
+                },
+                {
+                    "type": "text",
+                    "id": "info_detail",
+                    "label": "Info Details"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Utility Contact Info",
+            "category": "Custom Content",
+            "settings": {
+
+            }
+        }
+    ]
+}
+{% endschema %}
+<div class="contact-info">
+    {%- for block in section.blocks -%}
+    <div class="info-block {{ block.settings.info_type }}">
+        <p class="info-block-title">{{ block.settings.info_title }}</p>
+        {%- if block.settings.info_type == 'info-tel' -%}
+        <a href="tel:{{ block.settings.info_detail }}">{{ block.settings.info_detail }}</a>
+        {%- elsif block.settings.info_type == 'info-mail' -%}
+        <address>{{ block.settings.info_detail }}</address>
+        {%- elsif block.settings.info_type == 'info-email' -%}
+        <a href="mailto:{{ block.settings.info_detail }}">{{ block.settings.info_detail }}</a>
+        {%- endif -%}
+    </div>
+    {%- endfor -%}
+</div>

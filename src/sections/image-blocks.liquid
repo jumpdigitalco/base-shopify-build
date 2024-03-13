@@ -1,0 +1,179 @@
+{% if section.blocks.size > 0 %}
+<section class="module image-blocks-module display-{{section.settings.display_option}}">
+
+    {% if section.settings.header != blank or section.settings.caption != blank %}
+    {% capture module_heading %}
+        <div class="module-intro position-{{section.settings.header_position}}">
+            <div class="headlines-wrap">
+            {% if section.settings.header != blank %}<h4 class="headline{% if section.settings.highlight %} highlight{% endif %}">{{section.settings.header}}</h4>{% endif %}
+            {% if section.settings.caption != blank %}<div class="caption">{{section.settings.caption}}</div>{% endif %}
+            {% if section.settings.cta_url != blank %}
+            <a href="{{section.settings.cta_url}}" class="module-cta cta-link-1">{{ section.settings.cta_text }}</a>
+            {% endif %}
+            </div>
+        </div>
+    {% endcapture %}
+    {% endif %}
+    {%- if section.settings.header_position == 'top' -%}
+    {{module_heading}}
+    {%- endif -%}
+
+    <div class="blocks-wrapper block-size-{{section.blocks.size}} small-grid-{{section.settings.columns_mobile}} large-grid-{{section.settings.columns_desktop}}{% if section.settings.cta_under_image %} cta-under-image{% endif %}">
+    {% for block in section.blocks %}
+
+        {% if block.settings.image == blank %}{% continue %}{% endif %}
+
+        {% assign mobile_image = block.settings.image %}
+        {% if block.settings.image_mobile != blank %}
+        {% assign mobile_image = block.settings.image_mobile %}
+        {% endif %}
+
+        {% assign hover_image = '' %}
+        {% if block.settings.hover_image != blank %}
+        {% assign hover_image = block.settings.hover_image %}
+        {% endif %}
+
+        {% assign image_alt = "Block hover image " | append: forloop.index | append: ": " | append: block.settings.title %}
+        {% assign hover_image_alt = "Block hover image " | append: forloop.index | append: ": " | append: block.settings.title  %}
+
+        <div class="image-block{% if hover_image != blank %} with-hover{% endif %}">
+            <a class="image-block__link" href="{{ block.settings.link }}">
+                {% render 'responsive-image', image: block.settings.image, mobile_image: mobile_image, class: 'main-image', img_alt_prefix: image_alt %}
+                {% if hover_image != blank %}
+                    {% render 'responsive-image', image: hover_image, class: 'hover-image hide-small', img_alt_prefix: hover_image_alt %}
+                {% endif %}
+                {% if block.settings.title != blank or block.settings.cta_text != blank %}
+                <div class="image-block__content">
+                    {% if block.settings.title != blank %}<div class="image-block__title">{{ block.settings.title }}</div>{% endif %}
+                    {% if block.settings.cta_text != blank %}<div class="image-block__cta">{{ block.settings.cta_text }}</div>{% endif %}
+                </div>
+                {% endif %}
+            </a>
+        </div>
+    {% endfor %}
+    </div>
+
+    {%- if section.settings.header_position == 'bottom' -%}
+    {{module_heading}}
+    {%- endif -%}
+</section>
+{% endif %}
+
+{% schema %}
+{
+    "name": "Image Blocks",
+    "max_blocks": 8,
+    "settings": [
+        {
+            "type": "radio",
+            "options": [
+                { "value": "mobile-only", "label": "Mobile Only" },
+                { "value": "desktop-only", "label": "Desktop only" },
+                { "value": "both", "label": "Mobile & Desktop" }
+            ],
+            "default": "both",
+            "id": "display_option",
+            "label": "Module display options"
+        },
+        {
+            "type": "text",
+            "id": "header",
+            "label": "Header"
+        },
+        {
+            "type": "checkbox",
+            "default": false,
+            "id": "cta_under_image",
+            "label": "Show CTAs under images?"
+        },
+        {
+            "type": "textarea",
+            "id": "caption",
+            "label": "Caption"
+        },
+        {
+            "type": "radio",
+            "options": [
+                { "value": "top", "label": "Top" },
+                { "value": "bottom", "label": "Bottom" }
+            ],
+            "default": "top",
+            "id": "header_position",
+            "label": "Header Position"
+        },
+        {
+            "type": "text",
+            "id": "cta_text",
+            "label": "CTA Text"
+        },
+        {
+            "type": "url",
+            "id": "cta_url",
+            "label": "CTA URL",
+            "info": "CTA Not shown when empty"
+        },
+        {
+            "type":      "range",
+            "id":        "columns_desktop",
+            "min":       2,
+            "max":       5,
+            "step":      1,
+            "unit":      "col",
+            "label":     "Number of columns (Desktop)",
+            "default":   3
+        },
+        {
+            "type":      "range",
+            "id":        "columns_mobile",
+            "min":       1,
+            "max":       3,
+            "step":      1,
+            "unit":      "col",
+            "label":     "Number of columns (Mobile)",
+            "default":   2
+        }
+    ],
+    "blocks": [
+        {
+            "type": "image_block",
+            "name": "Image Block",
+            "settings": [
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Image"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "hover_image",
+                    "label": "Hover Image"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image_mobile",
+                    "label": "Mobile Image"
+                },
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Title"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Link"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Image Blocks",
+            "category": "Homepage",
+            "settings": {
+
+            }
+        }
+    ]
+}
+{% endschema %}

@@ -1,0 +1,184 @@
+<script type="text/javascript">
+    Shopify.queryParams = {};
+    Shopify.collectionHandle = '';
+</script>
+{% assign plp_pagination = settings.collection_pagination %}
+{% comment %}
+    plp_layout: Collection Layout, take options 'one-column' or 'two-columns'
+    plp_banner_layoutL Collection banner Layout, take options 'full' or 'split'
+    plp_quickbuy: In grid quickshop, no ajax request.
+    plp_quickshop: In modal quickshop, done via ajax request.
+{% endcomment %}
+{%- assign plp_layout = 'one-column' -%}
+{%- assign plp_quickbuy = false -%}
+{%- assign plp_quickshop = true -%}
+{% comment %} {% assign list_image_size = '600x' %} {% endcomment %}
+
+<div class="search-results product-collection {{ plp_layout }}" 
+    data-layout="{{ plp_layout }}"
+    data-url=""
+    data-quickbuy="{%- if plp_quickbuy -%}true{%- endif -%}" 
+    data-quickshop="{%- if plp_quickshop -%}true{%- endif -%}" >
+
+    {% comment %} plp_pagination {% endcomment %}
+    {% paginate search.results by 24 %}
+
+    <div class="collection-intro text-block">
+        {%- render 'breadcrumb' -%}
+    </div>
+
+    <div class="search-results-banner{% if search.results_count == 0 %} no-result{% endif %}">
+        <h1 class="search-results-title">
+            {% if search.performed %}
+                {% if search.results_count == 0 %}
+                {{ 'general.search.no_results_html' | t }}
+                {% else %}
+                {{ 'general.search.results_for_html' | t: counts: search.results_count }}
+                {% endif %}
+            {% else %}
+                {{ 'general.search.title' | t }}
+            {% endif %}
+        </h1>
+
+        {% if search.performed %}
+        <div class="search-results-description">
+            {{ 'general.search.description_html' | t: terms: search.terms }}
+        </div>
+        {% endif %}
+
+        {% render 'search-form', search_form_id: 'SearchResult' %}
+    </div>
+
+    <!--
+        search.types:{{search.types}}
+        search.results_count: {{search.results_count}}
+    -->
+    
+    {% if search.performed and search.results_count != 0 %}
+
+        <div class="collection-nav">
+            <nav class="nav">
+                {% render 'collection-nav', layout: layout %}
+            </nav>
+        </div>
+
+        <div class="collection-listing-wrapper">
+            <div class="collection-products items">
+                {% for product in search.results %}
+                    {% assign lazy_load = true %}
+                    {% if forloop.index < 5 %}
+                        {% assign lazy_load = false %}
+                    {% endif %}
+
+                    {%- if product.object_type == 'product' -%}
+                        {% render 'product-grid-item', product: product, search: true, include_alt_view: true, index: forloop.index, lazy_load: lazy_load %}
+                    {%- elsif product.object_type == 'article' -%}
+                        {% render 'article-grid-item', article_data: product, search: true %}
+                    {%- else -%}
+                        {% render 'page-grid-item', page: product %}
+                    {%- endif -%}
+                {%- else -%}
+                    <div class="collection-empty"><p>{{ 'collections.general.no_matches' | t }}</p></div>
+                {%- endfor -%}
+            </div>
+        </div>
+        {% if paginate.pages > 1 %}
+            {% render 'pagination' %}
+        {% endif %}
+    {%- else -%}
+        {% render 'empty-search', section: section %}
+    {% endif %}
+
+    {% endpaginate %}
+
+    <div class="collection-recommended">
+        <limespot></limespot>
+    </div>
+</div>
+
+
+{% schema %}
+{   
+    "name": "Empty Search Results",
+    "max_blocks": 5,
+    "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "label": "Title",
+            "default": "We could not find any results for"
+        },
+        {
+            "type": "textarea",
+            "id": "caption",
+            "label": "Caption"
+        },
+        {
+            "type": "text",
+            "id": "empty_terms_messaging",
+            "label": "Messaging for empty search terms",
+            "default": "Use the form above to search our site"
+        },
+        {
+            "type": "radio",
+            "options": [
+                { "value": "5", "label": "5" },
+                { "value": "4", "label": "4" },
+                { "value": "3", "label": "3" }
+            ],
+            "default": "4",
+            "id": "image_desktop_columns",
+            "label": "Desktop Columns"
+        },
+        {
+            "type": "radio",
+            "options": [
+                { "value": "2", "label": "2" },
+                { "value": "1", "label": "1" }
+            ],
+            "default": "2",
+            "id": "image_mobile_columns",
+            "label": "Mobile Columns"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "banner",
+            "name": "Banner block",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Title"
+                },
+                {
+                    "type": "textarea",
+                    "id": "caption",
+                    "label": "Caption"
+                },
+                {
+                    "type": "text",
+                    "id": "cta",
+                    "label": "CTA Text",
+                    "default": "Shop"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Link"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Image"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image_hover",
+                    "label": "Hover Image"
+                }
+            ]
+        }
+    ]
+}
+{% endschema %}

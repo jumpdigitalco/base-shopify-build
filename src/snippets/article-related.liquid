@@ -1,0 +1,8 @@
+<div class="article-related">
+    <h2>{{ title }}</h2>
+    {% for article in blog.articles limit:4 %}
+        {% unless article.id == currently_viewing %}
+            {% render 'article-card', article: article %}
+        {% endunless %}
+    {% endfor %}
+</div>

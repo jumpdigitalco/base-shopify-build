@@ -1,0 +1,34 @@
+<section class="module module-image-{{settings.image_layout}} grid-{{ settings.title | handleize }}" data-aos="fade-up">
+        <div class="grid-wrapper" {% if settings.image_layout == 'carousel' %}
+            data-mobile-slides="{{settings.image_mobile_columns}}"
+            data-desktop-slides="{{settings.image_desktop_columns}}"
+        {% endif %}>
+        {% for i in (1..16) %}
+            {% assign image_selector = 'image_' | append: i %}
+            {% assign image = settings[image_selector] %}
+            {% assign image_mobile = settings[image_selector] %}
+
+            {% assign image_url_selector = 'image_url_' | append: i %}
+            {% assign image_url = settings[image_url_selector] %}
+
+            {% if image == blank %}{% continue %}{% endif %}
+            
+            <div class="grid-image-wrap">
+                {% if image_url != blank %}
+                <a href="{{ image_url }}" class="slide-link">
+                {% endif %}
+
+                <picture class="grid-image">
+                    <source media="(max-width: 414px)" srcset="{{ image_mobile | img_url: '414x', format: 'pjpg' }}, {{ image_mobile | img_url: '414x', scale: 2, format: 'pjpg' }} 2x" />
+                    <source media="(max-width: 767px)" srcset="{{ image_mobile | img_url: '767x', format: 'pjpg' }}, {{ image_mobile | img_url: '767x', scale: 2, format: 'pjpg' }} 2x" />
+                    <source media="screen" srcset="{{ image | img_url: '1440x', format: 'pjpg' }}, {{ image | img_url: '1440x', scale: 2, format: 'pjpg' }} 2x" />
+                    <img src="{{ image | img_url: '1440x', format: 'pjpg' }}" alt="{{ image.alt }}" />
+                </picture>
+
+                {% if image_url != blank %}
+                </a>
+                {% endif %}
+            </div>
+        {% endfor %}
+        </div>
+</section>

@@ -1,0 +1,62 @@
+<style>
+    div#shopify-section-{{section.id}} .module.module-split-content .module-container .module-content .caption h4{
+        color: {{ settings.title_color }};
+    }
+</style>
+
+{% if settings.title != blank or settings.caption != blank or settings.image != blank %}
+<!--settings.negative_margin: {{settings.negative_margin}}-->
+<section class="module module-split-content{% if settings.hide_small %} hide-small{% endif %}{% if settings.hide_large %} hide-large{% endif %}"{% if settings.negative_margin == 0 %} data-aos="fade-up"{% endif %}>
+
+    <div class="module-margin"{% if settings.negative_margin != 0 %} style="margin-top: -{{settings.negative_margin}}%"{% endif %}></div>
+
+    <div class="module-container
+    mobile-{{ settings.text_align }}
+    desktop-{{ settings.desktop_text_align }}
+    {% if settings.flip_content_mobile %} flip-content-mobile{% endif %}
+    {% if settings.flip_content %} flip-content{% endif %}
+    {% if settings.center_content %} center-content{% endif %}
+    {% if settings.left_offset %} offset-left{% endif %}
+    {% if settings.right_offset %} offset-right{% endif %}
+    ">
+
+        {% if settings.image != blank %}
+            {% assign mobile_image = settings.image %}
+            {% if settings.image_mobile != blank %}
+                {% assign mobile_image = settings.image_mobile %}
+            {% endif %}
+
+            {% assign image_caption = settings.image_caption %}
+
+            <picture class="module-image{% if settings.video != blank %} video-block{% endif %}">
+                {% if settings.image_caption_bottom and image_caption != blank %}<div class="image-caption top hide-small">{{ image_caption }}</div>{% endif %}
+                <source media="(max-width: 414px)" srcset="{{ mobile_image | img_url: '414x', format: 'pjpg' }}, {{ mobile_image | img_url: '414x', scale: 2, format: 'pjpg' }} 2x" />
+                <source media="(max-width: 767px)" srcset="{{ mobile_image | img_url: '767x', format: 'pjpg' }}, {{ mobile_image | img_url: '767x', scale: 2, format: 'pjpg' }} 2x" />
+                <source media="screen" srcset="{{ settings.image | img_url: '1440x', format: 'pjpg' }}, {{ settings.image | img_url: '1440x', scale: 2, format: 'pjpg' }} 2x" />
+                <img src="{{ settings.image | img_url: '1440x', format: 'pjpg' }}" alt="{{ settings.title }}" />
+                {% if image_caption != blank %}
+                <div class="image-caption bottom{% if settings.image_caption_bottom %} hide-large{% endif %}">{{ image_caption }}</div>
+                {% endif %}
+
+
+                {% if settings.video != blank %}
+                    {% render 'video-module', settings: settings, is_bg_video: false %}
+                {% endif %}
+            </picture>
+        {% endif %}
+        
+        <div class="module-content{% if settings.subtitle == blank and settings.title == blank and settings.caption == blank %} empty-content{% endif %}">
+            
+            <div class="content-top-padding"{% if settings.content_top_padding != 0 %} style="padding-top: {{settings.content_top_padding}}%"{% endif %}></div>
+
+            {% if settings.subtitle != blank %}<div class="subtitle">{{settings.subtitle}}</div>{% endif %}
+            {% if settings.title != blank %}
+                <{% if main_title%} }h1{% else %}h4{% endif %} class="headline{% if settings.highlight %} highlight{% endif %}" style="font-size: {{settings.title_font_size}}px; color: {{ settings.title_color }};">
+                    {{settings.title}}
+                </{% if main_title%} }h1{% else %}h4{% endif %}>
+            {% endif %}
+            {% if settings.caption != blank %}<div class="caption">{{settings.caption}}</div>{% endif %}
+        </div>
+    </div>
+</section>
+{% endif %}

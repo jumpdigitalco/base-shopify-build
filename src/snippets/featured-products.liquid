@@ -1,0 +1,70 @@
+{%- assign block_collection = collections[block_settings.collection] %}
+{%- assign col_product_count = block_collection.products_count | times:1 %}
+
+{% assign scroller_class = ' hp-featured-products-module simplebar-arrow-scroller ' | append: block_settings.theme %}
+
+{% if block_settings.promo_activate and block_settings.promo_title != blank %}
+  {% capture promo_item %}
+    <div class="item promo-item" style="background-color: {{block_settings.promo_background_color}}; color: {{block_settings.promo_text_color}}">
+
+      <a href="{{block_settings.promo_link}}" class="promo-link"></a>
+      <h4>{{block_settings.promo_title}}</h4>
+      {% if block_settings.promo_link != '' %}
+        <div class="cta-wrap">
+          <span class="promo-btn">{{block_settings.promo_link_text}}</span>
+        </div>
+      {% endif %}
+    </div>
+  {% endcapture %}
+{% endif %}
+
+{% assign full_width_scrollbar = false %}
+{% comment %} 
+{% if page.template_suffix == 'enhanced-plp-2' %}
+    {% assign full_width_scrollbar = true %}
+{% endif %} 
+{% endcomment %}
+
+{% if block_settings.source == 'collection' and col_product_count > 0 %}
+  {% render 'simplebar-carousel',
+    intro_title: block_settings.title,
+    intro_subtitle: block_settings.subtitle,
+    intro_caption: block_settings.caption,
+    intro_link: block_settings.link,
+    intro_cta: block_settings.cta,
+    data_aos: 'fade-up',
+    offset_right: true,
+    full_width_scrollbar: full_width_scrollbar,
+    carousel_type: 'product'
+    arrow_box_class: 'collections-wrapper',
+    wrapper_class: 'collection-products',
+    scroller_class: scroller_class,
+    promo_item: promo_item,
+    iterables: block_collection.products %}
+{% elsif block_settings.source == 'products' %}
+  {% assign product_array = '' %}
+
+  {% for i in (1..block_settings.num_items) %}
+      {% assign product_setting_handle = 'product_product_' | append: i %}
+      {% assign product_handle = block_settings[product_setting_handle] %}
+      {% assign product_array = product_array | append: '|' | append: product_handle %}
+  {% endfor %}
+
+  {% assign product_array = product_array | split: '|' %}
+
+  {% render 'simplebar-carousel',
+    intro_title: block_settings.title,
+    intro_subtitle: block_settings.subtitle,
+    intro_caption: block_settings.caption,
+    intro_link: block_settings.link,
+    intro_cta: block_settings.cta,
+    data_aos: 'fade-up',
+    offset_right: true,
+    full_width_scrollbar: full_width_scrollbar,
+    carousel_type: 'product-handle',
+    arrow_box_class: 'collections-wrapper',
+    wrapper_class: 'collection-products',
+    scroller_class: scroller_class,
+    promo_item: promo_item,
+    iterables: product_array %}
+{% endif %}

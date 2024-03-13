@@ -1,0 +1,115 @@
+<div class="collection-banner {{ layout }}"{% if collection.metafields.plp.enable_collection_banner_slider %} data-slick=""{% endif %}>
+    {%- if layout == 'full' -%}
+        {% if collection.metafields.plp.enable_collection_banner_slider %}
+            {% for i in (1..3) %}
+                {% assign image_selector = 'collection_banner_' | append: i %}
+                {% assign slide_image = collection.metafields['plp'][image_selector] %}
+
+                {% assign image_mobile_selector = 'collection_banner_mobile_' | append: i %}
+                {% assign image_mobile = collection.metafields['plp'][image_mobile_selector] %}
+                <!--slide_image: {{slide_image}}-->
+                <!--image_mobile: {{image_mobile}}-->
+
+                {% unless image_mobile != blank %}
+                    {% assign image_mobile = slide_image %}
+                {% endunless %}
+
+                {% render 'responsive-image',
+                    image: slide_image,
+                    mobile_image: image_mobile,
+                    class: 'slide-image'
+                %}
+            {% endfor %}
+        {% elsif collection.metafields.plp.collection_banner_video_1 != blank %}
+            {% render 'video-module', video_url: collection.metafields.plp.collection_banner_video_1, mobile_video: collection.metafields.plp.collection_banner_video_mobile_1 %}
+        {% else %}
+            {% if collection.image != blank %}
+                {% assign mobile_image = collection.image | img_url: '767x' %}
+                {% if collection.metafields.plp.collection_banner_mobile_1 != blank %}
+                    {% assign mobile_image = collection.metafields["plp"]["collection_banner_mobile_"] | img_url: '767x' %}
+                {% endif %}
+                {% render 'responsive-image',
+                    image: collection.image,
+                    mobile_image: mobile_image,
+                    class: 'collection-image'
+                %}
+            {% endif %}
+        {% endif %}
+
+    {%- else layout == 'split' -%}
+        <div class="collection-banner-part">
+            {% if collection.image %}
+                {% unless enhanced_section != blank or enhanced_section != '' %}
+                    <img class="collection-image" alt="{{ collection.title }}" src="{{ collection.image | img_url: '720x' }}">
+                    <span class="collection-image background-image" role="img" aria-label="{{ collection.title }}" style="background-image:url('{{ collection.image | img_url: '720x' }}');"></span>
+                {% endunless %}
+            {% endif %}
+        </div>
+        <div class="collection-banner-part text-block">
+            <div class="collection-title">{{ collection.title }}</div>
+            {% if collection.description != blank %}
+                <div class="collection-desc">
+                    {{ collection.description }}
+                </div>
+            {% endif %}
+        </div>
+    {%- endif -%}
+</div>
+<div class="collection-banner image-link">
+    {% if collection.metafields.plp.image_links_activate %}
+        {% assign blocks_limit = 5 %}
+        {% assign all_blocks = '' %}
+        {% for i in (1..blocks_limit) %}
+            {% assign block_info_handle = 'image_link_' | append: i %}
+            {% assign block_info = collection.metafields.plp[block_info_handle] %}
+    
+            {% if block_info.value.image_file.value == blank %}{% continue %}{% endif %}
+
+            {% assign image_title = block_info.value.image_title.value %}
+            {% assign image_link = block_info.value.image_link.value %}
+            {% assign image_file = block_info.value.image_file.value %}
+            {% assign image_date = block_info.value.image_link_good_until.value | date: '%s'%}
+            {% assign image_file2 = block_info.value.image_file_2.value %}
+            {% assign currentDate = 'now' | date: '%s' %}
+
+            {% capture single_block %}
+            <div class="banner-block" data-aos="fade-up" data-aos-duration="300">
+                {% if image_link != blank %}
+                    <a href="{{image_link}}" class="banner-link" title="Go to {{ image_title }}">
+                {% endif %}
+                <!--CurrentDate: {{currentDate}}-->
+                <!--image_date: {{image_date}}-->
+                    <div class="image-container">
+                        {% if image_date >= currentDate %}
+                            {% render 'responsive-image', image: image_file2, class: 'main-image', img_alt_prefix: image_file2.value.alt %}
+                        {% else %}
+                            {% render 'responsive-image', image: image_file, class: 'main-image', img_alt_prefix: image_file.value.alt %}
+                        {% endif %}
+                    </div>
+        
+                    {% if image_title != blank %}
+                    <div class="block-content">
+                        <div class="headline">{{ image_title }}</div>
+                    </div>
+                    {% endif %}
+            
+                {% if image_link != blank %}
+                    </a>
+                {% endif %}
+            </div>
+            {% endcapture %}
+    
+            {% assign all_blocks = all_blocks | append: single_block %}
+            {% assign counter = counter | plus: 1 %}
+        {% endfor %}
+    
+        {% if all_blocks != '' %}
+        <section class="module banner-blocks-grid image-links">
+            <div class="banner-blocks block-size-{{counter}} small-grid-2 large-grid-{{ counter }}">
+                {{ all_blocks }}
+            </div>
+        </section>
+        {% endif %}
+    {% endif %}
+
+</div><!--.collection-banner-->

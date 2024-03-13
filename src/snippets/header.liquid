@@ -1,0 +1,172 @@
+{%- assign isHomepage = false -%}
+{%- if template.name == 'index' -%}
+  {%- assign isHomepage = true -%}
+{%- endif -%}
+
+<div id="MiniCart" class="drawer drawer-right" role="dialog" aria-hidden="true">
+  <div class="drawer-header">
+    <div class="drawer-title">
+      <span>{{ 'general.minicart.title' | t }}</span>
+    </div>
+    <button type="button" class="drawer-close">
+      <span class="visually-hidden">{{ 'general.accessibility.close_drawer' | t }}</span>
+    </button>
+  </div>
+  <div id="CartContainer" class="minicart-container"></div>
+  {% render 'ajax-cart-template' %}
+</div>
+
+<div id="SearchBar" class="drawer drawer-top" role="dialog" aria-hidden="true">
+  <button class="drawer-close" type="button">
+    <span class="visually-hidden">{{ 'general.accessibility.close_drawer' | t }}</span>
+  </button>
+  {% render 'search-form', search_form_id: 'Search' %}
+</div>
+
+<div id="MobileNav" class="drawer drawer-right" role="dialog" aria-hidden="true">
+  {% comment %}
+    <div class="mobile-search-container">
+    {% render 'search-form', search_form_id: 'SearchMobile' %}
+    </div>
+  {% endcomment %}
+  <div class="mobile-nav-placeholder"></div>
+
+  <div class="header-utilities">
+    {% comment %}
+    {% render 'header-utility-blocks', for_mobile_menu: true %}
+    {% endcomment %}
+
+    {% assign mobileExtraLinks = linklists.mobile-extra-links %}
+    {% if settings.mobile__nav_utility_linklist != blank %}
+      {% assign mobileExtraLinks = linklists[settings.mobile__nav_utility_linklist] %}
+    {% endif %}
+    {%- if mobileExtraLinks != blank and mobileExtraLinks.links.size > 0 -%}
+    <div class="header-extra-links">
+      {% for link in mobileExtraLinks.links %}
+        {%- assign link_handle = link.title | handle -%}
+        <a class="nav-link {{ link.title | handleize }}" href="{{ link.url }}">{{ link.title }}</a>
+      {% endfor %}
+    </div>
+    {% endif %}
+    
+    <div class="user-menu{% if customer == blank %} logged-out{% endif %}">
+      {% assign user_dropdown = 'user-dropdown' %}
+      {% if customer != blank %}
+        <ul>
+          <li class="customer-name">{{ customer.first_name }}</li>
+          {%- for link in linklists[user_dropdown].links -%}
+            <li>
+              <a class="nav-link" href="{{ link.url }}">{{ link.title }}</a>
+            </li>
+          {%- endfor -%}
+          <li>
+            <a class="nav-link" href="/account/logout">{{ 'layout.customer.log_out' | t }}</a>
+          </li>
+        </ul>
+      {% else %}
+        {% assign user_dropdown = 'user-dropdown-logged-out-mobile' %}
+        {% if user_dropdown.size < 1 %}
+          {% assign user_dropdown = 'user-dropdown-logged-out' %}
+        {% endif %}
+        <ul>
+          {% for link in linklists[user_dropdown].links %}
+            {%- if forloop.index0 == 0 -%}
+              {% continue %}
+            {%- endif -%}
+
+            <a class="{{ class }}" href="{{ link.url }}">
+              {{ link.title }}
+            </a>
+          {% endfor %}
+          <li>
+            <a class="nav-link" href="/account/login">{{ 'layout.customer.account' | t }}</a>
+          </li>
+        </ul>
+      {% endif %}
+    </div>
+
+    {% section 'localization-selectors' %}
+    
+    <div class="social-links">
+      {%- assign footer_social_linklist = settings.footer_social_linklist -%}
+      {% if linklists[footer_social_linklist].links.size > 0 %}
+          {% for social in linklists[footer_social_linklist].links %}
+              {%- assign social_handle = social.title | handleize -%}
+              <a class="social-link social icon-{{ social_handle }}" href="{{ social.url }}" title="{{ 'layout.footer.social_platform' | t: name: shop.name, platform: social.title }}" target="_blank">
+                  <span class="visually-hidden">{{ social.title }}</span>
+              </a>
+          {% endfor %}
+      {% endif %}
+  </div>
+
+  </div>
+</div>
+
+<header role="banner" class="site-header{% if isHomepage or apply_transparent_header %} homepage{% endif %}">
+
+  {% section "promo-banner" %}
+
+  {% section "header-countdown" %}
+
+  {% assign extraLinks = linklists.extra-links %}
+  {% if settings.header_utility_linklist != blank %}
+    {% assign extraLinks = linklists[settings.header_utility_linklist] %}
+  {% endif %}
+
+  {%- if extraLinks != blank and extraLinks.links.size > 0 -%}
+  <!-- Header Extra Links -->
+  <div class="header-content extra-links">
+    <div class="inner-wrap">
+    <div class="header-extra-links">
+    {% for link in extraLinks.links %}
+        <a href="{{ link.url }}" class="extra-link {{link.title | handleize}}"><span>{{ link.title }}</span></a>
+    {% endfor %}
+    </div>
+    </div>
+  </div>
+  <!-- Header Extra Links End -->
+  {%- endif -%}
+
+  <div class="header-content">
+
+    <div class="inner-wrap">
+      
+      <!-- Site logo and title -->
+      {% if isHomepage %}
+        <h1 itemscope itemtype="http://schema.org/Organization">
+      {% else %}
+        <div class="h1" itemscope itemtype="http://schema.org/Organization">
+      {% endif %}
+          <span class="screen-reader-text" aria-hidden="true">{{- shop.name -}}</span>
+          <a href="/" itemprop="url" class="site-logo{% if settings.logo != blank %} site-header__logo-image{% endif %}">
+            {% comment %} 
+            {% if settings.logo != blank %}
+              {% capture image_size %}{{ settings.logo_max_width }}x{% endcapture %}
+              <img src="{{ settings.logo | img_url: image_size }}" srcset="{{ settings.logo | img_url: image_size }} 1x, {{ settings.logo | img_url: image_size, scale: 2 }} 2x" alt="{{ settings.logo.alt | default: shop.name }}" itemprop="logo">
+            {% endif %}
+          {% endcomment %}
+            <span>{{ 'general.site.logo_anchor_text' | t }}</span>
+          </a>
+      {% if isHomepage %}
+          </h1>
+      {% else %}
+        </div>
+      {% endif %}
+      <!-- Site logo and title End -->
+
+      <!-- Nav Support Nested Menu -->
+      {% section 'navigation' %}
+      <!-- Nav End -->
+
+      <!-- Utility -->
+      <div class="header-utilities">
+        <div class="inner-wrap">
+          {% render 'header-utility-blocks', for_mobile_menu: false %}
+        </div>
+      </div>
+      <!-- Utility End -->
+
+    </div>
+  </div>
+
+</header>

@@ -1,0 +1,226 @@
+//
+//  Typography
+//  _____________________________________________
+.about-page {
+    .banner-headline {
+        @extend .title-font-1;
+    }
+    .headline {
+        // @extend .title-font-2;
+    }
+    .subheadline {
+        @extend .body-font-1;
+    }
+    .about-module-f {
+        .headline {
+            @extend .title-font-2;
+        }
+    }
+}
+//
+//  Common
+//  _____________________________________________
+$modulePadding: 6vw;
+.about-page {
+    .style-dark {
+        color: $styleDark;
+    }
+    .style-light {
+        color: $styleLight;
+    }
+    .banner-headline {
+        padding: 0 2vw;
+        width: 100%;
+        @include center-text-box(absolute);
+    }
+
+    img {
+        display: block;
+        width: 100%;
+    }
+
+    .about-module {
+        position: relative;
+        width: 100%;
+    }
+    .about-module-b,
+    .about-module-d {
+        @include prefixer('display', 'flex');
+        @include prefixer('align-items', 'center');
+        padding: 0 $modulePadding;
+
+        & > div {
+            flex: 1;
+            max-width: 50%;
+        }
+        .text-wrapper {
+            max-width: 40%;
+        }
+    }
+    .about-module-b {
+        .text-wrapper {
+            margin-right: 10%;
+        }
+        .image-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+        &.flipped {
+            & > div:nth-child(1) {
+                order: 2;
+                margin-right: 0;
+                margin-left: 5%;
+            }
+            & > div:nth-child(2) {
+                order: 1;
+            }
+        }
+    }
+    .about-module-c {
+        min-height: 40vw;
+        background-color: $lightGrey;
+        @include flexcenter();
+        .headline {
+            width: 70%;
+            margin: 50px 0;
+        }
+    }
+    .about-module-d {
+        .text-wrapper {
+            margin-left: 10%;
+        }
+        .image-wrapper {
+            position: relative;
+            z-index: 2;
+        }
+        &.flipped {
+            & > div:nth-child(1) {
+                order: 2;
+            }
+            & > div:nth-child(2) {
+                order: 1;
+                margin-left: 0;
+                margin-right: 5%;
+            }
+        }
+    }
+    .about-module-e {
+        .inner-wrapper {
+            max-width: 65%;
+            margin: 0 auto $modulePadding;
+            .video-content-wrapper {
+                position: relative;
+                padding-top: 56%;
+            }
+        }
+    }
+    .about-module-f {
+        background-color: $lightGrey;
+        text-align: center;
+        overflow: hidden;
+        .subheadline {
+            margin: 10px 0;
+        }
+        .container {
+            padding: 90px 20px 40px;
+        }
+        .product-badge {
+            color: $black;
+        }
+    }
+    .about-module-g {
+        min-height: 30vw;
+        background-color: transparent;
+        @include flexcenter();
+        .inner-wrapper {
+            width: 70%;
+        }
+        .cta-wrap {
+            margin-top: 40px;
+        }
+    }
+}
+//
+//  Small + Medium screen sizes - Prev: Tablet and Mobile
+//  _____________________________________________
+$aboutSmallScreenImageOffset: 15vw;
+@include query-medium-down {
+    .about-page {
+        .about-module-b {
+            padding-top: $modulePadding;
+            .image-wrapper {
+                top: $aboutSmallScreenImageOffset;
+            }
+        }
+        .about-module-b,
+        .about-module-d {
+            @include prefixer('flex-direction', 'column');
+            .image-wrapper,
+            .text-wrapper {
+                max-width: 100%;
+                margin: 0;
+            }
+        }
+        .about-module-c {
+            min-height: none;
+            padding: $aboutSmallScreenImageOffset $modulePadding;
+            .headline {
+                width: 100%;
+            }
+        }
+        .about-module-d {
+            padding-bottom: $modulePadding;
+            .image-wrapper {
+                top: -$aboutSmallScreenImageOffset;
+            }
+        }
+        .about-module-f {
+            .container {
+                padding: 40px 20px 20px;
+            }
+        }
+        .about-module-e {
+            .inner-wrapper {
+                margin-bottom: 0;
+                max-width: none;
+            }
+        }
+        .about-module-g {
+            padding: $modulePadding;
+            .inner-wrapper {
+                width: 100%;
+            }
+        }
+    }
+} //query-medium-down
+
+//
+//  Large screen sizes - Prev: Desktop
+//  _____________________________________________
+$aboutLargeScreenImageOffset: 7vw;
+@include query-large-up {
+    .about-page {
+        .about-module-b {
+            padding-top: $modulePadding;
+            .image-wrapper {
+                top: $aboutLargeScreenImageOffset;
+            }
+        }
+        .about-module-c {
+            padding: $aboutLargeScreenImageOffset $modulePadding;
+            .headline {
+                &.text-left {
+                    margin-right: auto;
+                }
+                &.text-right {
+                    margin-left: auto;
+                }
+            }
+        }
+        .about-module-d {
+            .image-wrapper {
+                top: -$aboutLargeScreenImageOffset;
+            }
+        }
+    }
+} //query-large-up

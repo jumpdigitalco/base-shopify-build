@@ -1,0 +1,190 @@
+{% schema %}
+{
+  "name": "Product Size Chart(s)",
+  "settings": [
+    {
+       "type":  "richtext",
+       "id":    "need_help_text",
+       "label": "Size chart help text",
+       "default": "<p>Email for size help</p>"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "size_chart",
+      "name": "Size Chart",
+      "settings": [
+        {
+          "type": "header",
+          "content": "Inches information"
+        },
+        {
+          "type":  "text",
+          "id":    "title",
+          "label": "Chart Title"
+        },
+        {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+        },
+        {
+            "type": "image_picker",
+            "id": "mobile_image",
+            "label": "Mobile Image"
+        },
+        {
+          "type": "textarea",
+          "id": "chart_content_inches",
+          "label": "Inches sizes",
+          "info": "Use the following structure to create columns: ['USA', 'XS', 'S', 'M', 'L', 'XL'] Copy previous snippet for as many rows the chart will have, columns are separated by commas"
+        },
+        {
+          "type": "header",
+          "content": "Centimeters information"
+        },
+        {
+            "type": "image_picker",
+            "id": "image_2",
+            "label": "Image"
+        },
+        {
+            "type": "image_picker",
+            "id": "mobile_image_2",
+            "label": "Mobile Image"
+        },
+        {
+          "type": "textarea",
+          "id": "chart_content_2",
+          "label": "Centimeters sizes",
+          "info": "Use the following structure to create columns: ['USA', 'XS', 'S', 'M', 'L', 'XL'] Copy previous snippet for as many rows the chart will have, columns are separated by commas"
+        },
+        {
+          "type":  "richtext",
+          "id":    "extra_content_2",
+          "label": "Extra Content for the tab, usually use as instructions."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Size Chart(s)",
+      "category": "Product",
+      "settings": {
+        
+      }
+    }
+  ]
+}
+{% endschema %}
+
+<div class="size-chart">
+    {% assign chart_size = section.blocks.size %}
+    {% if chart_size > 0 %}
+    <div class="tabbed-module sizechart-tabs">
+        {%- assign activeClass = true -%}
+        <div class="tabbed-title-wrap">
+        {% assign counter = 0 %}
+        {% for chart in section.blocks %}
+          <div
+            class="tabbed-title tabbed-title-{{ counter }}{% if forloop.first %} active{% endif %}"
+            data-target="tabbed-{{- counter -}}">
+                {{- chart.settings.title -}}
+          </div>
+          {% assign counter = counter | plus: 1 %}
+          {% assign activeClass = false %}
+        {% endfor %}
+        </div>
+
+        <div class="tabbed-content-wrap">
+        {% assign counter = 0 %}
+        {% for chart in section.blocks %}
+          <div
+            class="tabbed-content {% if forloop.first %} active{% endif %}"
+            data-target="tabbed-{{- counter -}}" id="tabbed-{{- counter -}}">
+              <div class="extra-content">
+                  {{ chart.settings.extra_content }}
+              </div>
+              <div class="chart">
+
+                  <div class="tabbed-module chart-tabs">
+                    <div class="tabbed-title-wrap">
+                      <div class="tabbed-title active" data-target="inner-tab-1">
+                            Inches
+                      </div>
+                      {% if chart.settings.image_2 != blank or chart.settings.chart_content_2 != blank %}
+                      <div class="tabbed-title" data-target="inner-tab-2">
+                            Centimeters
+                      </div>
+                      {% endif %}
+                    </div>
+                    <div class="tabbed-content-wrap">
+                      <div class="tabbed-content active" data-target="inner-tab-1" id="inner-tab-1">
+                        {% if chart.settings.image != blank %}
+                        {% assign chart_mobile_image = chart.settings.image %}
+                        {% if chart.settings.mobile_image != blank %}
+                          {% assign chart_mobile_image = chart.settings.mobile_image %}
+                        {% endif %}
+
+                        {% render 'responsive-image',
+                            image: chart.settings.image,
+                            mobile_image: chart_mobile_image,
+                            lazy_load: lazy_load,
+                            class: 'size-chart-image',
+                            img_class: 'chart-image',
+                            desktop_image_size: '1200x',
+                            mobile_image_size: '500x',
+                            img_alt_prefix: 'Size chart Image 1 ' %}
+
+                        {% endif %}
+
+                        {% assign chart_content = chart.settings.chart_content
+                                    | replace: '[', '<div class="chart-row"><div class="item">'
+                                    | replace: ',', '</div><div class="item">'
+                                    | replace: ']', '</div></div>' %}
+                        {{ chart_content }}
+                      </div>
+
+                      {% if chart.settings.image_2 != blank or chart.settings.chart_content_2 != blank %}
+                      <div class="tabbed-content" data-target="inner-tab-2" id="inner-tab-2">
+                        {% if chart.settings.image_2 != blank %}
+                        {% assign chart_mobile_image = chart.settings.image_2 %}
+                        {% if chart.settings.mobile_image_2 != blank %}
+                          {% assign chart_mobile_image = chart.settings.mobile_image_2 %}
+                        {% endif %}
+
+                        {% render 'responsive-image',
+                            image: chart.settings.image_2,
+                            mobile_image: chart_mobile_image,
+                            lazy_load: lazy_load,
+                            class: 'size-chart-image',
+                            img_class: 'chart-image',
+                            desktop_image_size: '1200x',
+                            mobile_image_size: '500x',
+                            img_alt_prefix: 'Size chart Image 2 ' %}
+
+                        {% endif %}
+
+                        {% assign chart_content = chart.settings.chart_content_2
+                                    | replace: '[', '<div class="chart-row"><div class="item">'
+                                    | replace: ',', '</div><div class="item">'
+                                    | replace: ']', '</div></div>' %}
+                        {{ chart_content }}
+                      </div>
+                      {% endif %}
+                    </div>
+                  </div>
+              </div>
+          </div>
+          {% assign counter = counter | plus: 1 %}
+          {% assign activeClass = false %}
+        {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if section.settings.need_help_text != blank %}
+    <div class="chart-actions">{{- section.settings.need_help_text -}}</div>
+    {% endif %}
+</div>

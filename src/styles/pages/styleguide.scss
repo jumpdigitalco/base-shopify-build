@@ -1,0 +1,165 @@
+//
+//  Typography
+//  _____________________________________________
+.style-guide {
+    .tool-tip {
+    }
+    section {
+        .title {
+            @extend .cta-font-1;
+            text-transform: uppercase;
+            margin-bottom: 40px;
+        }
+        &.section-fonts {
+            .section-content {
+                font-size: 32px;
+            }
+        }
+    }
+}
+//
+//  Common
+//  _____________________________________________
+
+.page-style-guide {
+    .layout-column-2 {
+        .column {
+            &.style-dark {
+                color: $black;
+                background: $white;
+                .field {
+                    background: $white;
+                }
+            }
+            &.style-light {
+                color: $white;
+                background: $black;
+                .field {
+                    background: $black;
+                }
+            }
+        }
+    }
+}
+
+.style-guide {
+    width: 100%;
+    margin: 0 auto;
+    max-width: $xxLargeScreen;
+    background: $lightGrey;
+    section {
+        text-align: left;
+        padding-bottom: 40px;
+        padding: 40px;
+        &.style-dark {
+            color: $black !important;
+            background: $white !important;
+        }
+        &.section-typography {
+            .section-content {
+                & > * {
+                    margin-bottom: 40px;
+                    display: block;
+                }
+            }
+        }
+        &.section-cta {
+            .section-content {
+                display: flex;
+                flex-direction: column;
+                & > * {
+                    margin-bottom: 40px;
+                    display: inline-block;
+                    max-width: 321px;
+                }
+            }
+        }
+        &.section-form {
+            .field {
+                margin-bottom: 40px;
+                max-width: 321px;
+            }
+        }
+        &.section-colors {
+            .section-content {
+                display: flex;
+                flex-flow: wrap;
+            }
+            .color-block {
+                width: 40%;
+                height: 100px;
+                margin-right: 10%;
+                margin-bottom: 33px;
+                border: 1px solid $lightGrey;
+                &.black {
+                    background: $black;
+                }
+                &.white {
+                    background: $white;
+                }
+                &.lightGrey {
+                    background: $lightGrey;
+                }
+                &.lightGrey2 {
+                    background: $lightGrey2;
+                }
+                &.darkGrey {
+                    background: $mediumGrey2;
+                }
+                &.red {
+                    background: var(--main-color);
+                }
+            }
+        }
+    }
+}
+
+//
+//  Medium Screens and Smaller
+//  _____________________________________________
+@include query-medium-down {
+    .style-guide {
+        margin-top: $headerSmallScreenHeight;
+        section {
+            &.section-fonts {
+                display: none;
+            }
+        }
+    }
+}
+
+//
+// Large Screens
+//  _____________________________________________
+@include query-large-up {
+    .page-style-guide {
+        .layout-column-2 {
+            display: flex;
+            .column {
+                width: 50%;
+            }
+        }
+    }
+    .style-guide {
+        section {
+            padding: 90px;
+            &.section-fonts {
+                min-height: 577px;
+            }
+            &.section-colors {
+                min-height: 577px;
+                padding: 90px 20px;
+                .color-block {
+                    width: 180px;
+                    margin-right: 33px;
+                    margin-bottom: 66px;
+                }
+            }
+        }
+    }
+}
+
+// Webpack Testing Page
+.template-suffix-webpack {
+    @extend .page-style-guide;
+}

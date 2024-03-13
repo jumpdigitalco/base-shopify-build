@@ -1,0 +1,780 @@
+/*============================================================================
+  Ajax the add to cart experience by revealing it in a side drawer
+  Plugin Documentation - http://shopify.github.io/Timber/#ajax-cart
+  (c) Copyright 2015 Shopify Inc. Author: Carson Shold (@cshold). All Rights Reserved.
+
+  This file includes:
+    - Basic Shopify Ajax API calls
+    - Ajax cart plugin
+
+  This requires:
+    - jQuery 1.8+
+    - handlebars.min.js (for cart template)
+    - modernizr.min.js
+    - snippet/ajax-cart-template.liquid
+
+  Customized version of Shopify's jQuery API
+  (c) Copyright 2009-2015 Shopify Inc. Author: Caroline Schnapp. All Rights Reserved.
+  
+  Modified by yang@onerockwell
+  
+==============================================================================*/
+if ((typeof ShopifyAPI) === 'undefined') {
+    ShopifyAPI = {};
+}
+
+/*============================================================================
+  API Helper Functions
+==============================================================================*/
+function attributeToString(attribute) {
+    if ((typeof attribute) !== 'string') {
+        attribute += '';
+        if (attribute === 'undefined') {
+            attribute = '';
+        }
+    }
+    return jQuery.trim(attribute);
+};
+
+/*============================================================================
+  API Functions
+==============================================================================*/
+ShopifyAPI.onCartUpdate = function(cart) {
+    // alert('There are now ' + cart.item_count + ' items in the cart.');
+};
+
+ShopifyAPI.updateCartNote = function(note, callback) {
+    var $body = $(document.body),
+        params = {
+            type: 'POST',
+            url: '/cart/update.js',
+            data: 'note=' + attributeToString(note),
+            dataType: 'json',
+            beforeSend: function() {
+                $body.trigger('beforeUpdateCartNote.ajaxCart', note);
+            },
+            success: function(cart) {
+                if ((typeof callback) === 'function') {
+                    callback(cart);
+                } else {
+                    ShopifyAPI.onCartUpdate(cart);
+                }
+                $body.trigger('afterUpdateCartNote.ajaxCart', [note, cart]);
+            },
+            error: function(XMLHttpRequest, textStatus) {
+                $body.trigger('errorUpdateCartNote.ajaxCart', [XMLHttpRequest, textStatus]);
+                ShopifyAPI.onError(XMLHttpRequest, textStatus);
+            },
+            complete: function(jqxhr, text) {
+                $body.trigger('completeUpdateCartNote.ajaxCart', [this, jqxhr, text]);
+            }
+        };
+    jQuery.ajax(params);
+};
+
+ShopifyAPI.onError = function(XMLHttpRequest, textStatus) {
+    var data = eval('(' + XMLHttpRequest.responseText + ')');
+    if (!!data.message) {
+        alert(data.message + '(' + data.status + '): ' + data.description);
+    }
+};
+
+/*============================================================================
+  POST to cart/add.js returns the JSON of the cart
+    - Allow use of form element instead of just id
+    - Allow custom error callback
+  Yang@onerockwell Added ShopifyAPI.addMultipleItems
+==============================================================================*/
+ShopifyAPI.addMultipleItems = function(data, callback, errorCallback) {
+    var $body = $(document.body),
+        params = {
+            type: 'POST',
+            url: '/cart/add.js',
+            data: data,
+            dataType: 'json',
+            beforeSend: function(jqxhr, settings) {
+                $body.trigger('beforeAddItem.ajaxCart');
+            },
+            success: function(line_item) {
+                if ((typeof callback) === 'function') {
+                    callback(line_item);
+                } else {
+                    ShopifyAPI.onItemAdded(line_item);
+                }
+                $body.trigger('afterAddItem.ajaxCart', [line_item]);
+            },
+            error: function(XMLHttpRequest, textStatus) {
+                if ((typeof errorCallback) === 'function') {
+                    errorCallback(XMLHttpRequest, textStatus);
+                } else {
+                    ShopifyAPI.onError(XMLHttpRequest, textStatus);
+                }
+                $body.trigger('errorAddItem.ajaxCart', [XMLHttpRequest, textStatus]);
+            },
+            complete: function(jqxhr, text) {
+                $body.trigger('completeAddItem.ajaxCart', [this, jqxhr, text]);
+            }
+        };
+    jQuery.ajax(params);
+};
+
+ShopifyAPI.addItemFromForm = function(form, callback, errorCallback) {
+    var $body = $(document.body),
+        params = {
+            type: 'POST',
+            url: '/cart/add.js',
+            data: jQuery(form).serialize(),
+            dataType: 'json',
+            beforeSend: function(jqxhr, settings) {
+                $body.trigger('beforeAddItem.ajaxCart', form);
+            },
+            success: function(line_item) {
+                console.log('item added to cart:', line_item);
+                if ((typeof callback) === 'function') {
+                    callback(line_item, form);
+                } else {
+                    ShopifyAPI.onItemAdded(line_item, form);
+                }
+                $body.trigger('afterAddItem.ajaxCart', [line_item, form]);
+
+                // dataLayer event for GTM
+                window.dataLayer.push({
+                    'event': 'AddToCart',
+                    'products': [{
+                        'id': line_item.id,
+                        'product_id': line_item.product_id,
+                        'name': line_item.product_title,
+                        'price': line_item.price / 100,
+                        'category': line_item.product_type,
+                        'brand': 'Maaji',
+                        'variant': line_item.title,
+                        'quantity': line_item.quantity
+                    }]
+                })
+            },
+            error: function(XMLHttpRequest, textStatus) {
+                if ((typeof errorCallback) === 'function') {
+                    errorCallback(XMLHttpRequest, textStatus);
+                } else {
+                    ShopifyAPI.onError(XMLHttpRequest, textStatus);
+                }
+                $body.trigger('errorAddItem.ajaxCart', [XMLHttpRequest, textStatus]);
+            },
+            complete: function(jqxhr, text) {
+                $body.trigger('completeAddItem.ajaxCart', [this, jqxhr, text]);
+            }
+        };
+    jQuery.ajax(params);
+};
+
+// Get from cart.js returns the cart in JSON
+ShopifyAPI.getCart = function(callback) {
+    $(document.body).trigger('beforeGetCart.ajaxCart');
+    jQuery.getJSON('/cart.js', function(cart, textStatus) {
+        if ((typeof callback) === 'function') {
+            callback(cart);
+        } else {
+            ShopifyAPI.onCartUpdate(cart);
+        }
+        $(document.body).trigger('afterGetCart.ajaxCart', cart);
+    });
+};
+
+// POST to cart/change.js returns the cart in JSON
+ShopifyAPI.changeItem = function(line, quantity, callback) {
+
+    const updatedProductData = JSON.parse( $(`.ajaxcart__row[data-line="${line}"] .ajaxcart__json-info`).text() );
+
+    var $body = $(document.body),
+        params = {
+            type: 'POST',
+            url: '/cart/change.js',
+            data: 'quantity=' + quantity + '&line=' + line,
+            dataType: 'json',
+            beforeSend: function() {
+                $body.trigger('beforeChangeItem.ajaxCart', [line, quantity]);
+            },
+            success: function(cart) {
+
+                if ((typeof callback) === 'function') {
+                    callback(cart, updatedProductData, quantity);
+                } else {
+                    ShopifyAPI.onCartUpdate(cart);
+                }
+                $body.trigger('afterChangeItem.ajaxCart', [line, quantity, cart]);
+
+                if(quantity == 0){
+                    //console.log('product was removed from cart');
+                    //alert('Product was removed from cart');
+                    window.dataLayer.push({
+                        'event': 'RemoveFromCart',
+                        'products': [updatedProductData]
+                    })
+                }
+            },
+            error: function(XMLHttpRequest, textStatus) {
+                $body.trigger('errorChangeItem.ajaxCart', [XMLHttpRequest, textStatus]);
+                ShopifyAPI.onError(XMLHttpRequest, textStatus);
+            },
+            complete: function(jqxhr, text) {
+                $body.trigger('completeChangeItem.ajaxCart', [this, jqxhr, text]);
+            }
+        };
+    jQuery.ajax(params);
+};
+
+
+
+/*============================================================================
+  Product Options
+==============================================================================*/
+ShopifyAPI.selectCallback = function(variant, selector) {
+    // var moneyFormat = Shopify.money_format;
+    var moneyFormat = theme.moneyFormat;
+    var disabledCTAClass = 'disabled';
+    const inventoryDisplayThreshold = {{ settings.product_inventory_display }};
+
+    // Selectors
+    if (selector.domIdPrefix.split('-').length > 1) {
+        var selectorArray = selector.domIdPrefix.split('-');
+        var $addToCart = $('#AddToCart-' + selectorArray[1]);
+    } else {
+        var $addToCart = $('#AddToCart');
+    }
+
+    var $productWrapper = $addToCart.parents('.product-core'), // Defined the Product Dom Scope
+        $productPrice = $productWrapper.find('.product-price'),
+        $comparePrice = $productWrapper.find('.product-compare-price'),
+        $addToCartText = $productWrapper.find('.add-to-cart-text');
+
+    // Variant
+    if (variant) {
+        // Select a valid variant if available
+        if (variant.available) {
+            // Available, enable the submit button, change text, show quantity elements
+            $addToCart.removeClass('disabled').prop('disabled', false);
+            if ($addToCart.hasClass('pre-order')) {
+                $addToCartText.html("{{ settings.product_preorder_badge }}");
+            } else {
+                $addToCartText.html("{{ 'products.product.add_to_cart' | t }}");
+            }
+        } else {
+            // Sold out, disable the submit button, change text, hide quantity elements
+            $addToCart.addClass(`${disabledCTAClass} sold-out`);//.prop('disabled', true);
+            if (!$addToCart.hasClass('inquire')) {
+                $addToCartText.html("{{ 'products.product.sold_out' | t }}");
+            }
+        }
+        // console.log('variant selected and update price', variant);
+        if(typeof variantStock !== 'undefined'){
+            let selectedVariantInventoryInfo = variantStock.filter( (item)=> item.variant == variant.id );
+            let selectedVariantInventory = selectedVariantInventoryInfo[0].inventory;
+            let unitsWording = selectedVariantInventory == 1 ? 'unit' : 'units';
+            // console.log('selectedVariantInventoryInfo', selectedVariantInventoryInfo);
+            // console.log('inventory for selected variant is:', selectedVariantInventoryInfo[0].inventory);
+            if(selectedVariantInventory > 0 && selectedVariantInventory <= inventoryDisplayThreshold){
+                $productWrapper.find('.variant-selection-availability').addClass('active').find('.qty').text(selectedVariantInventory);
+                $productWrapper.find('.variant-selection-availability').find('units').text(unitsWording);
+            }else{
+                $productWrapper.find('.variant-selection-availability').removeClass('active').find('.qty').empty;
+            }
+        }
+        // Show available units info
+
+
+        // console.log(selector);
+        // Regardless of stock, update the product price
+        $productPrice.html(Shopify.formatMoney(variant.price, moneyFormat));
+
+        // Also update and show the product's compare price if necessary
+        if (variant.compare_at_price > variant.price) {
+            $comparePrice.html(Shopify.formatMoney(variant.compare_at_price, moneyFormat)).show();
+        } else {
+            $comparePrice.hide();
+        }
+
+    } else {
+        $addToCart.addClass(disabledCTAClass);
+        $addToCart.addClass('disabled');//.prop('disabled', true);
+        if (!$addToCart.hasClass('inquire') && !$addToCart.hasClass('sold-out')) {
+            //$addToCartText.html("{{ 'products.product.sold_out' | t }}");
+            //$addToCartText.html("Select a ");
+        }
+    }
+
+    $addToCart.removeClass('loading');
+};
+/*============================================================================
+  Ajax Shopify Add To Cart
+==============================================================================*/
+var ajaxCart = (function(module, $) {
+
+    'use strict';
+
+    // Public functions
+    var init, loadCart;
+
+    // Private general variables
+    var settings, isUpdating, $body;
+
+    // Private plugin variables
+    var $formContainer, $addToCart, $cartCountSelector, $cartCostSelector, $cartContainer, $drawerContainer;
+
+    // Private functions
+    var updateCountPrice, formOverride, itemAddedCallback, itemErrorCallback, cartUpdateCallback,  buildCart, cartCallback, adjustCart, adjustCartCallback, createQtySelectors, qtySelectors, validateQty;
+
+    /*============================================================================
+      Initialise the plugin and define global options
+    ==============================================================================*/
+    init = function(options) {
+
+        // Default settings
+        settings = {
+            formSelector: 'form[action^="/cart/add"]',
+            cartContainer: '#CartContainer',
+            addToCartSelector: 'input[type="submit"]',
+            cartCountSelector: null,
+            cartCostSelector: null,
+            moneyFormat: '${{amount}}',
+            disableAjaxCart: false,
+            enableQtySelectors: true
+        };
+
+        // Override defaults with arguments
+        $.extend(settings, options);
+
+        // Select DOM elements
+        $formContainer = $(settings.formSelector);
+        $cartContainer = $(settings.cartContainer);
+        $addToCart = $formContainer.find(settings.addToCartSelector);
+        $cartCountSelector = $(settings.cartCountSelector);
+        $cartCostSelector = $(settings.cartCostSelector);
+
+        // General Selectors
+        $body = $(document.body);
+
+        // Track cart activity status
+        isUpdating = false;
+
+        // Setup ajax quantity selectors on the any template if enableQtySelectors is true
+            // console.log('enableQtySelectors??',settings.enableQtySelectors);
+        if (settings.enableQtySelectors) {
+            qtySelectors();
+        }
+
+        // Take over the add to cart form submit action if ajax enabled
+        if (!settings.disableAjaxCart && $addToCart.length) {
+            formOverride();
+        }
+
+        // Run this function in case we're using the quantity selector outside of the cart
+        adjustCart();
+    };
+
+    loadCart = function() {
+        $body.addClass('drawer--is-loading');
+        ShopifyAPI.getCart(cartUpdateCallback);
+    };
+
+    updateCountPrice = function(cart) {
+        if ($cartCountSelector) {
+            $cartCountSelector.html(cart.item_count).removeClass('hidden-count');
+
+            if (cart.item_count === 0) {
+                $cartCountSelector.addClass('hidden-count');
+            }
+        }
+        if ($cartCostSelector) {
+            $cartCostSelector.html(Shopify.formatMoney(cart.total_price, settings.moneyFormat));
+        }
+    };
+
+    formOverride = function() {
+        $formContainer.on('submit', function(evt) {
+            evt.preventDefault();
+            var proceed = true;
+            var $currForm = $(evt.target);
+            var $selects = $currForm.find('select');
+            $.each($selects, function(i, v) {
+                if ($(v).val() == '') {
+                    proceed = false;
+                    return false;
+                }
+            });
+
+            if (!proceed) {
+                alert('Please select all options');
+                return false;
+            }
+
+            // Add class to be styled if desired
+            $addToCart.removeClass('is-added').addClass('is-adding');
+
+            // Remove any previous quantity errors
+            $('.qty-error').remove();
+
+            ShopifyAPI.addItemFromForm(evt.target, itemAddedCallback, itemErrorCallback);
+        });
+    };
+
+    itemAddedCallback = function(line_item) {
+        console.log('itemAddedCallback:', line_item);
+        $addToCart.removeClass('is-adding').addClass('is-added');
+
+        ShopifyAPI.getCart(function(cart) {
+            cartUpdateCallback( cart );
+            const itemAddedEvent = new Event('afterAddToCart.ajaxCart', cart);
+            document.body.dispatchEvent(itemAddedEvent);
+        });
+    };
+
+    itemErrorCallback = function(res, text) {
+        $addToCart.removeClass('is-adding is-added');
+
+        if (!!text) {
+            if (res.status == 422) {
+                $formContainer.after('<div class="errors qty-error">' + text + '</div>')
+            }
+        }
+    };
+
+    cartUpdateCallback = function(cart) {
+        console.log('cartUpdateCallback', cart);
+        // Update quantity and price
+        updateCountPrice(cart);
+        buildCart(cart);
+    };
+
+    buildCart = function(cart) {
+        // Start with a fresh cart div
+        $cartContainer.empty();
+
+        // Show empty cart
+        if (cart.item_count === 0) {
+            $cartContainer
+                .append('<p class="ajaxcart__empty">' + {{ 'cart.general.empty' | t | json }} + '</p>');
+            cartCallback(cart);
+            return;
+        }
+
+        // Handlebars.js cart layout
+        var items = [],
+            item = {},
+            data = {},
+            source = $("#CartTemplate").html(),
+            template = Handlebars.compile(source);
+
+        console.log(cart.items);
+
+        // Add each item to our handlebars.js data
+        $.each(cart.items, function(index, cartItem) {
+            /* Hack to get product image thumbnail
+             *   - If image is not null
+             *     - Remove file extension, add _small, and re-add extension
+             *     - Create server relative link
+             *   - A hard-coded url of no-image
+             */
+            if (cartItem.image != null) {
+                var prodImg = cartItem.image.replace(/(\.[^.]*)$/, "_medium$1").replace('http:', '');
+            } else {
+                var prodImg = "//cdn.shopify.com/s/assets/admin/no-image-medium-cc9732cb976dd349a0df1d39816fbcc7.gif";
+            }
+
+            // Create item's data object and add to 'items' array
+            item = {
+                key: cartItem.key,
+                id: cartItem.id,
+                product_id: cartItem.product_id,
+                line: index + 1, // Shopify uses a 1+ index in the API
+                url: cartItem.url,
+                img: prodImg,
+                name: cartItem.product_title.replace('Maaji ',''),
+                variation: cartItem.variant_title.replace('SM', 'S').replace('MD','M').replace('LG','L'),
+                variant_name: cartItem.title,
+                properties: cartItem.properties,
+                itemAdd: cartItem.quantity + 1,
+                itemMinus: cartItem.quantity - 1,
+                itemQty: cartItem.quantity,
+                price_noformat: cartItem.price / 100,
+                price: Shopify.formatMoney(cartItem.price, settings.moneyFormat),
+                vendor: cartItem.vendor,
+                product_type: cartItem.product_type,
+                linePrice: Shopify.formatMoney(cartItem.line_price, settings.moneyFormat),
+                originalLinePrice: Shopify.formatMoney(cartItem.original_line_price, settings.moneyFormat),
+                discounts: cartItem.discounts,
+                discountsApplied: cartItem.line_price === cartItem.original_line_price ? false : true,
+                isGiftCard: cartItem.gift_card
+            };
+
+            items.push(item);
+        });
+        
+        let freeShippingBar = false;
+        let freeShippingMinimum = {{settings.minicart_free_shipping_minimum}};
+        let freeShippingMessage = '';
+        let freeShippingRemainingValue = '';
+        let freeShippingRemainingPercentage = '';
+
+        if (freeShippingMinimum != '') {
+            freeShippingBar = true;
+            freeShippingRemainingValue = freeShippingMinimum - ( cart.total_price / 100);
+            freeShippingRemainingPercentage = ( ( cart.total_price / 100) / freeShippingMinimum ) * 100;
+            if(freeShippingRemainingValue < 1){
+                freeShippingMessage = "{{ settings.minicart_free_shipping_completed_value_message}}"
+            }else{
+                freeShippingMessage = "{{ settings.minicart_free_shipping_remaining_value_message}}"
+                freeShippingMessage = freeShippingMessage.replace('[value]', '$' + freeShippingRemainingValue )
+            }
+        }
+
+        // Gather all cart data and add to DOM
+        data = {
+            items: items,
+            note: cart.note,
+            totalPrice: Shopify.formatMoney(cart.total_price, settings.moneyFormat),
+            totalCartDiscount: cart.total_discount === 0 ? 0 : {{ 'cart.general.savings_html' | t: price: '[savings]' | json }}.replace('[savings]', Shopify.formatMoney(cart.total_discount, settings.moneyFormat)),
+            totalCartDiscountApplied: cart.total_discount === 0 ? false : true,
+            freeShippingBar: freeShippingBar,
+            freeShippingMessage: freeShippingMessage,
+            freeShippingMinimum: freeShippingMinimum,
+            freeShippingRemainingValue: freeShippingRemainingValue,
+            freeShippingRemainingPercentage: freeShippingRemainingPercentage
+        }
+
+        console.log('cart data:', data)
+
+        $cartContainer.append(template(data));
+
+        cartCallback(cart);
+    };
+
+    cartCallback = function(cart) {
+        console.log('cartCallback');
+        $body.removeClass('drawer--is-loading');
+        $body.trigger('afterCartLoad.ajaxCart', cart);
+
+        if (window.Shopify && Shopify.StorefrontExpressButtons) {
+            Shopify.StorefrontExpressButtons.initialize();
+        }
+    };
+
+    adjustCart = function() {
+        // Delegate all events because elements reload with the cart
+
+        // Add or remove from the quantity
+        $(document).on('click', '.ajaxcart__qty-adjust', function(evt) {
+            evt.preventDefault();
+            console.log('ajaxcart__qty-adjust click', evt);
+            if (isUpdating) {
+                return;
+            }
+
+            var $el = $(this),
+                line = $el.data('line'),
+                $qtySelector = $el.siblings('.ajaxcart__qty-num'),
+                qty = parseInt($qtySelector.val().replace(/\D/g, ''));
+
+            var qty = validateQty(qty);
+
+            // Add or subtract from the current quantity
+            if ($el.hasClass('ajaxcart__qty--plus')) {
+                qty += 1;
+            } else {
+                qty -= 1;
+                if (qty <= 0) qty = 0;
+            }
+
+            // If it has a data-line, update the cart.
+            // Otherwise, just update the input's number
+            if (line) {
+                console.log('adjust quantity');
+                updateQuantity(line, qty);
+            } else {
+                $qtySelector.val(qty);
+            }
+        });
+
+        $(document).on('click', '.ajaxcart__qty-remove', function(e) {
+            e.preventDefault();
+            console.log('.ajaxcart__qty-remove click to remove');
+            var $el = $(this),
+                line = $el.data('line');
+
+            if (isUpdating) {
+                return;
+            }
+            updateQuantity(line, 0);
+        });
+
+        // Update quantity based on input on change
+        $(document).on('change', '.ajaxcart__qty-num', function() {
+            if (isUpdating) {
+                return;
+            }
+
+            var $el = $(this),
+                line = $el.data('line'),
+                qty = parseInt($el.val().replace(/\D/g, ''));
+
+            var qty = validateQty(qty);
+
+            // If it has a data-line, update the cart
+            if (line) {
+                updateQuantity(line, qty);
+            }
+        });
+
+        // Prevent cart from being submitted while quantities are changing
+        $body.on('submit', 'form.ajaxcart', function(evt) {
+            if (isUpdating) {
+                evt.preventDefault();
+            }
+        });
+
+        // Highlight the text when focused
+        $(document).on('focus', '.ajaxcart__qty-adjust', function(evt) {
+            var $el = $(this);
+            setTimeout(function() {
+                $el.select();
+            }, 50);
+        });
+
+        function updateQuantity(line, qty) {
+            console.log('updateQuantity');
+            isUpdating = true;
+
+            // Add activity classes when changing cart quantities
+            var $row = $('.ajaxcart__row[data-line="' + line + '"]').addClass('is-loading');
+
+            if (qty === 0) {
+                $row.parent().addClass('is-removed');
+            }
+
+            // Slight delay to make sure removed animation is done
+            setTimeout(function() {
+                ShopifyAPI.changeItem(line, qty, adjustCartCallback);
+            }, 250);
+        }
+
+        // Save note anytime it's changed
+        $body.on('change', 'textarea[name="note"]', function() {
+            var newNote = $(this).val();
+
+            // Update the cart note in case they don't click update/checkout
+            ShopifyAPI.updateCartNote(newNote, function(cart) {});
+        });
+    };
+
+    adjustCartCallback = function(cart, updatedProductData, quantity) {
+        console.log('adjustCartCallback');
+        // Update quantity and price
+        updateCountPrice( cart );
+
+        const adjustCartEvent = new Event('adjustCartCallback.ajaxCart', cart);
+        document.body.dispatchEvent(adjustCartEvent);
+
+        // Reprint cart on short timeout so you don't see the content being removed
+        setTimeout(function() {
+            isUpdating = false;
+            ShopifyAPI.getCart(buildCart);
+        }, 150)
+    };
+
+    createQtySelectors = function() {
+        // If there is a normal quantity number field in the ajax cart, replace it with our version
+        if ($('input[type="number"]', $cartContainer).length) {
+            $('input[type="number"]', $cartContainer).each(function() {
+                var $el = $(this),
+                    currentQty = $el.val();
+
+                var itemAdd = currentQty + 1,
+                    itemMinus = currentQty - 1,
+                    itemQty = currentQty;
+
+                var source = $("#AjaxQty").html(),
+                    template = Handlebars.compile(source),
+                    data = {
+                        key: $el.data('id'),
+                        itemQty: itemQty,
+                        itemAdd: itemAdd,
+                        itemMinus: itemMinus
+                    };
+
+                // Append new quantity selector then remove original
+                $el.after(template(data)).remove();
+            });
+        }
+    };
+
+    qtySelectors = function() {
+        // Change number inputs to JS ones, similar to ajax cart but without API integration.
+        // Make sure to add the existing name and id to the new input element
+        var numInputs = $('input.enable-qty-selector');
+
+        if (numInputs.length) {
+            numInputs.each(function() {
+                var $el = $(this),
+                    currentQty = $el.val(),
+                    inputName = $el.attr('name'),
+                    inputId = $el.attr('id');
+
+                var itemAdd = currentQty + 1,
+                    itemMinus = currentQty - 1,
+                    itemQty = currentQty;
+
+                var source = $("#JsQty").html(),
+                    template = Handlebars.compile(source),
+                    data = {
+                        key: $el.data('id'),
+                        itemQty: itemQty,
+                        itemAdd: itemAdd,
+                        itemMinus: itemMinus,
+                        inputName: inputName,
+                        inputId: inputId
+                    };
+
+                // Append new quantity selector then remove original
+                $el.after(template(data)).remove();
+            });
+
+            // Setup listeners to add/subtract from the input
+            $('.js-qty__adjust').on('click', function() {
+                var $el = $(this),
+                    id = $el.data('id'),
+                    $qtySelector = $el.siblings('.js-qty__num'),
+                    qty = parseInt($qtySelector.val().replace(/\D/g, ''));
+
+                var qty = validateQty(qty);
+
+                // Add or subtract from the current quantity
+                if ($el.hasClass('js-qty__adjust--plus')) {
+                    qty += 1;
+                } else {
+                    qty -= 1;
+                    if (qty <= 1) qty = 1;
+                }
+
+                // Update the input's number
+                $qtySelector.val(qty);
+            });
+        }
+    };
+
+    validateQty = function(qty) {
+        if ((parseFloat(qty) == parseInt(qty)) && !isNaN(qty)) {
+            // We have a valid number!
+        } else {
+            // Not a number. Default to 1.
+            qty = 1;
+        }
+        return qty;
+    };
+
+    module = {
+        init: init,
+        load: loadCart
+    };
+
+    return module;
+
+}(ajaxCart || {}, jQuery));

@@ -1,0 +1,57 @@
+{% form 'contact' %}
+    {% if form.posted_successfully? %}
+    <p class="form-success">{{ 'contact.form.post_success' | t }}</p>
+    {% endif %}
+    <div class="fieldset">
+        <div class="field col">
+            <div class="input-wrapper">
+                <input type="text"
+                    name="contact[name]"
+                    id="ContactFormName"
+                    placeholder="{{ 'contact.form.name' | t }}"
+                    value="{% if form[name] %}{{ form[name] }}{% elsif customer %}{{ customer.name }}{% endif %}">
+                <label for="ContactFormName">{{ 'contact.form.name' | t }}</label>
+            </div>
+        </div>
+        <div class="field col">
+            <div class="input-wrapper">
+                <input type="email"
+                    name="contact[email]"
+                    id="ContactFormEmail"
+                    placeholder="{{ 'contact.form.email' | t }}"
+                    value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+                    spellcheck="false"
+                    autocomplete="off"
+                    autocapitalize="off">
+                <label for="ContactFormEmail">{{ 'contact.form.email' | t }}</label>
+            </div>
+        </div>
+        <div class="field">
+            <div class="input-wrapper">
+                <input type="tel"
+                    name="contact[phone]"
+                    id="ContactFormPhone"
+                    placeholder="{{ 'contact.form.phone' | t }}"
+                    value="{% if form[phone] %}{{ form[phone] }}{% elsif customer %}{{ customer.phone }}{% endif %}"
+                    pattern="[0-9\-]*">
+                <label for="ContactFormPhone">{{ 'contact.form.phone' | t }}</label>
+            </div>
+        </div>
+        <div class="field">
+            <div class="input-wrapper">
+                {% comment %} Removed form.body conditional, causing whitespace in textarea and Shopify docs says form.body are exclusive to form tags with the "article" parameter. --Dell {% endcomment %}
+                <textarea rows="10"
+                    name="contact[body]"
+                    id="ContactFormMessage"
+                    placeholder="{{ 'contact.form.message_area' | t }}"></textarea>
+                <label for="ContactFormMessage">{{ 'contact.form.message' | t }}</label>
+            </div>
+        </div>
+    </div>
+    
+    {{ form.errors | default_errors }}
+    
+    <div class="actions">
+        <button type="submit" class="btn">{{ 'contact.form.send' | t }}</button>
+    </div>
+{% endform %}

@@ -1,0 +1,14 @@
+<div class="mobile-accordion">
+    {% for link in categories %}
+        <div class="category-item">
+            <a class="nav-accordion-title" data-target="{{ link.title | handle }}">{{ link.title }}</a>
+            {% if link.links.size > 0 %}
+                <div class="nav-accordion-content" data-target="{{ link.title | handle }}">
+                    {% for sublink in link.links %}
+                        <p>{{ sublink.title }}</p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    {% endfor %}
+</div>

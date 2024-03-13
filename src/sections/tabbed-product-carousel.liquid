@@ -1,0 +1,168 @@
+{% comment %} {% render 'home-featured-products', section_settings: section.settings, section_blocks: section.blocks  %} {% endcomment %}
+{% if section.blocks.size > 0 %}
+<section class="module tabbed-product-carousel">
+
+    {% if section.settings.title != blank or section.settings.caption != blank %}
+        {% capture module_heading %}
+            <div class="module-intro theme-light{% if section.settings.small_container %} small-container{% endif %}">
+                <div class="headlines-wrap">
+                {% if section.settings.title != blank %}<h3 class="headline">{{section.settings.title}}</h3>{% endif %}
+                {% if section.settings.caption != blank %}<div class="caption">{{section.settings.caption}}</div>{% endif %}
+                {% if section.settings.cta_url != blank %}
+                <a href="{{section.settings.cta_url}}" class="module-cta cta-{{section.settings.cta_style}}">{{ section.settings.cta_text }}</a>
+                {% endif %}
+                </div>
+            </div>
+        {% endcapture %}
+        {{module_heading}}
+    {%- endif -%}
+
+    {% assign content_count = 0 %}
+    {% for block in section.blocks %}
+        {%- assign block_collection = collections[block.settings.collection] %}
+        {%- assign col_product_count = block_collection.products_count | times:1 %}
+        {% if col_product_count < 1 %}{% continue %}{% endif %}
+
+        {% assign wrapper_class = 'collection-products slick-carousel ' | append: section_settings.layout_type %}
+        {% assign scroller_class = ' products-carousel ' | append: section_settings.layout_type %}
+
+        {% capture tab_title %}
+        <div
+            class="tabbed-title{% if forloop.first %} active{% endif %}"
+            data-target="tab-{{ block.settings.title | handle }}">
+        {{ block.settings.title }}
+        </div>
+        {% endcapture %}
+
+        {% capture tab_content %}
+        <div
+            data-target="tab-{{ block.settings.title | handle }}"
+            id="tab-{{ block.settings.title | handle }}"
+            class="tabbed-content{% if forloop.first %} active{% endif %}">
+
+            {% render 'products-carousel',
+                data_aos: 'fade-up',
+                carousel_type: 'product',
+                limit: block.settings.num_items,
+                arrow_box_class: 'collections-wrapper',
+                wrapper_class: wrapper_class,
+                scroller_class: scroller_class,
+                iterables: block_collection.products %}
+        </div>
+        {% endcapture %}
+
+        {% if col_product_count > 0 %}
+            {% assign content_count = content_count | plus: 1 %}
+        {% endif %}
+
+        {% assign tab_titles = tab_titles | append: tab_title %}
+        {% assign tab_contents = tab_contents | append: tab_content %}
+    {% endfor %}
+
+    <div class="tabbed-carousels tabs-num-{{content_count}} tabbed-module">
+        <div class="tabbed-title-wrap">{{tab_titles}}</div>
+        <div class="tabbed-content-wrap">{{tab_contents}}</div>
+    </div><!--.tabbed-content-->
+
+</section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Tabbed Product Carousel",
+  "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+        },
+        {
+            "type": "text",
+            "id": "subtitle",
+            "label": "Subtitle"
+        },
+        {
+            "type": "textarea",
+            "id": "caption",
+            "label": "Caption"
+        },
+        {
+            "type": "header",
+            "content": "Call to action"
+        },
+        {
+            "type": "text",
+            "id": "cta_text",
+            "label": "CTA Text",
+            "default": "Shop Now"
+        },
+        {
+            "type": "url",
+            "id": "cta_url",
+            "label": "CTA URL",
+            "info": "CTA Not shown when empty"
+        },
+        {
+            "type": "radio",
+            "options": [
+                { "value": "outline", "label": "Outline" },
+                { "value": "solid", "label": "Solid Color" },
+                { "value": "solid-2", "label": "Solid Dark/Light" },
+                { "value": "link", "label": "Link" }
+            ],
+            "default": "outline",
+            "id": "cta_style",
+            "label": "CTA Style"
+        }
+        
+  ],
+  "blocks": [
+    {
+        "type": "carousel",
+        "name": "Carousel",
+        "limit": 4,
+        "settings": [
+            {
+                "type": "text",
+                "id": "title",
+                "label": "Carousel Title"
+            },
+            {
+                "type": "radio",
+                "options": [
+                    { "value": "slick-carousel", "label": "Carousel" },
+                    { "value": "grid", "label": "Grid" }
+                ],
+                "default": "slick-carousel",
+                "id": "layout_type",
+                "label": "Product display format"
+            },
+            {
+                "type": "collection",
+                "id": "collection",
+                "label": "Products Collection"
+            },
+            {
+                "type":      "range",
+                "id":        "num_items",
+                "min":       6,
+                "max":       16,
+                "step":      1,
+                "unit":      "pr",
+                "label":     "Number of items",
+                "default":   10
+            }
+        ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Tabbed Product Carousel",
+      "category": "Homepage",
+      "settings": {
+        
+      }
+    }
+  ]
+}
+{% endschema %}

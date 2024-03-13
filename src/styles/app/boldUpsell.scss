@@ -1,0 +1,52 @@
+.bold-upsell__intro-heading{
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+article.bold-product{
+    border: 0;
+}
+.bold-product__info{
+    text-align: left;
+}
+.bold-product__pricing{
+    text-align: left;
+    font-size: 12px;
+    line-height: 19px;
+    .bold-product__price{
+        font-size: inherit;
+    }
+}
+
+.bold-product__variants{
+    .bold-product__variant-selector{
+        border-color: $lightGrey;
+    }
+}
+
+.add-to-cart.bold-product__button{
+    @extend .cta-1;
+    color: $white !important;
+    margin-bottom: 10px;
+    border: 0;
+    &:hover,
+    &:visited{
+        background-color: var(--main-color);
+        color: $white;
+        opacity: 0.8;
+    }
+}
+.bold-modal__footer{
+
+}
+.bold-upsell__button.bold-upsell__button--primary{
+    @extend .cta-2;
+    color: $white !important;
+    &:hover,
+    &:visited{
+        background-color: $black;
+        color: $white;
+        opacity: 0.8;
+    }
+}

@@ -1,0 +1,216 @@
+{% if section.blocks.size > 0 %}
+<section class="module image-blocks-grid block-size-{{section.blocks.size}} small-grid-{{section.settings.image_mobile_columns}} small-first-{{section.settings.image_mobile_first_row_columns}} large-grid-{{section.settings.image_desktop_columns}} large-first-{{section.settings.image_desktop_first_row_columns}}">
+  {% for block in section.blocks %}
+    {% if block.settings.image == blank %}{% continue %}{% endif %}
+    <div class="image-block">
+        {% if block.settings.link != blank %}
+          <a href="{{block.settings.link}}" class="banner-link" title="Go to {{ block.settings.title }}">
+        {% endif %}
+
+        <!--block.settings.image:{{block.settings.image}}-->
+        <!--block.settings.mobile_image:{{block.settings.mobile_image}}-->
+        <div class="image-container">
+            {% render 'responsive-image',
+                image: block.settings.image,
+                mobile_image: block.settings.mobile_image,
+                class: 'block-image',
+                img_class: 'block-image-wrap' %}
+        </div>
+
+        {% if block.settings.show_content %}
+        <div class="block-content {{block.settings.text_color}} {{ block.settings.text_align }} {{ block.settings.mobile_text_align }}" data-aos="fade-up" data-aos-duration="1500">
+
+            {% if block.settings.title != blank %}
+            <div class="headline">{{ block.settings.title }}</div>
+            {% endif %}
+            {% if block.settings.subtitle != blank %}
+            <div class="subtitle">{{ block.settings.subtitle }}</div>
+            {% endif %}
+            {% if block.settings.cta != blank %}
+            <div class="cta-wrap">
+                <button class="cta-{{-block.settings.cta_style-}}"><span>{{ block.settings.cta }}</span></button>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if block.settings.link != blank %}
+            </a>
+        {% endif %}
+    </div>
+    {% endfor %}
+
+</section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Image Blocks Grid",
+  "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+        },
+        {
+            "type": "header",
+            "content": "Layout Settings"
+        },
+        {
+            "type": "radio",
+            "options": [
+                { "value": "2", "label": "2" },
+                { "value": "1", "label": "1" }
+            ],
+            "default": "2",
+            "id": "image_mobile_columns",
+            "label": "Mobile Default Columns"
+        },
+        {
+            "type": "radio",
+            "options": [
+                { "value": "2", "label": "2" },
+                { "value": "1", "label": "1" }
+            ],
+            "default": "1",
+            "id": "image_mobile_first_row_columns",
+            "label": "Mobile First Row Columns"
+        },
+        {
+            "type": "radio",
+            "options": [
+                { "value": "4", "label": "4" },
+                { "value": "3", "label": "3" },
+                { "value": "2", "label": "2" }
+            ],
+            "default": "3",
+            "id": "image_desktop_columns",
+            "label": "Desktop Default Columns"
+        },
+        {
+            "type": "radio",
+            "options": [
+                { "value": "4", "label": "4" },
+                { "value": "3", "label": "3" },
+                { "value": "2", "label": "2" },
+                { "value": "1", "label": "1" }
+            ],
+            "default": "2",
+            "id": "image_desktop_first_row_columns",
+            "label": "Desktop First Row Columns"
+        }
+  ],
+  "blocks": [
+    {
+        "type": "banner",
+        "name": "Banner block",
+        "settings": [
+            {
+                "type": "header",
+                "content": "Image settings"
+            },
+            {
+                "type": "image_picker",
+                "id": "image",
+                "label": "Image"
+            },
+            {
+                "type": "image_picker",
+                "id": "mobile_image",
+                "label": "Mobile Image"
+            },
+            {
+                "type": "url",
+                "id": "link",
+                "label": "Link"
+            },
+
+            {
+                "type": "header",
+                "content": "Content settings"
+            },
+            {
+                "type": "checkbox",
+                "default": true,
+                "id": "show_content",
+                "label": "Show text content"
+            },
+            {
+                "type": "radio",
+                "options": [
+                    { "value": "theme-dark", "label": "Light" },
+                    { "value": "theme-light", "label": "Dark" },
+                    { "value": "theme-primary", "label": "Theme" }
+                ],
+                "default": "theme-primary",
+                "id": "text_color",
+                "label": "Font Color"
+            },
+            {
+                "type": "header",
+                "content": "Text Alignment"
+            },
+            {
+                "type": "radio",
+                "options": [
+                    { "value": "text-left", "label": "Left" },
+                    { "value": "text-center", "label": "Center" },
+                    { "value": "text-right", "label": "Right" }
+                ],
+                "default": "text-left",
+                "id": "text_align",
+                "label": "Text Alignment"
+            },
+            {
+                "type": "radio",
+                "options": [
+                    { "value": "mobile-text-left", "label": "Left" },
+                    { "value": "mobile-text-center", "label": "Center" },
+                    { "value": "mobile-text-right", "label": "Right" }
+                ],
+                "default": "mobile-text-center",
+                "id": "mobile_text_align",
+                "label": "Mobile Text Alignment"
+            },
+            {
+                "type": "text",
+                "id": "title",
+                "label": "Title"
+            },
+            {
+                "type": "text",
+                "id": "subtitle",
+                "label": "Subtitle"
+            },
+            {
+                "type": "text",
+                "id": "cta",
+                "label": "CTA Text",
+                "default": "Shop"
+            },
+            {
+                "type": "radio",
+                "options": [
+                    { "value": "outline", "label": "Outline" },
+                    { "value": "solid", "label": "Solid Color" },
+                    { "value": "solid-2", "label": "Solid Dark/Light" },
+                    { "value": "link", "label": "Link" }
+                ],
+                "default": "solid",
+                "id": "cta_style",
+                "label": "CTA Style"
+            }
+        ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Image Blocks Grid",
+      "category": "Homepage",
+      "settings": {
+        
+      }
+    }
+  ]
+}
+{% endschema %}

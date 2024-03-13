@@ -1,0 +1,47 @@
+{% comment %}
+    This will be the master template for repeatable sections. Changes/Updates will need to be carried over to 
+    other utility sections.
+{% endcomment %}
+{% schema %}
+{
+    "name": "Utility Sections",
+    "blocks": [
+        {
+            "type": "section_block",
+            "name": "Content Block",
+            "settings": [
+                {
+                    "type": "text",
+                    "id": "section_title",
+                    "label": "Content Title (Large)"
+                },
+                {
+                    "type": "text",
+                    "id": "section_subtitle",
+                    "label": "Content Subitle (Small)"
+                },
+                {
+                    "type": "checkbox",
+                    "id": "section_accordion",
+                    "label": "Has Accordions?"
+                },
+                {
+                    "type": "html",
+                    "id": "section_details",
+                    "label": "Content Details"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Utility Contents",
+            "category": "Custom Content",
+            "settings": {
+
+            }
+        }
+    ]
+}
+{% endschema %}
+{%- render 'utility-section-view' with section -%}

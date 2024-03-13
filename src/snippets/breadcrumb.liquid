@@ -1,0 +1,66 @@
+<!-- /snippets/breadcrumb.liquid -->
+{% comment %}
+Documentation - http://docs.shopify.com/support/your-website/navigation/creating-a-breadcrumb-navigation
+{% endcomment %}
+
+{% assign parent_category_menu = collection.metafields["global"]["parent-category-menu"] %}
+
+{% unless template == 'index' or template == 'cart' %}
+    <nav class="breadcrumb" role="presentation" aria-label="breadcrumbs">
+        {%- assign master_collection = collection.handle | replace: '-shop-all' -%}
+        {%- assign link_title = 'general.breadcrumbs.home_link_title' | t -%}
+        {%- if parent_category_menu != blank -%}
+            {%- assign link_title = 'Collection: ' | append: parent_category_menu -%}
+        {%- endif -%}
+        <a href="/{% if parent_category_menu != blank %}collections/{{ parent_category_menu | handle }}{% endif %}" title="{{ link_title }}">
+            {% if parent_category_menu != blank %}
+                {{ parent_category_menu }}
+            {% else %}
+                {{ 'general.breadcrumbs.home' | t }}
+            {% endif %}
+        </a>
+        <!-- SOL -->
+        &nbsp;
+        &sol;
+        &nbsp;
+        <!-- END SOL -->
+
+        {% comment %}
+        <span class="divider" aria-hidden="true">/</span>
+        {% endcomment %}
+        {% if template contains 'product' %}
+            {% if collection %}
+                {% if collection.handle %}
+                {% capture url %}/collections/{{ collection.handle }}{% endcapture %}
+                {{ collection.title | link_to: url | replace: '_similars:', '' }}
+                {% endif %}
+                <span class="divider" aria-hidden="true">/</span>
+            {% endif %}
+            <span class="last">{{ product.title | replace: 'Maaji', '' }}</span>
+            
+        {% elsif template contains 'collection' and collection.handle %}
+            <span class="last">{{ collection.title | replace: '_similars:', '' }}</span>
+        {% elsif template == 'blog' %}
+            <span class="divider" aria-hidden="true">/</span>
+            {% if current_tags %}
+                {{ blog.title | link_to: blog.url }}
+                <span class="divider" aria-hidden="true">/</span>
+                <span>{{ current_tags | join: " + " }}</span>
+            {% else %}
+                <span class="last">{{ blog.title }}</span>
+            {% endif %}
+        {% elsif template == 'article' %}
+            {{ blog.title | link_to: blog.url }}
+            {% comment %}
+            <span class="divider" aria-hidden="true">/</span>
+            <span>{{ article.title }}</span>
+            {% endcomment %}
+        {% elsif template contains 'search' %}
+            <span class="last">Search</span>
+        {% elsif template contains 'page' %}
+            <span class="last">{{ page.title }}</span>
+        {% else %}
+            <span class="last">{{ page_title }}</span>
+        {% endif %}
+    </nav>
+{% endunless %}

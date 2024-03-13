@@ -1,0 +1,26 @@
+{
+    "sections": {
+        "locale_selector": {
+            "name": "Configuraciones de Ubicación",
+            "settings": {
+
+            }
+        },
+        "footer": {
+            "name": "Footer",
+            "settings": {
+                "header_language_selector": "Para agregar un lenguaje ve a [language settings.](\/admin\/settings\/languages)",
+                "show_locale_selector": {
+                "label": "Mostrar selector lenguaje"
+                },
+                "header_currency_selector": "Para agregar una moneda ve a [currency settings.](\/admin\/settings\/payments)",
+                "show_currency_selector": {
+                "label": "Mostrar selector moneda"
+                },
+                "show_currency_flags": {
+                "label": "Mostrar banderas de moneda"
+                }
+            }
+        }
+    }
+}

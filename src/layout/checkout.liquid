@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="{{ locale }}" dir="{{ direction }}" class="{{ checkout_html_classes }}">
+<head>
+    {% if customer != blank %}
+        {% comment %}Remove cookie if logged in (no need to sign up anymore){% endcomment %}
+        <script>
+            document.cookie = 'saveAccountInfo=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        </script>
+    {% endif %}
+
+    {% render 'head-code' %}
+
+    <meta name="referrer" content="origin">
+
+    {{ content_for_header }}
+
+    {{ checkout_stylesheets }}
+
+    {% comment %} {{ 'checkout.scss.css' | asset_url | stylesheet_tag }} 
+    {{ 'checkout.css' | asset_url | stylesheet_tag }}{% endcomment %}
+
+    {% render 'css-import', css_url: 'checkout.css', webpack_dev_server: 'http://localhost:9090/mj/assets/' %}
+
+    {{ checkout_scripts }}
+
+    {%- comment -%}{{ '//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js' | script_tag }}{%- endcomment -%}
+    {%- comment -%}{{ 'view-checkout.js' | asset_url | script_tag }}{%- endcomment -%}
+
+    {% comment %} 
+    {% assign webpack_dev_server = 'http://localhost:9090/mj/assets/' %}
+    {% assign js_bundle_url = 'checkout.bundle.js' %}
+
+    {% if settings.webpack_dev_server_enable %}
+        {% assign js_bundle_url = js_bundle_url | prepend: webpack_dev_server %}
+    {% else %}
+        {% assign js_bundle_url = js_bundle_url | asset_url %}
+    {% endif %}
+
+    <!-- WEBPACK -->
+    <script src="{{ js_bundle_url }}"></script> 
+    {% endcomment %}
+
+    {% comment %} <script>
+    window.addEventListener('load', (event) => {
+        console.log('page is fully loaded');
+        setTimeout(function(){
+            if(window.innerWidth < 768){
+            document.querySelector('.order-summary-toggle__text--show').click()
+            }
+        }, 1000)
+    });
+    </script> {% endcomment %}
+
+    {% if settings.gtm_id != blank %}
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','{{settings.gtm_id}}');</script>
+    <!-- End Google Tag Manager -->
+    {% endif %}
+
+    {%- render 'limespot' -%}
+
+</head>
+
+<body class="template-checkout">
+    {% if settings.gtm_id != blank %}
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id={{settings.gtm_id}}"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    {% endif %}
+
+    {% if settings.custom_body_code != blank %}
+        {{ settings.custom_body_code }}
+    {% endif %}
+
+    {{ skip_to_content_link }}
+
+    <header class="site-header" data-header>
+        <div class="header-content">
+            <div class="inner-wrap">
+                <div class="h1" itemscope itemtype="http://schema.org/Organization">
+                    <span class="screen-reader-text" aria-hidden="true">{{- shop.name -}}</span>
+                    <a href="/" itemprop="url" class="site-logo site-header__logo-image"></a>
+                </div>
+                <div class="hidden">
+                    {{ content_for_logo }}
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div
+        class="content"
+        data-content>
+
+        {% if settings.checkout_promo_banner != blank %}
+        <div class="promo-banner activate">{{ settings.checkout_promo_banner }}</div>
+        {% endif %}
+
+        {{ order_summary_toggle }}
+
+        <div class="wrap">
+
+            <div class="breadcrumbs-wrapper">
+                {{ breadcrumb }}
+            </div>
+
+            <div class="main" role="main">
+                <div class="main__header">
+                    {{ alternative_payment_methods }}
+                </div>
+                <div class="main__content">
+                    {{ content_for_layout }}
+
+                    {% if settings.checkout_terms %}
+                        <label class="accept-terms-checkbox {% if settings.checkout_terms == false %}hide{% endif %}" for="accept-terms">
+                            <input type="checkbox" id="accept-terms" name="gift-message">
+                            <div class="check-mark"></div>
+                            <div class="terms-content-wrap">
+                                <span class="terms-text">{{ 'cart.general.terms_conditions_check_html' | t }}</span>
+                                <span class="terms-error">{{ 'cart.general.terms_conditions_error' | t }}</span>
+                            </div>
+                        </label>
+                    {% endif %}
+
+                    {% if settings.checkout_notes != blank %}
+                        <div class="checkout-notes">
+                            {{ settings.checkout_notes }}
+                        </div>
+                    {% endif %}
+
+                </div>
+                {% comment %} 
+                <div class="main__footer">
+                    {{ content_for_footer }}
+                </div>
+                {% endcomment %}
+            </div>
+            <div class="sidebar" role="complementary">
+                <div class="sidebar__content">
+                    <div class="sidebar__content--header">
+                        <h2>Cart</h2><div class="item-count"></div>
+                    </div>
+
+                    {{ content_for_order_summary }}
+
+                    <div class="checkout-crosssell">
+                        
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="site-footer" role="contentinfo">
+        
+        {{ content_for_footer }}
+    
+        <div class="footer-part footer-slim">
+            <div class="footer-wrapper">
+                <div class="footer-block copyright">
+                    {{ 'now' | date: "%Y" }} &copy; {{ settings.footer_copyright }}
+                </div>
+                <div class="footer-block bottom-menu link-wrapper">
+                    {%- assign footer_slim_linklist = settings.footer_slim_linklist -%}
+                    {% if linklists[footer_slim_linklist].links.size > 0 %}
+                    {% for link in linklists[footer_slim_linklist].links %}
+                    <a class="link" href="{{ link.url }}" target="_blank">{{ link.title }}</a>
+                    {% endfor %}
+                    {% endif %}
+                    <a class="link build-by" href="https://jumpdigital.co" target="_blank" title="Visit Jump Digital - Opens in a new tab">Build by Jump Digital</a>
+                    <a class="link powered-by" href="https://shopify.com" target="_blank">Powered by Shopify</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    {{ tracking_code }}
+
+    {% render 'checkout-additional-scripts' %}
+    
+    <script>
+        var dataLayerObject = {
+            event: "checkoutView",
+            checkoutCustomerId: "{{ customer.id }}",
+            checkoutCustomerEmail: '{{ customer.email }}' || '{{ checkout.email }}',
+            checkoutCustomerName: '{{ customer.name }}',
+            checkoutCustomerTotalSpent: '{{ customer.total_spent }}'
+        }
+        window.dataLayer.push( dataLayerObject );
+    
+        // Login url
+        window.checkoutLoginLinkURL = '{{ settings.checkout_login_link }}';
+    </script>
+</body>
+</html>

@@ -1,0 +1,18 @@
+{% comment %} 
+
+
+{% endcomment %}
+
+{%- assign block_collection_1 = collections[settings.collection] %}
+{%- assign col_product_count_1 = block_collection_1.products_count | times:1 %}
+
+{%- assign block_collection_2 = collections[settings.collection_2] %}
+{%- assign col_product_count_2 = block_collection_2.products_count | times:1 %}
+
+<section class="module module-mix-and-match">
+    <div class="module-container">
+        {% render 'module-mix-match-carousel', col_product_count: col_product_count_1, block_collection: block_collection_1, carousel_index: 1  %}
+
+        {% render 'module-mix-match-carousel', col_product_count: col_product_count_2, block_collection: block_collection_2, carousel_index: 2  %}
+    </div>
+</section>

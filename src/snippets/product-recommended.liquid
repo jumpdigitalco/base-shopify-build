@@ -1,0 +1,115 @@
+
+{% assign setting_prefix = 'related_collection_' %}
+{% assign recommended_titles = '' %}
+{% assign recommended_content = '' %}
+{% assign counter = 0 %}
+    
+{% for i in (1..4) %}
+    {% assign reco_title = '' %}
+    {% assign reco_content = '' %}
+
+    {% assign title_handle = setting_prefix | append: 'title_' | append: i %}
+    {% assign related_title = product.metafields.pdp[title_handle] %}
+
+    {% assign content_handle = setting_prefix | append: 'content_' | append: i %}
+    {% assign related_content = product.metafields.pdp[content_handle] %}
+
+    {% assign collection_handle = setting_prefix | append: i %}
+    {% assign related_collection = product.metafields.pdp[collection_handle] %}
+    {% assign related_collection = collections[ related_collection ] %}
+    {% assign related_collection_count = related_collection.products_count | times:1 %}
+
+    {% if related_title != blank and related_collection_count > 0 or related_content != '' %}
+        {% assign counter = counter | plus: 1 %}
+        {% capture reco_title %}
+            <div class="tabbed-title reco-tabbed-title-{{counter}}{% if counter == 1 %} active{% endif %}" data-target="reco-tabbed-{{counter}}">
+                {{related_title}}
+            </div>
+        {% endcapture %}
+        {% capture reco_content %}
+            <div class="tabbed-content{% if counter == 1 %} active{% endif %}" data-target="reco-tabbed-{{counter}}" id="reco-tabbed-{{counter}}">
+                <div class="content-inner">
+                    {% if related_collection_count > 0 %}
+                    {% render 'products-carousel',
+                        intro_title: '{{settings.product_default_recommendation_title}}',
+                        data_aos: 'fade-up',
+                        carousel_type: 'product'
+                        arrow_box_class: 'collections-wrapper',
+                        wrapper_class: 'collection-products slick-carousel',
+                        scroller_class: 'complementary-products',
+                        iterables: related_collection.products 
+                    %}
+                    {% endif%}
+                    {% if related_content != '' %}
+                        {{related_content}}
+                    {% endif %}
+                </div>
+            </div>
+        {% endcapture %}
+
+    {% elsif related_title != blank and forloop.index == 1 and collection.products %}
+        {% assign col_product_count = collection.products_count | times:1 %}
+        {% if col_product_count > 0 %}
+            {% assign counter = counter | plus: 1 %}
+            {% capture reco_title %}
+            <div class="tabbed-title within-collection reco-tabbed-title-{{counter}} active" data-target="reco-tabbed-{{counter}}">
+                {{related_title}}
+            </div>
+            {% endcapture %}
+            {% capture reco_content %}
+                <div class="tabbed-content active" data-target="reco-tabbed-{{counter}}" id="reco-tabbed-{{counter}}">
+                    <div class="content-inner">
+                        {% render 'products-carousel',
+                            intro_title: '',
+                            data_aos: 'fade-up',
+                            carousel_type: 'product'
+                            arrow_box_class: 'collections-wrapper',
+                            wrapper_class: 'collection-products slick-carousel',
+                            scroller_class: 'complementary-products',
+                            iterables: collection.products 
+                        %}
+                    </div>
+                </div>
+            {% endcapture %}
+        {% endif %}
+    {% endif %}
+
+    {% if reco_title != '' and reco_content != '' %}
+    {% assign recommended_titles = recommended_titles | append: reco_title %}
+    {% assign recommended_content = recommended_content | append: reco_content %}
+    {% endif %}
+
+{%  endfor %}
+
+<div class="product-recommend buy-together">
+    <div id="ProductSection-{{ product.id }}" class="product-section" data-section-id="{{ product.id }}" data-section-type="product-template"></div>
+    <div id="shopify-section-product-template" class="shopify-section"></div>
+</div>
+
+<div class="product-recommend limespot">
+    <limespot></limespot>
+</div>
+
+{% if recommended_titles != '' and recommended_content != '' %}
+    <div class="product-recommend tabs-{{counter}}">
+        <div data-aos="fade-up" class="module-intro aos-init aos-animate">
+            <div class="headlines-wrap">            
+                <h2 class="headline">{{settings.product_recommendations_title}}</h2>
+            </div>
+        </div>
+    
+        <div class="recommended-tabs">
+        <div class="tabbed-module">
+            {% if counter > 1%}
+            <div class="tabbed-title-wrap">
+                {{recommended_titles}}
+            </div>
+            {% endif %}
+            <div class="tabbed-content-wrap">
+                {{recommended_content}}
+            </div>
+    
+        </div>
+    </div>
+    </div>
+{% endif %}

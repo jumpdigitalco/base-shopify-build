@@ -1,0 +1,214 @@
+{% comment %}
+Image naming convention : sku_[sku]_[variant_option]_[variant_option_value]_[index_or_swatch].[file_extension]
+    e.g. sku_test002_color_pink_swatch.png
+    e.g. sku_test002_color_pink_02.png
+{% endcomment %}
+{%- assign media_index_sku = 1 -%}
+{%- assign media_index_variant_option = 2 -%}
+{%- assign media_index_variant_value = 3 -%}
+{%- assign media_index_indexing_or_swatch = 4 -%}
+{%- assign productImageRatio = 1.5 -%}
+
+{%- unless current_variant -%}
+    {%- assign current_variant = product.selected_or_first_available_variant -%}
+{%- endunless -%}
+
+{%- unless featured_image -%}
+    {%- assign featured_image = current_variant.featured_image | default: product.featured_image -%}
+{%- endunless -%}
+
+{% comment %} Check if product has multiple color variants to group image gallery per color {% endcomment %}
+{% assign hasMultipleColors = false %}
+{%- for option in product.options_with_values -%}
+    {%- assign optTitle = option.name | downcase -%}
+    {% if optTitle == 'color' %}
+        {% if option.values.size > 1 %}
+            {% assign hasMultipleColors = true %}
+            {% break %}
+        {% endif %}
+    {% endif %}
+{%- endfor -%}
+
+<div class="product-media {{ layout }}{% if hasMultipleColors %} multiple-colors{% endif %}">
+    {% assign lastCount = 0 %}
+    {% assign thumbnailHtml = '' %}
+    {% assign featuredImageSrcSections = featured_image.src | split: '_' %}
+    {% assign selected_media_option = featuredImageSrcSections[media_index_variant_option] | downcase %}
+    {% assign selected_media_option_value = featuredImageSrcSections[media_index_variant_value] | downcase %}
+    {% assign videoThumbnail = product.metafields["global"]["product-media-video-thumb"] %}
+    {% assign videoTitle = product.metafields["global"]["product-media-video-title"] %}
+    {% assign videoUrl = product.metafields["global"]["product-media-video"] %}
+    {% assign withLazyLoad = false %}
+
+
+    
+    <div class="product-media-images{% if product.media.size > 4 %} expandable{% endif %}" id="ProductMediaImages">
+        <div class="images-wrapper" data-variant-option="{{ selected_media_option }}" data-variant-option-value="{{ selected_media_option_value }}">
+        {% for image in product.media %}
+            {% comment %} Change image section read src from the image name to the image alt {% endcomment %}
+            {%- assign imageSrc = image.alt | default: image.src -%}            
+            {%- assign imageSrcSections = imageSrc | split: '_' -%}
+            {%- assign imageSrcSections__sku = imageSrcSections[media_index_sku] | downcase -%}
+            {%- assign imageSrcSections__option = imageSrcSections[media_index_variant_option] | downcase -%}
+            {%- assign imageSrcSections__value = imageSrcSections[media_index_variant_value] | downcase | default: 'noval' -%}
+            {%- assign imageSrcSections__index_swatch = imageSrcSections[media_index_indexing_or_swatch] | downcase -%}
+
+            {%- assign has_video = false -%}
+            {%- assign video_type = '' -%}
+            {%- assign video_modal = false -%}
+
+            {% case image.media_type %}
+                {% when 'external_video' %}
+                  {%- assign has_video = true -%}
+                  {%- assign video_type = image.host -%}
+                  {%- if image.host contains 'youtube' -%}
+                    {%- assign video_id = image.external_id -%}
+                  {%- endif -%}
+                {% when 'video' %}
+                    {%- assign has_video = true -%}
+                    {%- assign video_type = 'mp4' -%}
+                    {%- for source in image.sources -%}
+                        {%- assign video_url = source.url -%}
+                    {%- endfor -%}
+            {% endcase %}
+
+            {%- unless imageSrcSections__index_swatch contains 'swatch' -%}
+                
+                {%- if layout == 'slider' -%}
+                    {%- assign zoomImage = image.src | img_url: '3000x', format: 'pjpg' -%}
+                    {%- assign sliderImage = image.src | img_url: '768x', format: 'pjpg' -%}
+                    {%- assign thumbnailImage = image.src | img_url: '140x', format: 'pjpg' -%}
+                    {%- assign sliderImageSize = '768x' -%}
+                    {%- assign thumbnailImageSize = '140x' -%}
+                {%- elsif layout == 'scrolling' -%}
+                    {%- assign zoomImage = image.src | img_url: '3000x', format: 'pjpg' -%}
+                    {%- assign sliderImage = image.src | img_url: '1200x', format: 'pjpg' -%}
+                    {%- assign thumbnailImage = image.src | img_url: '1200x', format: 'pjpg' -%}
+                    {%- assign sliderImageSize = '1280x' -%}
+                    {%- assign thumbnailImageSize = '414x' -%}
+                {%- elsif layout == 'quickshop' -%}
+                    {%- assign zoomImage = image.src | img_url: '3000x', format: 'pjpg' -%}
+                    {%- assign sliderImage = image.src | img_url: '800x', format: 'pjpg' -%}
+                    {%- assign thumbnailImage = image.src | img_url: '200x', format: 'pjpg' -%}
+                    {%- assign sliderImageSize = '768x' -%}
+                    {%- assign thumbnailImageSize = '140x' -%}
+                {%- endif -%}
+                
+                {%- if isGiftCard -%}
+                    {%- assign zoomImage = '#' -%}
+                {%- endif -%}
+
+                {% assign image_variant = 'no-variant' %}
+                {% for variant in image.variants %}
+                    {% assign image_variant = variant.title %}
+                {% endfor %}
+
+                {% if lastCount > 1 and layout != 'quickshop' %}
+                    {% assign withLazyLoad = true %}
+                {% endif %}
+
+                {% comment %} option-{{ imageSrcSections__value | handleize }} {% endcomment %}
+                <a href="javascript:void(0)" class="image-slide{% if has_video %} media-video product-content-video{% endif %} option-{{image_variant | handleize }}{% if forloop.index > 4 %} hide-large{% endif %}"{% unless has_video %} data-zoom-image="{{ zoomImage }}"{% endunless %} data-variant-option-value="{{ imageSrcSections__value }}" data-image-variant="{{ image_variant | handleize }}" data-index="{{ forloop.index }}">
+                    {% comment %} <span class="background-image" role="img" aria-label="{{ image.src.alt }}" style="background-image:url('{{ sliderImage }}');"></span> {% endcomment %}
+                    {% comment %} <!--image.attached_to_variant: {{image.attached_to_variant}}--> {% endcomment %}
+                    {% unless has_video %}
+
+                        {% assign lazy_load = true %}
+                        {% if forloop.index < 3 %}
+                            {% assign lazy_load = false %}
+                        {% endif %}
+
+                        {% render 'responsive-image',
+                            image: image.src,
+                            lazy_load: lazy_load,
+                            class: 'product-image-wrap',
+                            img_class: 'product-image' %}
+
+                    {% else %}
+                        <div class="video-wrapper"
+                            data-ratio="{{ productImageRatio }}"
+                            data-video-type="{{ video_type }}"
+                            data-video-id="{{ videoId }}"
+                            data-video-src="{{ video_url }}">
+
+                            <div
+                                id="media-video-{{lastCount}}"
+                                class="video-box"
+                                data-video-id="{{ videoId }}"
+                                data-video-src="{{ video_url }}"
+                                data-video-type="{{ video_type }}">
+
+                                <video preload="none"
+                                    playsinline
+                                    loop
+                                    muted
+                                    controls
+                                    autoplay
+                                    controlsList="nodownload"
+                                    poster="{{ image.preview_image | img_url: product_image_size }}"
+                                    data-image-count="{{ product.media.size }}"
+                                    data-video-type="{{ video_type }}"
+                                    data-video-style="{{ video_style }}"
+                                    loading="lazy"
+                                    id="ProductVideo-{{ section_id }}-{{ loopIndex }}"
+                                    class="product__video lazy playing">
+                                    {%- for source in image.sources -%}
+                                      {%- if isModal -%}
+                                        <div class="hide product__video-src" data-src="{{ source.url }}" type="{{ source.mime_type }}"></div>
+                                      {%- else -%}
+                                        <source data-src="{{ source.url }}" type="{{ source.mime_type }}">
+                                      {%- endif -%}
+                                    {%- endfor -%}
+                                    Your browser does not support the video tag.
+                                </video>
+                
+                                <div class="content-wrapper">
+                                    <button class="video-ctl paused"></button>
+                                </div>
+                            </div>
+                            
+                        </div>
+
+                        {% comment %} 
+                        <span class="background-image video-thumbnail" role="img" aria-label="" style="background-image:url('{{ image.preview_image.src | img_url }}');"></span> 
+                        {% endcomment %}
+                        {% comment %} <img loading="lazy" data-src="{{ image.preview_image.src | img_url }}" alt="{{ videoTitle }} poster image"> {% endcomment %}
+                    {% endunless %}
+                </a>
+                
+                {% capture thumbnailHtmlItem %}
+                <a href="javascript:void(0)" class="image-thumbnail{% if layout == 'scrolling' %} image-slide{% endif %} option-{{image_variant | handleize }}{% if forloop.first %} active{% endif%}" data-zoom-image="{{ zoomImage }}" data-image-variant="{{ image_variant | handleize }}" data-variant-option-value="{{ imageSrcSections__value }}" data-index="{{ forloop.index }}">
+                    {% comment %} <span class="background-image" role="img" aria-label="{{ image.src.alt }}" style="background-image:url('{{ thumbnailImage }}');"></span> {% endcomment %}
+                    <picture>
+                        <source media="only screen" srcset="{{ image.src | img_url: thumbnailImageSize, format: 'pjpg' }}, {{ image.src | img_url: thumbnailImageSize, scale:2, format: 'pjpg' }} 2x">
+                        <img class="product-image" src="{{ image.src | img_url: thumbnailImageSize, format: 'pjpg' }}" alt="Thumbnail - {{ image.alt | escape }} - {{ forloop.index }}">
+                    </picture>
+
+                    {% render 'responsive-image',
+                        image: image.src,
+                        lazy_load: true,
+                        class: '',
+                        img_class: 'product-image',
+                        desktop_image_size: thumbnailImageSize,
+                        img_alt_prefix: 'Thumbnail - ' %}
+                </a>
+                {% endcapture %}
+                {% assign thumbnailHtml = thumbnailHtml | append: thumbnailHtmlItem %}
+                
+                {% assign lastCount = lastCount | plus: 1 %}
+                
+            {%- endunless -%}
+        {% endfor %}
+        </div>
+        <button class="toggle-images cta-outline"><span data-hide="{{ 'products.product.view_less' | t }}" data-show="{{ 'products.product.view_more' | t }}"></span></button>
+    </div>
+    
+    <div class="product-media-thumbnails" id="ProductMediaThumbs">
+        <div class="images-wrapper" data-variant-option="{{ selected_media_option }}" data-variant-option-value="{{ selected_media_option_value }}">
+            {{ thumbnailHtml }}
+            {% comment %}
+            Product Media Video here (For thumbnails and 'scrolling' views)
+            {% endcomment %}
+        </div>
+    </div>
+</div>

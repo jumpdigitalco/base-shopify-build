@@ -1,0 +1,105 @@
+<div class="utility-page {{ page.handle }}{% if settings.utility_nav_enable and settings.utility_nav_linklist %} with-nav{% endif %}">
+    
+    <div class="utility-content pre-content">
+        <h1 class="utility-page-title">{{ page.title }}</h1>
+        {{ page.metafields.page.pre_description }}
+    </div>
+
+    {% if settings.utility_nav_enable and settings.utility_nav_linklist %}
+    <nav class="utility-nav">
+        {% if settings.utility_title != '' %}
+            <h3>{{ settings.utility_title }}</h3>
+        {% endif %}
+        <div class="inner-wrapper links">
+        {%- assign utility_nav_linklist = settings.utility_nav_linklist -%}
+        {%- if linklists[utility_nav_linklist].links.size > 0 -%}
+        
+            {% assign navLinkHtml = '' %}
+            {%- for link in linklists[utility_nav_linklist].links -%}
+                {% comment %} {% if link.active %}
+                    <span class="link select-link">{{ link.title }}</span>
+                    {% assign activeLink = link %}
+                {%- endif -%} {% endcomment %}
+                
+                {% capture navLinkHtmlItem %}
+                    {%- if link.levels > 0 -%}
+                    <div class="link-wrapper {% if link.active %}active{% endif %}">
+                        <a class="link {% if link.active %}active{% endif %}" href="{{ link.url }}">{{ link.title }}</a>
+                        <div class="sublinks {% if link.active %}active{% endif %}">
+                        {% for sublink in link.links %}  
+                            <a class="sublink" href="{{- link.url -}}#{{ sublink.title | handleize }}">{{ sublink.title }}</a>
+                        {% endfor %}  
+                        </div>
+                    </div>
+                    {%- else -%}
+                    <a class="link{% if link.active %} active{% endif %}" href="{{ link.url }}">{{ link.title }}</a>    
+                    {%- endif -%}
+                {% endcapture %}
+                {% assign navLinkHtml = navLinkHtml | append: navLinkHtmlItem %}
+            {%- endfor -%}
+    
+            <div class="link-container">
+                {{ navLinkHtml }}
+            </div>
+        {%- endif -%}    
+        </div>
+    </nav> 
+    {%- endif -%}  
+    <div class="utility-content">
+        <div class="inner-wrapper">
+            <div class="utility-page-content">
+            {% unless page.content contains 'utility-section-' %}
+
+                {% assign separate_contents = page.content| split: '<h4>' %}
+
+                {% for desc_content in separate_contents %}
+                    {% assign separate_title = desc_content | split: '</h4>' %}
+                    {% assign item_title = separate_title[0] %}
+                    {% assign item_title_handle = item_title | handleize %}
+                    {% assign item_content = separate_title[1] %}
+                    
+                    {%- assign item_title = item_title | replace: '<meta charset="utf-8">',''  -%}
+                    {%- assign item_content = item_content | replace: '<meta charset="utf-8">',''  -%}
+
+                    {% unless forloop.index == 1 and item_content == blank %}
+                    {% assign counter = counter | plus: 1 %} 
+                    <div class="accordion-container tab-accordion-system">
+                    <div class="system">
+                        <div class="system-title utility-subtitle system-title-{{ counter }}" data-target="system-{{- counter -}}">{{item_title}}</div>
+                        <div class="system-content" data-target="system-{{- counter -}}">
+                            {{item_content}}
+                        </div>
+                    </div>
+                    </div> 
+                    {% else %}
+                    {{item_title}}
+                    {% endunless %}
+                {% endfor %}
+
+            {% else %}
+                {%- assign sectionType = page.content | handleize -%}
+                {%- case sectionType -%}
+                    {%- when 'utility-section-1' -%}
+                    {%- section 'utility-section-1' -%}
+                    
+                    {%- when 'utility-section-2' -%}
+                    {%- section 'utility-section-2' -%}
+                    
+                    {%- when 'utility-section-3' -%}
+                    {%- section 'utility-section-3' -%}
+
+                    {%- when 'utility-section-4' -%}
+                    {%- section 'utility-section-4' -%}
+                {%- endcase -%}
+            {% endunless %}
+            </div>
+        </div>
+    </div>
+
+    {% if page.metafields.page.pos_description != blank %}
+        <div class="utility-content pos-content">
+            {{ page.metafields.page.pos_description  }}
+        </div>
+    {% endif %}
+    
+</div>

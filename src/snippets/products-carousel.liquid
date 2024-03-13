@@ -1,0 +1,149 @@
+{% comment %}
+*
+* Snippet to standardize the carousels that implement Simplebar
+*
+* @param {Liquid Array}     iterables - The items to loop over and display (optional)
+* @param {Enum<String>}     carousel_type<product|product-handle|image|collection|blog|captured-content> -
+*                               Carousel type
+* @param {String}           scroller_class - Class for main section
+* @param {String}           wrapper_class - Class for wrapper div
+* @param {String}           arrow_box_class - Class for arrow box div
+* @param {Number}           limit - Limit the for loop
+* @param {Bool}             fade_up - Toggle module intro fade up
+* @param {Bool}             intro_centered - Center the intro header, defaults to false
+* @param {String}           intro_subtitle
+* @param {String}           intro_title
+* @param {String}           intro_caption
+* @param {String}           intro_link - CTA url
+* @param {String}           intro_cta - CTA text
+* @param {String}           intro_cta_style - CTA class name
+* @param {Liquid %capture%} captured_content - Content provided via capture variable
+* @param {Bool}             no_placeholder - Hide placeholder slide, defaults to true
+* @param {Bool}             full_width - full width on desktop
+* @param {Liquid %capture%} promo_item
+*
+{% endcomment %}
+
+{% comment %}Default values{% endcomment %}
+{% assign the_wrapper_class = '' %}
+{% assign the_scroller_class = 'carousel-type__' | append: carousel_type %}
+
+{% unless intro_centered    == true %}{% assign intro_centered = false %}{% endunless %}
+{% unless intro_cta_style   != blank %}{% assign intro_cta_style = 'cta-outline' %}{% endunless %}
+{% unless no_placeholder    == true or no_placeholder == false %}{% assign no_placeholder = true %}{% endunless %}
+
+{% if limit == blank %}
+    {% assign limit = 15 %}
+{% endif %}
+{% unless wrapper_class == blank %}
+    {% assign the_wrapper_class = the_wrapper_class | append: ' ' | append: wrapper_class %}
+{% endunless %}
+{% unless scroller_class == blank %}
+    {% assign the_scroller_class = the_scroller_class | append: ' ' | append: scroller_class %}
+{% endunless %}
+{% if intro_centered %}
+    {% assign the_scroller_class = the_scroller_class | append: ' intro-centered' %}
+{% endif %}
+
+{% if captured_content != blank and carousel_type == blank %}
+    {% assign carousel_type = 'captured-content' %}
+{% endif %}
+
+<section class="products-carousel {{ the_scroller_class }}">
+    {% unless iterables == blank and iterables.size == 0 and captured_content == blank %}
+        {% assign the_arrow_box_class = carousel_type %}
+        {% unless arrow_box_class == blank %}{% assign the_arrow_box_class = the_arrow_box_class | append: ' ' | append: arrow_box_class %}{% endunless %}
+        {% if full_width %}{% assign the_arrow_box_class = the_arrow_box_class | append: ' full-width' %}{% endif %}
+
+        <div class="{{ the_arrow_box_class }}">
+            <!-- carousel_type 1: {{carousel_type}} -->
+            {% unless intro_title == blank and intro_subtitle == blank and intro_caption == blank %}
+            {% assign module_intro_class = 'module-intro' %}
+            {% unless no_placeholder %}
+                {% assign module_intro_class = module_intro_class | append: ' placeholder' %}
+            {% endunless %}
+            {% if intro_centered %}
+                {% assign module_intro_class = module_intro_class | append: ' centered' %}
+            {% endif %}
+
+            <div
+                {% unless data_aos == blank %}data-aos="{{ data_aos }}"{% endunless %}
+                class="{{ module_intro_class }}">
+                <div class="headlines-wrap">
+                    {% unless intro_subtitle == blank %}<div class="subheadline">{{- intro_subtitle -}}</div>{% endunless %}
+                    {% unless intro_title == blank %}<h2 class="headline">{{ intro_title }}</h2>{% endunless %}
+                    {% unless intro_caption == blank %}<div class="caption">{{- intro_caption -}}</div>{% endunless %}
+                    {% unless intro_link == blank or intro_cta == blank %}
+                        <a href="{{-intro_link-}}" role="button" class="module-cta {{ intro_cta_style }}"><span>{{ intro_cta }}</span></a>
+                    {% endunless %}
+                </div>
+            </div>
+            {% endunless %}
+            <div class="{{ the_wrapper_class }}">
+                {% case carousel_type %}
+                {% when 'product' %}
+                    {% unless promo_item == blank %}{{ promo_item }}{% endunless %}              
+                    {% for product in iterables limit: limit %}
+                        {% comment %} Ignore items in cart {% endcomment %}
+                        {% assign alreadyInCart = false %}
+                        {% for item in cart.items %}
+                            {% if item.product.handle == product.handle %}
+                                {% assign alreadyInCart = true %}
+                                {% break %}
+                            {% endif %}
+                        {% endfor %}
+                        {% unless alreadyInCart %}  
+                        {% render 'product-grid-item',
+                        product: product,
+                        iscarousel: true,
+                        additional_classes: '' %}
+                        {% endunless %}
+                    {% endfor %}
+                {% when 'product-handle' %}
+                    <!-- carousel_type: product-handle -->
+                    {% for productHandle in iterables limit: limit %}
+                        {% comment %}Skip if product handle is empty{% endcomment %}
+                        <!--productHandle:{{productHandle}}-->
+                        {% unless productHandle.size > 0 %}{% continue %}{% endunless %}
+
+                        {% assign product = all_products[productHandle] %}
+                        {% render 'product-grid-item',
+                        product: product,
+                        iscarousel: true,
+                        additional_classes: '' %}
+                    {% endfor %}
+                {% when 'collection' %}
+                    <!-- carousel_type: collection -->
+                    {% for block in iterables %}
+                        {% if block.type == 'solid_color' %}
+                            {% render 'recommendation-solid-block', block_settings: block.settings %}
+                        {% elsif block.type == 'recommendation' %}
+                            {% render 'recommendation-block', block_settings: block.settings %}
+                        {% endif %}
+                    {% endfor %}
+                {% when 'blog' %}
+                    <!-- carousel_type: blog -->
+                    {% for block in iterables %}
+                        {% case block.type %}
+                        {% when 'blog_article' %}
+                            {% assign article = articles[block.settings.article] %}
+                            {% render 'article-grid-item', article: article, article_layout: 'layout-home', additional_classes: '' %}
+                        {% when 'promo_item' %}
+                            <article class="blog-post layout-black-bg no-image">
+                                <div class="article-info">
+                                    <h3 class="article-title"><a href="{{ block.settings.promo_link }}">{{ block.settings.promo_caption }}</a></h3>
+                                    <div class="article-content"><a class="" href="{{ block.settings.promo_link }}" role="button">{{ block.settings.promo_cta }}</a></div>
+                                </div>
+                            </article>
+                        {% endcase %}
+                    {% endfor %}
+                {% when 'captured-content' %}
+                    <!-- carousel_type: captured-content -->
+                    {{ captured_content }}
+                {% else %}
+                    <!-- No Data -->
+                {% endcase %}
+            </div>
+        </div>
+</section>
+{% endunless %}

@@ -1,0 +1,497 @@
+.article-container {
+    .article-body {
+        .article-content {
+            ol {
+                li {
+                    list-style: decimal;
+                    list-style-position: inside;
+                    margin-bottom: 10px;
+                }
+            }
+            .video-wrapper {
+                height: 0;
+                padding-bottom: 56.25%;
+                position: relative;
+
+                iframe {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    bottom: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                }
+            }
+            figure {
+                margin: 20px auto;
+                & > figure {
+                    display: flex;
+                    flex-wrap: wrap;
+                    overflow: hidden;
+                    margin: 0 auto;
+                    img {
+                    }
+                    &.columns-3 {
+                        img {
+                        }
+                    }
+                    &.inline {
+                        flex-wrap: nowrap;
+                        overflow-x: scroll;
+                        img {
+                            flex: 0 0 auto;
+                            margin-right: 6px;
+                        }
+                        &::-webkit-scrollbar {
+                            opacity: 0;
+                        }
+                    }
+                }
+                figcaption {
+                    display: flex;
+                    width: 100%;
+                    margin-top: 5px;
+                    .credit {
+                        // @extend .body-font-2;
+                        color: $lightGrey2;
+                    }
+                }
+                &.testimonial {
+                    background-color: $lightGrey;
+                    padding: $smallScreenMargin * 2;
+                    blockquote {
+                        border: 0;
+                        margin: 0 auto $smallScreenMargin;
+                        width: auto;
+                        font-weight: 500;
+                        font-size: 14px;
+                        line-height: 26px;
+                        font-style: italic;
+                    }
+                    figcaption {
+                        // @extend .body-font-2;
+                        display: block;
+                        text-align: right;
+                    }
+                }
+            }
+            blockquote {
+                // @extend .body-font-2;
+                border-top: 6px solid $black;
+                margin: 30px auto;
+                padding-top: $smallScreenMargin;
+            }
+
+            .listicle{
+                padding: 20px 0;
+                .num{
+                    // @include base-font-10;
+                    float: left;
+                    font-size: 54px;
+                    line-height: 50px;
+                    letter-spacing: 1px;
+                    margin-right: 20px;
+                    margin-bottom: 14px;
+                }
+                .headline{
+                    font-size: 22px;
+                    line-height: 1.2;
+                    margin: 0;
+                    margin-bottom: 20px;
+                }
+                p, div{
+                    &:last-child{
+                        margin-bottom: 0;
+                    }
+                }
+            }
+        } //.article-content
+
+        .featured-gallery {
+            // overflow: hidden;
+            img {
+                display: block;
+            }
+            h3 {
+                font-weight: bold;
+                margin: 0 auto $smallScreenMargin;
+            }
+            .gallery-main {
+                .gallery-image {
+                }
+            }
+            &.default {
+                padding: 0 2px;
+                .gallery-main,
+                .gallery-thumbs {
+                    &:not(.slick-initialized) {
+                        opacity: 0;
+                        display: inline-flex;
+                        flex-wrap: nowrap;
+                        visibility: hidden;
+                        & > div {
+                            flex: 0 0 auto;
+                        }
+                    }
+                }
+                .gallery-thumbs {
+                    margin: 0 -4px;
+                    .gallery-thumb {
+                        padding: 0 2px;
+                        cursor: pointer;
+                        img {
+                            overflow: hidden;
+                            display: block;
+                            opacity: 1;
+                            @include transition(all $fast);
+                            &:not([src]) {
+                                opacity: 0;
+                            }
+                            &[src] {
+                                border-radius: 2px;
+                                border: 2px solid transparent;
+                                padding: 2px;
+                            }
+                        }
+                        &:hover {
+                            img {
+                                border-color: $black;
+                            }
+                        }
+                    }
+                    .slick-current {
+                        img {
+                            border-color: $black;
+                        }
+                    }
+                }
+            } //.default
+            &.dark {
+                background-color: $black;
+                color: $white;
+                padding: $smallScreenMargin 0 $smallScreenMargin * 2
+                    $smallScreenMargin;
+                .gallery-main {
+                    white-space: nowrap;
+                    .gallery-image {
+                        width: 80%;
+                        display: inline-block;
+                        flex: 0 0 auto;
+                        background: transparent;
+                        margin-right: 20px;
+                    }
+                    .simplebar-scrollbar {
+                        &:before {
+                            display: none;
+                        }
+                        &.simplebar-visible:before {
+                            display: none;
+                        }
+                    }
+                    .simplebar-content-wrapper {
+                        &::-webkit-scrollbar {
+                            opacity: 0;
+                            display: none;
+                        }
+                    }
+                    /*
+                    .simplebar-track.simplebar-horizontal{
+                        background-color: $black;
+                        height: 5px;
+                        bottom: -20px;
+                        left: 0px;
+                        .simplebar-scrollbar{
+                            background-color: $lightGrey2;
+                            height: 5px;
+                            top: 0;
+                        }
+                    }
+                    */
+                    .simplebar-content {
+                        display: flex;
+                        flex-wrap: nowrap;
+                    }
+                }
+                .gallery-thumbs {
+                    display: none;
+                }
+            }
+        } //.featured-gallery
+
+        .featured-product {
+            padding: 20px 0;
+
+            a,
+            picture,
+            img {
+                display: inline-block;
+            }
+            .product-badges-wrapper {
+                position: absolute;
+                top: 0;
+                left: 0;
+                .sale-badge {
+                    @extend .product-badge;
+                    background: var(--main-color);
+                    color: $white;
+                    display: inline-block;
+                    line-height: 25px;
+                    padding: 5px $smallScreenMargin/2;
+                    z-index: 999;
+                }
+            }
+            .product-image-wrapper {
+                // margin-bottom: $smallScreenMargin;
+                position: relative;
+                picture,
+                img {
+                    display: block;
+                }
+                img {
+                    border: 1px solid $lightGrey;
+                }
+            }
+            .product-info-wrapper {
+                .product-name {
+                    // @extend .body-font-2;
+                }
+                .product-vendor {
+                    // @extend .body-font-2;
+                    text-transform: capitalize;
+                    color: $lightGrey2;
+                }
+                .price-box {
+                }
+                .product-cta {
+                    @extend .cta-1;
+                    text-decoration: none;
+                    margin-top: $smallScreenMargin;
+                }
+            }
+        } //.featured-product
+    }
+    .slick-track {
+        display: flex;
+        flex-wrap: nowrap;
+    }
+
+    .gallery-main {
+        position: relative;
+
+        .slick-slider .slick-arrow {
+            z-index: 1001;
+        }
+    }
+}
+
+//
+//  Small screen sizes - Prev: Mobile only
+//  _____________________________________________
+@include query-small {
+} //query-small
+
+//
+//  Small + Medium screen sizes - Prev: Tablet and Mobile
+//  _____________________________________________
+@include query-medium-down {
+    .article-container {
+        .article-body {
+            .article-content {
+                figure {
+                    & > figure {
+                        img {
+                        }
+                        &.columns-2 {
+                            margin-left: -3px;
+                            margin-right: -3px;
+                            margin-bottom: 5px;
+                            img {
+                                width: calc((100% / 2) - 6px);
+                                margin: 3px;
+                            }
+                        }
+                        &.columns-3 {
+                            margin-left: -3px;
+                            margin-right: -3px;
+                            margin-bottom: 5px;
+                            img {
+                                width: calc((100% / 2) - 6px);
+                                margin: 3px;
+                                &:first-child {
+                                    width: calc((100% / 1) - 6px);
+                                }
+                            }
+                        }
+                        &.inline {
+                            margin-right: calc(50% - 50vw);
+                            img {
+                                max-width: 75vw;
+                                margin-left: 0;
+                            }
+                        }
+                    }
+                    & > img {
+                        @include uncontain;
+                        align-self: flex-start;
+                    }
+                    figcaption {
+                        flex-direction: column;
+                        .credit {
+                        }
+                    }
+                    &.video {
+                        .video-wrapper {
+                            @include uncontain;
+                        }
+                    }
+                } //figure
+            } //article-content
+            .featured-gallery {
+                &.dark {
+                    @include uncontain;
+                    padding-right: 0;
+                    .gallery-main {
+                        .gallery-image {
+                            img {
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+} //query-medium-down
+
+//
+//  Medium screen sizes - Prev: Tablet Only
+//  _____________________________________________
+@include query-medium {
+} //query-medium
+
+//
+//  Medium + Large screen sizes - Prev: Tablet and Desktop
+//  _____________________________________________
+@include query-medium-up {
+} //query-medium-up
+
+//
+//  Large screen sizes - Prev: Desktop
+//  _____________________________________________
+@include query-large-up {
+    .article-container {
+        .article-body {
+            .article-content {
+                figure {
+                    margin: 20px auto;
+                    & > figure {
+                        display: flex;
+                        flex-wrap: nowrap;
+                        overflow: hidden;
+                        img {
+                        }
+                        &.columns-2 {
+                            margin-left: -3px;
+                            margin-right: -3px;
+                            margin-bottom: 5px;
+                            img {
+                                width: calc((100% / 2) - 6px);
+                                margin: 3px;
+                            }
+                        }
+                        &.columns-3 {
+                            margin-left: -3px;
+                            margin-right: -3px;
+                            img {
+                                width: calc((100% / 3) - 3px);
+                                margin: 3px;
+                            }
+                        }
+                    }
+                    figcaption {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        .credit {
+                            padding-left: 10px;
+                        }
+                    }
+                }
+                &.video {
+                    & > iframe {
+                        width: 100%;
+                        height: 400px;
+                    }
+                }
+                blockquote {
+                    width: 60%;
+                }
+                .listicle{
+                    padding: 20px 0;
+                    padding-right: 110px;
+                    .num{
+                        font-size: 62px;
+                        margin-right: 25px;
+                        margin-bottom: 10px;
+                    }
+                    .headline{
+                        font-size: 26px;
+                    }
+                }
+            } //article-content
+
+            .featured-gallery {
+                padding: 0 2px;
+                &.default {
+                    .gallery-main {
+                        .gallery-image {
+                        }
+                    }
+                }
+                &.dark {
+                    padding: 50px 0 80px 50px;
+                    h3 {
+                        margin-bottom: 30px;
+                    }
+                    /*
+                    .simplebar-track.simplebar-horizontal{
+                        bottom: -30px;
+                    }
+                    */
+                }
+            } //.featured-gallery
+
+            .featured-product {
+                &.left,
+                &.right {
+                    display: flex;
+                    flex-wrap: wrap;
+                    align-items: center;
+                    .product-image-wrapper,
+                    .product-info-wrapper
+                    {
+                        width: 50%;
+                    }
+                }
+                &.left {
+                    flex-direction: row;
+                    .product-info-wrapper {
+                        padding-left: $smallScreenMargin * 3;
+                    }
+                }
+                &.right {
+                    flex-direction: row-reverse;
+                    .product-info-wrapper {
+                        padding-right: $smallScreenMargin * 3;
+                    }
+                }
+            } //.featured-product
+        }
+    }
+} //query-large-up
+
+//
+//  XLarge down screen sizes - Prev: Small Desktop
+//  _____________________________________________
+@include query-large {
+} //query-large

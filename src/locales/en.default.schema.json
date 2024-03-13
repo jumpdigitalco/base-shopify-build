@@ -1,0 +1,26 @@
+{
+    "sections": {
+        "locale_selector": {
+            "name": "Localization Settings",
+            "settings": {
+
+            }
+        },
+        "footer": {
+            "name": "Footer",
+            "settings": {
+                "header_language_selector": "To add a language, go to your [language settings.](\/admin\/settings\/languages)",
+                "show_locale_selector": {
+                "label": "Show language selector"
+                },
+                "header_currency_selector": "To add a currency, go to your [currency settings.](\/admin\/settings\/payments)",
+                "show_currency_selector": {
+                "label": "Show currency selector"
+                },
+                "show_currency_flags": {
+                "label": "Show currency flags"
+                }
+            }
+        }
+    }
+}

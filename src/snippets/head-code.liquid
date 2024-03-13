@@ -1,0 +1,84 @@
+{% comment %} 
+Title and description fields hidden by SEOManager APP requirement
+https://support.seomanager.com/article/4-how-to-install-seo-meta-manager
+{% endcomment %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, height=device-height">
+    <meta name="theme-color" content="#FFF">
+    <meta name="color-scheme" content="light">
+    <meta name="supported-color-schemes" content="light">
+
+    <link rel="preconnect" href="//googletagmanager.com/" crossorigin>
+    <link rel="preconnect" href="https://addshoppers.s3.amazonaws.com/" crossorigin>
+    <link rel="preconnect" href="//js.hs-scripts.com/22417573.js" crossorigin>
+    <link rel="dns-prefetch" href="https://foursixty.com/" crossorigin>
+    <link rel="dns-prefetch" href="https://predict-api-v3.getwair.com/load" crossorigin>
+    <link rel="dns-prefetch" href="https://predict-v4.getwair.com" crossorigin>
+    <link rel="dns-prefetch" href="https://analytics.klickly.com/" crossorigin>
+    <link rel="dns-prefetch" href="https://analytics-api.klickly.com/" crossorigin>
+    <link rel="dns-prefetch" href="https://track.klickly.com/" crossorigin>
+    <link rel="dns-prefetch" href="https://connect.facebook.net" crossorigin>
+    <link rel="dns-prefetch" href="https://facebook.com/" crossorigin>
+    <link rel="dns-prefetch" href="https://analytics.tiktok.com" crossorigin>
+    <link rel="dns-prefetch" href="https://stats.g.doubleclick.net" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn-widgetsrepository.yotpo.com" crossorigin>
+    <link rel="dns-prefetch" href="https://staticw2.yotpo.com/" crossorigin>
+    <link rel="dns-prefetch" href="https://www.googleadservices.com/" crossorigin>
+    <link rel="dns-prefetch" href="https://www.googletagmanager.com/" crossorigin>
+    <link rel="dns-prefetch" href="https://www.google.com/" crossorigin>
+    <link rel="dns-prefetch" href="https://www.google.com.co/" crossorigin>
+    <link rel="dns-prefetch" href="https://analytics.fatmedia.io/" crossorigin>
+    <link rel="dns-prefetch" href="https://usaincreasingly.increasingly.co/" crossorigin>
+    <link rel="dns-prefetch" href="https://static.hotjar.com" crossorigin>
+    <link rel="dns-prefetch" href="https://script.hotjar.com" crossorigin>
+
+    <link rel="alternate" hreflang="es-CO" href="https://www.mic.com.co/">
+    <link rel="alternate" hreflang="es-EC" href="https://www.mic.com.ec/">
+    <link rel="alternate" hreflang="es-GT" href="https://www.mic.com.gt/">
+
+    {% assign words = collection.title | downcase | split: '_similars:' %}
+    {% assign hasLinkedCollection = words | size %}
+
+    {% if template == 'collection' and hasLinkedCollection > 1 %}
+        <meta name="robots" content="noindex,nofollow">
+    {% elsif shop.url contains '.myshopify.com' %}
+        <meta name="robots" content="noindex,nofollow">
+    {% else %}
+        <meta name="robots" content="index,follow">
+    {% endif %}
+
+{%- if gift_card != blank -%}
+    <title>{{ 'gift_cards.issued.title' | t: value: formatted_initial_value_stripped, shop: shop.name }}</title>
+    <meta name="robots" content="noindex,nofollow">
+    <meta name="description" content="{{ 'gift_cards.issued.subtext' | t }}">
+    {% if settings.favicon != blank %}
+        <link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">
+    {% endif %}
+{%- else -%}
+    {% render 'canonical-link' %}
+
+    {% if settings.favicon != blank %}
+        <link rel="shortcut icon" href="{{ settings.favicon | img_url: '32x32' }}" type="image/png">
+    {% endif %}
+
+    {% capture seo_title %}
+        {{ page_title | replace: 'Your Shopping Cart', 'Shopping Bag' }}
+        {% if current_tags %}
+            {%- assign meta_tags = current_tags | join: ', ' %} &ndash; {{ 'general.meta.tags' | t: tags: meta_tags -}}
+        {% endif %}
+        {% if current_page != 1 %}
+            &ndash; {{ 'general.meta.page' | t: page: current_page }}
+        {% endif %}
+        {% unless page_title contains shop.name %}
+            &ndash; {{ shop.name }}
+        {% endunless %}
+    {% endcapture %}
+    <title>{{ seo_title }}</title>
+
+    {% if page_description %}
+        <meta name="description" content="{{ page_description | escape }}">
+    {% endif %}
+
+    {% render 'social-meta-tags' %}
+{%- endif -%}

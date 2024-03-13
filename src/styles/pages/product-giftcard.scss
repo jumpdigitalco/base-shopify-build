@@ -1,0 +1,197 @@
+//
+//  Typography
+//  _____________________________________________
+.template-giftcard {
+    h1 {
+        text-align: center;
+        @extend .title-font-2;
+        // @include base-font-9;
+        font-size: 20px;
+        line-height: 24px;
+        text-transform: uppercase;
+    }
+    .giftcard-info {
+        // @extend .body-font-2;
+        text-align: center;
+        .full-balance,
+        .current-balance {
+            // @include base-font-9;
+        }
+    }
+    .giftcard-tag {
+        // @extend .body-font-2;
+        // @include base-font-2;
+        font-size: 18px;
+        line-height: 22px;
+    }
+    .giftcard-code {
+        text-align: center;
+        #GiftCardDigits {
+            @extend .title-font-2;
+            font-size: 20px;
+            line-height: 24px;
+        }
+    }
+    .giftcard-actions {
+        .btn {
+            @include cta-1;
+        }
+        .print-giftcard {
+            @include cta-2;
+        }
+    }
+}
+
+//
+//  Common (Gift Card PDP layout will force to be slider layout)
+//  _____________________________________________
+.product-detail-container.gift-card {
+    .product-media {
+        &.slider {
+            .product-media-images {
+                width: 100%;
+                .image-slide {
+                    &:before {
+                        display: none;
+                    }
+                }
+            }
+            .product-media-thumbnails {
+                display: none;
+            }
+        }
+        .background-image {
+            background-size: 80% auto;
+        }
+        .product-media-images {
+            &:after {
+                padding-bottom: $giftcardImageRatioPercentage;
+            }
+        }
+    }
+    .product-core {
+        .product-core-block {
+            &.block-review-rate,
+            &.block-badges,
+            &.block-meta,
+            .sku {
+                display: none;
+            }
+        }
+    }
+}
+
+.template-giftcard {
+    // Giftcard Page
+    header.giftcard-header {
+        text-align: center;
+    }
+    #MainContent {
+    }
+    .giftcard-wrapper {
+        max-width: 768px;
+        margin: 0 auto;
+        padding: 40px 20px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .giftcard-image {
+        position: relative;
+        max-width: 460px;
+        margin: 20px auto;
+        @extend .animated, .fadeInUp;
+        @include animation-delay($fast);
+        @include animation-duration($fast);
+    }
+    .giftcard-info {
+        margin-bottom: 0px;
+        .current-balance {
+            margin-top: 10px;
+        }
+    }
+    .giftcard-code {
+        margin: 30px 0;
+        #GiftCardDigits {
+            background-color: $lightGrey;
+            padding: 10px 20px;
+            display: inline-block;
+            margin-bottom: 0px;
+            border-radius: 3px;
+        }
+        .giftcard-tag {
+            margin-bottom: 10px;
+        }
+    }
+    .giftcard-actions {
+        margin-bottom: $smallScreenMargin;
+        display: flex;
+        justify-content: center;
+        & > a {
+            margin: 0 10px;
+        }
+    }
+    .apple-wallet {
+        margin: 0 auto;
+        margin-bottom: $smallScreenMargin;
+        display: inline-block;
+    }
+    #QrCode {
+        text-align: center;
+        margin-bottom: $smallScreenMargin;
+        width: 100%;
+        // @include transform(translateY(-50%));
+        img {
+            margin: 0 auto;
+        }
+    }
+}
+
+//
+//  Small + Medium screen sizes - Prev: Tablet and Mobile
+//  _____________________________________________
+@include query-medium-down {
+    .template-giftcard {
+        // Giftcard Page
+        header.giftcard-header {
+            background: $headerSmallScreenBackground;
+            h1, .h1 {
+                height: $headerSmallScreenHeight;
+                .site-logo {
+                    line-height: $headerSmallScreenHeight;
+                    @include icon-fonts-before($icon-logo, inherit, 40px);
+                }
+            }
+        }
+        .giftcard-actions {
+            flex-direction: column;
+            .btn {
+                margin-bottom: 10px;
+            }
+        }
+    }
+}
+
+//
+//  Large screen sizes - Prev: Desktop
+//  _____________________________________________
+@include query-large-up {
+    .template-giftcard {
+        // Giftcard Page
+        header.giftcard-header {
+            background: $headerLargeScreenBackground;
+            h1,
+            .h1 {
+                height: $headerLargeScreenHeight;
+                .site-logo {
+                    line-height: $headerLargeScreenHeight;
+                    @include icon-fonts-before(
+                        $icon-logo,
+                        inherit,
+                        40px
+                    );
+                }
+            }
+        }
+    }
+} ;

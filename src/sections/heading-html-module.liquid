@@ -1,0 +1,116 @@
+<section class="module heading-html-module" style="background-color: {{section.settings.background_color}}">
+
+    {% if section.settings.title != blank or section.settings.caption != blank %}
+    {% capture module_heading %}
+        <div class="module-intro {{section.settings.text_color}} position-{{section.settings.header_position}}{% if section.settings.small_container %} small-container{% endif %}">
+            <div class="headlines-wrap">
+            {% if section.settings.title != blank %}<h3 class="headline">{{section.settings.title}}</h3>{% endif %}
+            {% if section.settings.caption != blank %}<div class="caption">{{section.settings.caption}}</div>{% endif %}
+            {% if section.settings.cta_url != blank %}
+            <a href="{{section.settings.cta_url}}" class="module-cta cta-{{section.settings.cta_style}}">{{ section.settings.cta_text }}</a>
+            {% endif %}
+            </div>
+        </div>
+    {% endcapture %}
+    {% endif %}
+    {%- if section.settings.header_position == 'top' -%}
+    {{module_heading}}
+    {%- endif -%}
+
+    {% if section.settings.html != blank %}
+    <div class="html-content"> {{ section.settings.html }} </div>
+    {% endif %}
+
+    {%- if section.settings.header_position == 'bottom' -%}
+    {{module_heading}}
+    {%- endif -%}
+
+</section>
+{% schema %}
+{
+    "name": "Heading and/or HTML",
+    "settings": [
+        {
+            "type": "color",
+            "id": "background_color",
+            "label": "Background Color",
+            "default": "transparent"
+        },
+        {
+            "type": "radio",
+            "options": [
+                { "value": "theme-dark", "label": "Light" },
+                { "value": "theme-light", "label": "Dark" }
+            ],
+            "default": "theme-light",
+            "id": "text_color",
+            "label": "Text Color"
+        },
+        {
+            "type": "checkbox",
+            "default": false,
+            "id": "small_container",
+            "label": "Enable small container?"
+        },
+        {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+        },
+        {
+            "type": "textarea",
+            "id": "caption",
+            "label": "Caption"
+        },
+        {
+            "type": "textarea",
+            "id": "html",
+            "label": "HTML Content"
+        },
+        {
+            "type": "text",
+            "id": "cta_text",
+            "label": "CTA Text"
+        },
+        {
+            "type": "url",
+            "id": "cta_url",
+            "label": "CTA URL",
+            "info": "CTA Not shown when empty"
+        },
+        {
+            "type": "radio",
+            "options": [
+                { "value": "outline", "label": "Outline" },
+                { "value": "solid", "label": "Solid Color" },
+                { "value": "solid-2", "label": "Solid Dark/Light" },
+                { "value": "link", "label": "Link" }
+            ],
+            "default": "outline",
+            "id": "cta_style",
+            "label": "CTA Style"
+        },
+        {
+            "type": "radio",
+            "options": [
+                { "value": "top", "label": "Top" },
+                { "value": "bottom", "label": "Bottom" }
+            ],
+            "default": "top",
+            "id": "header_position",
+            "label": "Header Position"
+        }
+    ],
+    "blocks": [
+    ],
+    "presets": [
+        {
+            "name": "Heading and/or HTML",
+            "category": "Homepage",
+            "settings": {
+
+            }
+        }
+    ]
+}
+{% endschema %}

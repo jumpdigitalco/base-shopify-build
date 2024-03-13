@@ -1,0 +1,48 @@
+#BISModal{
+    margin: 0;
+}
+#container {
+    margin: 0;
+    border-radius: 0;
+    border-radius: 0;
+}
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+form .form-control {
+    -webkit-font-smoothing: antialiased;
+    -webkit-text-size-adjust: 100%;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    background: none;
+    box-shadow: none;
+    line-height: calc(55px - 2px*2);
+    border: 2px solid black;
+    border-radius: 0;
+    opacity: 1;
+    padding: 0 20px;
+}
+form .btn {
+    height: 55px;
+    line-height: calc(55px - 2px*2);
+    text-align: center;
+    text-transform: uppercase;
+    border: 2px solid;
+    padding: 0 20px;
+    border-radius: 0;
+    background: transparent;
+    transition: background 0.45s,color 0.45s,border 0.45s;
+    -moz-transition: background 0.45s,color 0.45s,border 0.45s;
+    -webkit-transition: background 0.45s,color 0.45s,border 0.45s;
+    -ms-transition: background 0.45s,color 0.45s,border 0.45s;
+    -o-transition: background 0.45s,color 0.45s,border 0.45s;
+}
+form .btn::hover {
+    background: black;
+    color: white;
+}

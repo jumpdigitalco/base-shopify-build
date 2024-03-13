@@ -1,0 +1,195 @@
+{%-
+liquid 
+    if product.metafields.inventory.ShappifyHidden == 'true' or product.title == blank
+        continue
+    endif
+
+    assign all_tags = product.tags | downcase
+
+    unless include_alt_view
+        assign include_alt_view = false
+    endunless    
+
+    comment 
+    Is Sold out 
+    endcomment
+    assign sold_out = true
+    if product.available
+        assign sold_out = false
+    endif
+
+    comment 
+    Is Pre-Order 
+    endcomment
+    assign isPreOrder = false
+    if all_tags contains settings.product_preorder_tag
+        assign isPreOrder = true
+        assign preOrderBadge = settings.product_preorder_badge
+        assign product_preorder_msg = settings.product_preorder_message
+    endif
+
+    comment 
+    Is Final Sale 
+    endcomment
+    assign isFinalSale = false
+    if all_tags contains settings.product_finalsale_tag 
+        assign isFinalSale = true
+        assign finalSaleBadge = settings.product_finalsale_badge
+        assign product_finalsale_msg = settings.product_finalsale_message
+    endif
+
+    assign excludeSaleBadge = false
+    if all_tags contains settings.product_sale_badge_exclude 
+        assign excludeSaleBadge = true 
+    endif  
+
+    for tag in product.tags
+        if tag contains 'mainBadge:'
+            assign mainProductBadge = tag | replace: 'mainBadge:',''
+        endif
+    endfor
+-%}
+{% comment %} <!-- additional classes: {{ additional_classes }} --> {% endcomment %}
+<article
+    class="item product-item object-type-{{ product.object_type | handle }}{% if search %} search-item{% endif %} {{ additional_classes }}"
+    data-handle="{{ product.handle }}"
+    data-id="{{ product.id }}"
+    data-page="{{ current_page }}"
+    data-product-index="{{ index }}"
+    role="presentation">
+
+    {% unless iscarousel %}
+    <script type="application/json" class="product-json" data-product-json>{{ product | json }}</script>
+    {% endunless %}
+
+        <div class="product-image-wrapper{% if product.images[1] %} with-hover{% endif %}">
+            {%- assign hasSpecialPrice = false -%}
+            {% if product.compare_at_price_max > product.price %}
+                {%- assign hasSpecialPrice = true -%}
+            {% endif %}
+
+            {% assign main_view_img = product.featured_image.src %}
+            {% assign alt_view_img = product.featured_image.src %}
+            {% if product.images[2] != blank %}
+                {% assign alt_view_img = product.images[2].src %}
+            {% endif %}
+            {% for image in product.images %}
+                {% if image.alt contains settings.product_alt_view_tag %}
+                    {% assign alt_view_img = image.src %}
+                    {% break %}
+                {% endif %}
+            {% endfor %}
+
+            <a
+            class="product-link"
+            href="{{ product.url | within: collection }}"
+            {% if product.images[1] %}
+                data-alt-image="{{ product.images[1] | img_url: '1024x1024' }}"
+                data-alt-text="{{ product.images[1].alt | escape }}"
+            {% endif %}>
+                {% render 'responsive-image',
+                    image: main_view_img,
+                    lazy_load: lazy_load,
+                    class: 'main-view',
+                    img_class: 'product-image',
+                    desktop_image_size: '500x',
+                    mobile_image_size: '500x',
+                    img_alt_prefix: 'Main image - ' %}
+
+                {% if include_alt_view %}
+                {% render 'responsive-image',
+                    image: alt_view_img,
+                    lazy_load: lazy_load,
+                    class: 'alt-view',
+                    img_class: 'product-image alt-image',
+                    desktop_image_size: '500x',
+                    mobile_image_size: '500x',
+                    img_alt_prefix: 'Alternative image - ' %}
+                {% endif %}
+
+                {% render 'responsive-image',
+                    image: product.images[1],
+                    lazy_load: lazy_load,
+                    class: 'hover-view',
+                    img_class: 'product-image hover-image',
+                    desktop_image_size: '500x',
+                    mobile_image_size: '500x',
+                    img_alt_prefix: 'Hover image - ' %}
+            
+            </a>
+
+            <div class="product-wishlist-button">
+                <span class="smartwishlist" data-product="{{ product.id }}" data-variant="{{ product.variants.first.id }}"></span>
+            </div>
+
+            <div class="product-badges">
+                {%- if product.object_type == 'product' -%}
+                    {%- if sold_out -%}
+                        <p class="product-badge out-of-stock">{{ 'products.product.sold_out' | t }}</p>
+                    {%- elsif hasSpecialPrice and excludeSaleBadge == false and settings.show_sale_when_discounted -%}
+                        <p class="product-badge sale-badge">Sale</p>
+                    {%- endif -%}
+                {%- endif -%}
+
+                {% if mainProductBadge != blank %}
+                    <p class="product-badge main-badge {{mainProductBadge | handleize}}">{{mainProductBadge}}</p>
+                {% endif %}
+            </div>
+            
+            {% unless sold_out %}
+                {%- if plp_quickshop -%}
+                <button
+                    class="quick-shop-trigger"
+                    data-url="{{ product.url }}"
+                    aria-hidden="true">
+                    <span class="icon-fallback-text" tabindex="-1">{{ 'collections.general.quick_shop' | t }}</span>
+                </button>
+                {%- endif -%}
+
+                {%- if plp_quickbuy -%}
+                    <button
+                        class="quick-buy-trigger"
+                        data-toggle="close">
+                        <span class="icon-fallback-text" tabindex="-1">{{ 'collections.general.quick_buy' | t }}</span>
+                    </button>
+                    <div class="quick-buy-container">
+                        <span class="add-label">{{'collections.general.quick_buy' | t }}</span>
+                        <div class="quick-buy-close icon-close" role="button" aria-hidden="true"></div>
+                        {%- render 'product-core-form', product: product, plp_quickbuy: plp_quickbuy  -%}
+                    </div>
+                {%- endif -%}
+            {% endunless %}
+
+        </div>
+
+        <div class="product-info-wrapper">
+
+        <a
+        class="product-link"
+        href="{{ product.url }}"
+        {% if product.images[1] %}
+            data-alt-image="{{ product.images[1] | img_url: '1024x1024' }}"
+            data-alt-text="{{ product.images[1].alt | escape }}"
+        {% endif %}>
+
+            <p class="product-name">{{ product.title | replace: 'Maaji', '' }}</p>
+            {% comment %} <p class="product-vendor">{{ product.vendor }}</p> {% endcomment %}
+
+            {% comment %}This is a change to force-update these to render instead of include{% endcomment %}
+            {% render 'product-price', product: product %}
+
+            {%- if isFinalSale and template.name != 'collection' -%}
+                <div class="product-badge product-finalsale-badge">
+                    <span>{{ finalSaleBadge }}</span>
+                </div>
+            {%- endif -%}
+        
+            {% comment %} 
+            {%- if sold_out -%}
+            <p class="out-of-stock">{{ 'products.product.sold_out' | t }}</p>
+            {%- endif -%} 
+            {% endcomment %}
+        </a>
+            
+        </div>
+</article>

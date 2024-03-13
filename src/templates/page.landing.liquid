@@ -1,0 +1,33 @@
+<div class="landing-page page-collections{% if page.metafields.custom.css_class != '' %} page-{{page.metafields.custom.css_class | handleize}}{% endif%}" {%- if page.metafields.custom.page_bg_color != '' -%} style="background: {{page.metafields.custom.page_bg_color}}"{% endif %}>
+    {% if page.content == 'page-landing-15' %}
+        {% section 'page-landing-15' %}
+    {% elsif page.content == 'page-landing-14' %}
+        {% section 'page-landing-14' %}
+    {% elsif page.content == 'page-landing-13' %}
+        {% section 'page-landing-13' %}
+    {% elsif page.content == 'page-landing-12' %}
+        {% section 'page-landing-12' %}
+    {% elsif page.content == 'page-landing-11' %}
+        {% section 'page-landing-11' %}
+    {% elsif page.content == 'page-landing-10' %}
+        {% section 'page-landing-10' %}
+    {% elsif page.content == 'page-landing-9' %}
+        {% section 'page-landing-9' %}
+    {% elsif page.content == 'page-landing-8' %}
+        {% section 'page-landing-8' %}
+    {% elsif page.content == 'page-landing-7' %}
+        {% section 'page-landing-7' %}
+    {% elsif page.content == 'page-landing-6' %}
+        {% section 'page-landing-6' %}
+    {% elsif page.content == 'page-landing-5' %}
+        {% section 'page-landing-5' %}
+    {% elsif page.content == 'page-landing-4' %}
+        {% section 'page-landing-4' %}
+    {% elsif page.content == 'page-landing-3' %}
+        {% section 'page-landing-3' %}
+    {% elsif page.content == 'page-landing-2' %}
+        {% section 'page-landing-2' %}
+    {% else %}
+        {% section 'page-landing-1' %}
+    {% endif %}
+</div>

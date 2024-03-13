@@ -1,0 +1,22 @@
+{   
+    "Colombia": {
+        "lat": 3.40343344312947,
+        "lng": -73.0958916457199,
+        "cities": {
+            "Medellin": {
+                "lat": 3.3164320841991,
+                "lng": -73.0709927376559,
+                "stores": {
+                    "Maaji El Tesoro": {
+                        "lat": 6.197536,
+                        "lng": -75.5592255,
+                        "name": "Maaji El Tesoro",
+                        "address": "Carrera 25AA #1 Sur-45, El Poblado, Medellín, El Poblado, Medellín, Antioquia, Colombia",
+                        "phone": "+573173648959",
+                        "email": ""
+                    }
+                }
+            }
+        }
+    }
+}

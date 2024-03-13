@@ -1,0 +1,56 @@
+{%- assign block_collection = collections[section.settings.collection] %}
+{%- assign col_product_count = block_collection.products_count | times:1 %}
+{%- assign layout_type = block_collection.products_count | times:1 %}
+
+{% assign scroller_class = ' hp-featured-products-module ' | append: section_settings.theme | append: section_settings.layout_type %}
+{% assign wrapper_class = 'collection-products ' | append: section_settings.layout_type %}
+
+{% if section_settings.promo_activate and section_settings.promo_title != blank %}
+  {% capture promo_item %}
+    <div class="item promo-item" style="background-color: {{section_settings.promo_background_color}}; color: {{section_settings.promo_text_color}}">
+
+      <a href="{{section_settings.promo_link}}" class="promo-link"></a>
+      <h4>{{section_settings.promo_title}}</h4>
+      {% if section_settings.promo_link != '' %}
+        <div class="cta-wrap">
+          <span class="promo-btn">{{section_settings.promo_link_text}}</span>
+        </div>
+      {% endif %}
+    </div>
+  {% endcapture %}
+{% endif %}
+
+{% assign settings = section_settings %}
+{% if settings.source == 'collection' and col_product_count > 0 %}
+  {% render 'products-carousel',
+    intro_title: settings.title,
+    intro_subtitle: settings.subtitle,
+    intro_caption: settings.caption,
+    intro_link: settings.link,
+    intro_cta: settings.cta,
+    data_aos: 'fade-up',
+    carousel_type: 'product',
+    limit: settings.num_items,
+    arrow_box_class: 'collections-wrapper',
+    wrapper_class: wrapper_class,
+    scroller_class: scroller_class,
+    iterables: block_collection.products %}
+{% elsif section_settings.source == 'products' and section_blocks.size > 0 %}
+  {% assign product_array = '' %}
+  {% for block in section_blocks limit: section_settings.num_items %}
+    {% assign product_array = product_array | append: '|' | append: block.settings.product %}
+  {% endfor %}
+  {% assign product_array = product_array | split: '|' %}
+  {% render 'products-carousel',
+    intro_title: settings.title,
+    intro_subtitle: settings.subtitle,
+    intro_caption: settings.caption,
+    intro_link: settings.link,
+    intro_cta: settings.cta,
+    data_aos: 'fade-up',
+    carousel_type: 'product-handle',
+    arrow_box_class: 'collections-wrapper',
+    wrapper_class: wrapper_class,
+    scroller_class: scroller_class,
+    iterables: product_array %}
+{% endif %}

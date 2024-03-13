@@ -1,0 +1,142 @@
+
+{% if section.blocks.size > 0 %}
+<section class="module hotspots-module">
+<div class="hotspots-wrapper{% if section.settings.flip_content %} flip-large{% endif %}">
+    <div class="module-intro theme-light">
+        <div class="headlines-wrap">
+        {% if section.settings.title != blank %}<h3 class="headline">{{section.settings.title}}</h3>{% endif %}
+        {% if section.settings.caption != blank %}<div class="caption">{{section.settings.caption}}</div>{% endif %}
+        </div>
+    </div>
+    <div class="hotspots-image-container">
+        {% if section.settings.image != blank %}
+        {% render 'responsive-image',
+            image: section.settings.image,
+            class: 'block-image',
+            img_class: 'block-image-wrap' %}
+        {% else %}
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        {% endif %}
+
+        <div class="hotspots-buttons">
+            {% for block in section.blocks %}
+              <a href="#" class="hotspots-button hotspot-button-{{ forloop.index}}" data-button="{{ forloop.index }}" style="left: {{block.settings.horizontal}}%; top: {{block.settings.vertical}}%">
+                <span class="visually-hidden">Select product</span>
+              </a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="hotspots-content-container">
+        <div class="module-intro theme-light">
+            <div class="headlines-wrap">
+            {% if section.settings.title != blank %}<h3 class="headline">{{section.settings.title}}</h3>{% endif %}
+            {% if section.settings.caption != blank %}<div class="caption">{{section.settings.caption}}</div>{% endif %}
+            </div>
+        </div>
+
+        <div class="hotspots-products collection-products">
+        {% for block in section.blocks %}
+            {% if block.settings.featured_product != blank %}
+            {%- assign product = block.settings.featured_product -%}
+            {% render 'product-grid-item',
+                product: product,
+                iscarousel: false,
+                lazy_load: false,
+                additional_classes: '' %}
+            {% endif %}
+        {% endfor %}
+        </div>
+    </div>
+</div>
+</section>
+{% endif %}
+
+{% schema %}
+{
+    "name": "Image Hotspots",
+    "class": "image-hotspots-section",
+    "settings": [
+        {
+            "type": "text",
+            "id": "title",
+            "label": "Title"
+        },
+        {
+            "type": "textarea",
+            "id": "caption",
+            "label": "Caption"
+        },
+        {
+            "type": "image_picker",
+            "id": "image",
+            "label": "Image"
+        },
+        {
+            "type": "checkbox",
+            "default": false,
+            "id": "flip_content",
+            "label": "Flip Content in Desktop?"
+        },
+        {
+          "type": "color",
+          "id": "hotspot_color",
+          "label": "Hotspot Color",
+          "default": "#FFF"
+        }
+    ],
+    "blocks": [
+        {
+          "type": "product",
+          "name": "Product",
+          "settings": [
+                {
+                    "type": "product",
+                    "id": "featured_product",
+                    "label": "Featured product"
+                },
+                {
+                    "type": "range",
+                    "id": "vertical",
+                    "label": "Vertical position",
+                    "default": 50,
+                    "min": 10,
+                    "max": 90,
+                    "step": 1,
+                    "unit": "%"
+                },
+                {
+                    "type": "range",
+                    "id": "horizontal",
+                    "label": "Horizontal position",
+                    "default": 50,
+                    "min": 10,
+                    "max": 90,
+                    "step": 1,
+                    "unit": "%"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Image Hotspots",
+            "blocks": [
+                {
+                    "type": "product",
+                    "settings": {
+                        "vertical": 25,
+                        "horizontal": 25
+                    }
+                },
+                {
+                    "type": "product",
+                    "settings": {
+                        "vertical": 75,
+                        "horizontal": 65
+                    }
+                }
+            ]
+        }
+    ]
+}
+{% endschema %}

@@ -1,0 +1,20 @@
+{% comment %}
+Params
+
+section{boolean} - whether to render as a <div> or a <section>
+
+{% endcomment %}
+{% unless image == blank %}
+    {% assign el = 'div' %}
+    {% if section == true %}
+        {% assign el = 'section' %}
+    {% endif %}
+    <{{ el }} class="image-text-split-module">
+        <div>
+            {% render 'responsive-image', image: image, mobile_image: mobile_image %}
+        </div>
+        <div class="body-copy">
+            {{ text }}
+        </div>
+    </{{ el }}>
+{% endunless %}

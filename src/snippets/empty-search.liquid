@@ -1,0 +1,83 @@
+<section class="search-empty-results">
+
+    {% if section.settings.title != blank or section.settings.caption != blank %}
+    {% capture module_heading %}
+        <div class="module-intro">
+            <div class="headlines-wrap">
+                {% if section.settings.title != blank %}
+                <h4 class="headline text-left">
+                    {%- if search.terms == blank -%}
+                        {{ section.settings.empty_terms_messaging }}
+                    {%- else -%}
+                        {{ section.settings.title }} '{{ search.terms }}'
+                    {%- endif -%}
+                </h4>
+                {% endif %}
+
+                {% if section.settings.caption != blank %}
+                <div class="caption text-left">
+                    {{section.settings.caption}}
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    {% endcapture %}
+    {{module_heading}}
+    {% endif %}
+
+    {% if section.blocks.size > 0 %}
+    <div class="banner-blocks block-size-{{section.blocks.size}} small-grid-{{section.settings.image_mobile_columns}} large-grid-{{section.settings.image_desktop_columns}}">
+    {% for block in section.blocks %}
+        {% if block.settings.image == blank %}{% continue %}{% endif %}
+        <div class="banner-block{% if block.settings.image_hover != blank %} with-hover{% endif %}">
+      
+              <div class="image-container">
+                {% if block.settings.link != blank %}
+                  <a href="{{block.settings.link}}" class="banner-link" title="Go to {{ block.settings.title }}">
+                {% endif %}
+                  <picture class="main-image">
+                      <source media="(max-width: 414px)" srcset="{{ block.settings.image | img_url: '414x' }}, {{ block.settings.image | img_url: '414x', scale: 2 }} 2x" />
+                      <source media="(max-width: 767px)" srcset="{{ block.settings.image | img_url: '767x' }}, {{ block.settings.image | img_url: '767x', scale: 2 }} 2x" />
+                      <source media="screen" srcset="{{ block.settings.image | img_url: '1024x' }}, {{ block.settings.image | img_url: '1024x', scale: 2 }} 2x" />
+                      <img src="{{ block.settings.image | img_url: '1024x' }}" alt="{{ block.settings.image.alt }}" />
+                  </picture>
+      
+                  {% comment %} Hover image {% endcomment %}
+                  {% if block.settings.image_hover != blank %}
+                  <picture class="hover-image">
+                      <img src="{{ block.settings.image_hover | img_url: '1024x' }}" alt="{{ block.settings.image_hover.alt }}" />
+                  </picture>
+                  {% endif %}
+      
+                  {% if block.settings.link != blank %}
+                    </a>
+                    {% endif %}
+              </div>
+      
+              <div class="block-content" data-aos="fade-up" data-aos-duration="1500">
+                {% if block.settings.link != blank %}
+                  <a href="{{block.settings.link}}" class="banner-link" title="Go to {{ block.settings.title }}">
+                {% endif %}
+      
+                  {% if block.settings.title != blank %}
+                  <div class="headline">{{ block.settings.title }}</div>
+                  {% endif %}
+                  {% if block.settings.caption != blank %}
+                  <div class="caption">{{ block.settings.caption }}</div>
+                  {% endif %}
+                  {% if block.settings.link != blank %}
+                  <div class="cta-wrap">
+                      <button class="cta-link-1"><span>{{ block.settings.cta }}</span></button>
+                  </div>
+                  {% endif %}
+      
+                {% if block.settings.link != blank %}
+                    </a>
+                {% endif %}
+              </div>
+        </div>
+    {% endfor %}
+    </div>
+    {% endif %}
+
+</section><!--.search-empty-results-->

@@ -1,0 +1,106 @@
+{%- assign has_text = section.settings.header_countdown_text -%}
+{%- assign has_cta = section.settings.header_countdown_cta -%}
+{%- assign has_link = section.settings.header_countdown_link -%}
+{%- if 	has_text != blank and 
+        has_cta != blank and 
+        has_link != blank and 
+        section.settings.header_countdown_enable and
+        section.settings.header_countdown_active_from != blank and
+        section.settings.header_countdown_active_to != blank 
+-%}
+  {%- assign default_text = has_text -%}
+  {%- assign mobile_text = default_text -%}
+  {%- if section.settings.header_countdown_mobile_text != blank %}
+    {% assign mobile_text = section.settings.header_countdown_mobile_text -%}
+  {%- endif -%}
+
+  <div class="header-countdown {{section.settings.header_countdown_color}}" style="background-color: {{section.settings.header_countdown_background}}">
+    {%- if has_link != blank -%}
+      <a href="{{- has_link -}}" title="View More"></a>
+    {%- endif -%}
+
+    {% if has_text %}
+      <div class="countdown-mobile-text">{{- mobile_text -}}</div>
+      <div class="countdown-desktop-text">{{- default_text -}}</div>
+    {%- endif -%}
+
+    <div id="countdown-timer" class="countdown-timer" data-date_from="{{- section.settings.header_countdown_active_from -}}" data-date_to="{{- section.settings.header_countdown_active_to -}}"></div>
+
+    {% if has_cta and has_link %}
+      <div class="countdown-cta-wrapper" role="button">
+        <button class="countdown-cta">
+          <span>{{- has_cta -}}</span>
+        </button>
+      </div>
+    {%- endif -%}
+
+  </div>
+{%- endif -%}
+
+{%- schema -%}
+  {
+    "name": "Header Countdown",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Header Countdown"
+      },
+      {
+        "type": "checkbox",
+        "id": "header_countdown_enable",
+        "label": "Enable?",
+        "default": false
+      },
+      {
+        "type": "color",
+        "id": "header_countdown_background",
+        "label": "Countdown background color",
+        "default": "#000000"
+      },
+      {
+        "type": "radio",
+        "options": [
+          {
+            "value": "theme-dark",
+            "label": "Light"
+          }, {
+            "value": "theme-light",
+            "label": "Dark"
+          }
+        ],
+        "default": "theme-dark",
+        "id": "header_countdown_color",
+        "label": "Font Color"
+      }, {
+        "id": "header_countdown_text",
+        "label": "Subnav Banner Desktop Text (default)",
+        "type": "text"
+      }, {
+        "id": "header_countdown_mobile_text",
+        "label": "Subnav Banner Mobile Text",
+        "type": "text",
+        "info": "Use a short text when countdown is enabled, no longer then 20 characters."
+      }, {
+        "id": "header_countdown_link",
+        "label": "Subnav Banner Link",
+        "type": "url"
+      }, {
+        "id": "header_countdown_cta",
+        "label": "Subnav Banner CTA",
+        "type": "text"
+      }, {
+        "id": "header_countdown_active_from",
+        "label": "Subnav Banner Active from (YYYY\/MM\/DD) GMT",
+        "info": "As an option, you can specify the time in hh:mm:ss, e.g.: YYYY\/MM\/DD hh:mm:ss. Assumes 00:00:00 (ET) as initial time.",
+        "type": "text",
+        "placeholder": "Optional"
+      }, {
+        "id": "header_countdown_active_to",
+        "label": "Subnav Banner Active up to (YYYY\/MM\/DD) GMT",
+        "info": "As an option, you can specify the time in hh:mm:ss, e.g.: YYYY\/MM\/DD hh:mm:ss. Assumes 23:59:59 (ET) as final time.",
+        "type": "text",
+        "placeholder": "Optional"
+      }
+    ]
+  }
+{%- endschema -%}

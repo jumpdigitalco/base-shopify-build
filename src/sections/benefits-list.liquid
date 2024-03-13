@@ -1,0 +1,71 @@
+{% if section.blocks.size > 0 %}
+    <section class="module benefits-list">
+    {% for block in section.blocks %}
+        <div class="benefit-block">
+            {% if block.settings.icon_type == 'image' %}
+            <div class="benefit-icon">
+                <img loading="lazy" data-src="{{block.settings.image | img_url: '80x' }}" alt="{{block.settings.title}} Image">
+            </div>
+            {% elsif block.settings.icon_type == 'text' %}
+            <div class="benefit-icon"><span class="text">{{block.settings.text}}</span></div>
+            {% endif %}
+            <div class="benefit-title">{{block.settings.title}}</div>
+            <div class="benefit-caption">{{block.settings.caption}}</div>
+        </div>
+    {% endfor %}
+    </section>
+{% endif %}
+{% schema %}
+{
+    "name": "Benefits List",
+    "max_blocks": 12,
+    "settings": [],
+    "blocks": [
+        {
+            "type": "benefit",
+            "name": "Benefit",
+            "settings": [
+                {
+                    "type": "radio",
+                    "options": [
+                        { "value": "image", "label": "Image" },
+                        { "value": "text", "label": "Text" }
+                    ],
+                    "default": "image",
+                    "id": "icon_type",
+                    "label": "Icon Type"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Image"
+                },
+                {
+                    "type": "text",
+                    "id": "text",
+                    "label": "Icon Text"
+                },
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Title"
+                },
+                {
+                    "type": "richtext",
+                    "id": "caption",
+                    "label": "Caption"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Benefits List",
+            "category": "Homepage",
+            "settings": {
+
+            }
+        }
+    ]
+}
+{% endschema %}

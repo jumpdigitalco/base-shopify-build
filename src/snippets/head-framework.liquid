@@ -1,0 +1,206 @@
+{% assign is_preview = content_for_header contains 'designMode' %}
+{% assign webpack_dev_server = 'http://localhost:9090/micgt/assets/' %}
+
+{% case template.name %}
+    {% when 'index' %}
+        {% assign css_url = 'home' %}
+    {% when 'collection' %}
+        {% assign css_url = 'collection' %}
+    {% when 'product' %}
+        {% assign css_url = 'product' %}
+    {% when 'cart' %}
+        {% assign css_url = 'cart' %}
+    {% when 'account' %}
+        {% assign css_url = 'account' %}
+    {% when 'order' %}
+        {% assign css_url = 'orders' %}
+    {% when 'blog' %}
+        {% assign css_url = 'blog' %}
+    {% when 'article' %}
+        {% assign css_url = 'article' %}
+    {% else %}
+        {% assign css_url = 'main' %}
+{% endcase %}
+
+{% if css_url contains ',' %}
+    {%- comment -%}Multiple files{%- endcomment -%}
+    {% assign css_urls = css_url | split: ',' %}
+    {% for url in css_urls %}
+        {% render 'css-import',
+            css_url: url,
+            webpack_dev_server: webpack_dev_server %}
+    {% endfor %}
+{% else %}
+    {% render 'css-import',
+        css_url: css_url,
+        webpack_dev_server: webpack_dev_server %}
+{% endif %}
+
+{% comment %} 3rd Party Scripts and Snippets {% endcomment %}
+{%- if settings.enable_crosssell -%}
+    <!-- Cross Sell custom code start. Do not change -->
+    {%- render 'cross-sell-custom' -%}
+    <!-- Cross Sell custom code end. Do not change -->
+{%- endif -%}
+
+{% comment %} Shopify default scripts {% endcomment %}
+<script src="{{ 'vendor.js' | asset_url }}"></script>
+<script src="{{ 'ajax-cart.js' | asset_url }}"></script>
+<script src="{{ 'option_selection.js' | shopify_asset_url }}" {% unless settings.async_load_third_party_js == false %}async{% endunless %}></script>
+{%- if template.directory == 'customers' -%}
+<script src="{{ 'shopify_common.js' | shopify_asset_url }}"></script>
+{%- endif -%}
+{%- if gift_card != blank -%}
+<script src="{{ 'vendor/qrcode.js' | shopify_asset_url }}"></script>
+{%- endif -%}
+
+{% comment %} Base Scripts {% endcomment %}
+<script id="base-script" type="text/javascript">
+    document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+
+    window.shopUrl = '{{ request.origin }}';
+    window.routes = {
+        cart_add_url: '{{ routes.cart_add_url }}',
+        cart_change_url: '{{ routes.cart_change_url }}',
+        cart_update_url: '{{ routes.cart_update_url }}',
+        cart_url: '{{ routes.cart_url }}',
+        predictive_search_url: '{{ routes.predictive_search_url }}',
+    };
+
+    window.theme = {
+        configs: {
+            cookieBannerEnabled: {%- if settings.cookie_banner_enable -%}true{%- else -%}false{%- endif -%}
+        },
+        strings: {
+            addToCart: {{ 'products.product.add_to_cart' | t | json }},
+            soldOut: {{ 'products.product.sold_out' | t | json }},
+            unavailable: {{ 'products.product.unavailable' | t | json }}
+        },
+        moneyFormat: {{ shop.money_format | json }} 
+    };
+    
+    // Global helper javascript
+    var GlobalObj = (function (GlobalObj) { return GlobalObj; } (GlobalObj || {}));
+    window.GlobalObj = GlobalObj;
+    GlobalObj.storeName = '{{ shop.name }}';
+    GlobalObj.responsive = '';
+    GlobalObj.responsiveSizes = {
+        'medium' : 820,
+        'large' : 1024,
+        'xlarge' : 1200,
+        'xxlarge' : 1440
+    }
+    GlobalObj.breakpoint = '(min-width: 1025px)';
+    GlobalObj.allowedCountries = "{{ settings.allowed_countries }}";
+    GlobalObj.redirectPopUp = {
+        allowed_countries: "{{ settings.allowed_countries }}",
+        title:  "{{ settings.redirect_popup_title }}",
+        info:  "{{ settings.redirect_popup_info }}",
+        btn_continue:  "{{ settings.redirect_popup_continue_btn }}",
+        btn_redirect:  "{{ settings.redirect_popup_redirect_btn }}"
+    },
+    GlobalObj.utilities = {
+        'isMobile' : function() {
+            var check = false;
+            (function(a){if(/(android|bb\d+|meego).+mobile|avantgo|bada\/|blackberry|blazer|compal|elaine|fennec|hiptop|iemobile|ip(hone|od|ad)|iris|kindle|lge |maemo|midp|mmp|mobile.+firefox|netfront|opera m(ob|in)i|palm( os)?|phone|p(ixi|re)\/|plucker|pocket|psp|series(4|6)0|symbian|treo|up\.(browser|link)|vodafone|wap|windows ce|xda|xiino/i.test(a)||/1207|6310|6590|3gso|4thp|50[1-6]i|770s|802s|a wa|abac|ac(er|oo|s\-)|ai(ko|rn)|al(av|ca|co)|amoi|an(ex|ny|yw)|aptu|ar(ch|go)|as(te|us)|attw|au(di|\-m|r |s )|avan|be(ck|ll|nq)|bi(lb|rd)|bl(ac|az)|br(e|v)w|bumb|bw\-(n|u)|c55\/|capi|ccwa|cdm\-|cell|chtm|cldc|cmd\-|co(mp|nd)|craw|da(it|ll|ng)|dbte|dc\-s|devi|dica|dmob|do(c|p)o|ds(12|\-d)|el(49|ai)|em(l2|ul)|er(ic|k0)|esl8|ez([4-7]0|os|wa|ze)|fetc|fly(\-|_)|g1 u|g560|gene|gf\-5|g\-mo|go(\.w|od)|gr(ad|un)|haie|hcit|hd\-(m|p|t)|hei\-|hi(pt|ta)|hp( i|ip)|hs\-c|ht(c(\-| |_|a|g|p|s|t)|tp)|hu(aw|tc)|i\-(20|go|ma)|i230|iac( |\-|\/)|ibro|idea|ig01|ikom|im1k|inno|ipaq|iris|ja(t|v)a|jbro|jemu|jigs|kddi|keji|kgt( |\/)|klon|kpt |kwc\-|kyo(c|k)|le(no|xi)|lg( g|\/(k|l|u)|50|54|\-[a-w])|libw|lynx|m1\-w|m3ga|m50\/|ma(te|ui|xo)|mc(01|21|ca)|m\-cr|me(rc|ri)|mi(o8|oa|ts)|mmef|mo(01|02|bi|de|do|t(\-| |o|v)|zz)|mt(50|p1|v )|mwbp|mywa|n10[0-2]|n20[2-3]|n30(0|2)|n50(0|2|5)|n7(0(0|1)|10)|ne((c|m)\-|on|tf|wf|wg|wt)|nok(6|i)|nzph|o2im|op(ti|wv)|oran|owg1|p800|pan(a|d|t)|pdxg|pg(13|\-([1-8]|c))|phil|pire|pl(ay|uc)|pn\-2|po(ck|rt|se)|prox|psio|pt\-g|qa\-a|qc(07|12|21|32|60|\-[2-7]|i\-)|qtek|r380|r600|raks|rim9|ro(ve|zo)|s55\/|sa(ge|ma|mm|ms|ny|va)|sc(01|h\-|oo|p\-)|sdk\/|se(c(\-|0|1)|47|mc|nd|ri)|sgh\-|shar|sie(\-|m)|sk\-0|sl(45|id)|sm(al|ar|b3|it|t5)|so(ft|ny)|sp(01|h\-|v\-|v )|sy(01|mb)|t2(18|50)|t6(00|10|18)|ta(gt|lk)|tcl\-|tdg\-|tel(i|m)|tim\-|t\-mo|to(pl|sh)|ts(70|m\-|m3|m5)|tx\-9|up(\.b|g1|si)|utst|v400|v750|veri|vi(rg|te)|vk(40|5[0-3]|\-v)|vm40|voda|vulc|vx(52|53|60|61|70|80|81|83|85|98)|w3c(\-| )|webc|whit|wi(g |nc|nw)|wmlb|wonu|x700|yas\-|your|zeto|zte\-/i.test(a.substr(0,4)))check = true})(navigator.userAgent||navigator.vendor||window.opera);
+            return check;
+        },
+        'isTouchEnabled' : function() {
+            return 'ontouchstart' in document.documentElement;
+        },
+        'getUrlParam' : function(url, sParam, value) {
+            var sPageURL = url != undefined ? url : decodeURIComponent(window.location.search.substring(1));
+            if (sPageURL.indexOf("?") >= 0) { sPageURL = sPageURL.replace("?", "&"); }
+            var sURLVariables = sPageURL.split('&'),
+                sParameterName,
+                i;
+
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+                if (sParameterName[0] === sParam) {
+                    if (value && sParameterName[1] !== undefined) {
+                        var st1 = sParameterName[0] + '=' + sParameterName[1];
+                        var st2 = sParameterName[0] + '=' + value;
+                        return url.replace(st1, st2);
+                    } else {
+                        return sParameterName[1] === undefined ? true : sParameterName[1];
+                    }
+                }
+            }
+        },
+        'updateUrlParam' : function(url, sParam, value) {
+            url = url ? url : window.location.href;
+            var newurl = url;
+            var currentParams = window.location.search;
+            var currentHandle = GlobalObj.utilities.getUrlParam(url,sParam);
+            if (currentHandle) {
+                // Replace
+                newurl = GlobalObj.utilities.getUrlParam(url,sParam,value);
+            } else {
+                // Create new depends on current params and url structure
+                if (currentParams) {
+                    newurl += '&' + sParam + '=' + value;
+                }
+            }
+            return newurl;
+        },
+        'setCookie' : function(name,value,days,domain) {
+            if (days) {
+                var date = new Date();
+                date.setTime(date.getTime()+(days*24*60*60*1000));
+                var expires = "; expires="+date.toGMTString();
+            } else {
+                var expires = "";
+            }
+            if (domain) {
+                document.cookie = name+"="+value+expires+"; path=/; domain=" + domain;
+            } else {
+                document.cookie = name+"="+value+expires+"; path=/";
+            }
+        },
+        'getCookie' : function(name) {
+            var nameEQ = name + "=";
+            var ca = document.cookie.split(';');
+            for(var i=0;i < ca.length;i++) {
+                var c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                if (c.indexOf(nameEQ) == 0) return c.substring(nameEQ.length,c.length);
+            }
+            return null;
+        },
+        'deleteCookie' : function(name) {
+            GlobalObj.utilities.setCookie(name,"",-1);
+        },
+        'searchCookie' : function(term) {
+            var ca = document.cookie.split(';');
+            for(var i=0;i < ca.length;i++) {
+                var c = ca[i];
+                while (c.charAt(0)==' ') c = c.substring(1,c.length);
+                var s = c.split('=');
+                if (s.length > 0 && s[0].indexOf(term) > -1) return s[0];
+            }
+            return null;
+        }
+    }
+</script>
+
+<!-- Base Scripts -->
+{% assign js_bundle_url = 'main.bundle.js' %}
+
+{% if settings.webpack_dev_server_enable %}
+    {% assign js_bundle_url = js_bundle_url | prepend: webpack_dev_server %}
+{% else %}
+    {% assign js_bundle_url = js_bundle_url | asset_url %}
+{% endif %}
+
+{%- comment -%} For dev/staging, cache bust {%- endcomment -%}
+{% if shop.url contains 'staging' and !content_for_header.contains 'designMode' %}
+    {% assign js_bundle_url = js_bundle_url | append: '&ver=' | append: date_hash %}
+{% endif %}
+
+<script src="{{ js_bundle_url }}"></script>
+
+{% comment %} Head code injection {% endcomment %}
+{%- if settings.custom_head_code != blank -%}
+    {{ settings.custom_head_code }}
+{%- endif -%}

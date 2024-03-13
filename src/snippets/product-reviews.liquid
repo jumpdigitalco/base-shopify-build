@@ -1,0 +1,15 @@
+{%- if review_widget == 'badge' -%}
+    {%- if review_type == "shopify" -%}
+            <span class="shopify-product-reviews-badge" data-id="{{ product.id }}"></span>
+    {%- elsif review_type == "yotpo" -%}
+            <div class="yotpo-widget-instance" data-yotpo-instance-id="163769" data-yotpo-product-id="{{product.id}}"></div>
+    {%- endif -%}
+{%- elsif review_widget == 'reviews' -%}
+    <div class="review-container">
+    {%- if review_type == 'shopify' -%}
+        <div id="shopify-product-reviews" data-id="{{ product.id }}">{{ product.metafields.spr.reviews }}</div>
+    {%- elsif review_type == 'yotpo' -%}
+    <div class="yotpo-widget-instance" data-yotpo-instance-id="163768" data-yotpo-product-id="{{product.id}}" data-yotpo-name="{{ product.title | escape }}" data-yotpo-url="{{ shop.url }}{{ product.url }}" data-yotpo-image-url="{{ product.featured_image | product_img_url: "large" |replace: '?', '%3F' | replace: '&','%26'}}" data-yotpo-description="{{ product.description | escape }}"></div> 
+    {%- endif -%}
+    </div>    
+{%- endif -%}

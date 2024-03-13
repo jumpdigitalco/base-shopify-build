@@ -1,0 +1,45 @@
+
+{% comment %}
+Params:
+block_link
+block_image
+block_mobile_image
+block_title
+block_caption
+block_cta
+block_class
+{% endcomment %}
+{% if block_image != blank and block_link != blank %}
+    {% if block_mobile_image == blank %}
+        {% assign block_mobile_image = block_image %}
+    {% endif %}
+    <div class="image-block{% if block_class != blank %} {{block_class}}{% endif %}">
+        <a
+            class="block-link"
+            href="{{ block_link }}">
+        </a>
+        <div class="block-image">
+            <span
+                class="absolute-image desktop-image"
+                role="img"
+                aria-label="{{ block_title }}"
+                data-bg="{{ block_image | img_url: '1440x', scale: 2 }}">
+            </span>
+            <span
+                class="absolute-image mobile-image"
+                role="img"
+                aria-label="{{ block_title }}"
+                data-bg="{{ block_mobile_image | img_url: '1440x', scale: 2 }}">
+            </span>
+        </div>
+        <div class="block-info">
+            <h3 class="block-title">{{ block_title }}</h3>
+            {% if block_caption != blank %}
+                <div class="block-caption">{{- block_caption -}}</div>
+            {% endif %}
+            {% if block_cta != blank %}
+            <a href="{{ block_link }}" role="button" class="block-cta {{ block_cta | handleize }}">{{ block_cta }}</a>
+            {% endif %}
+        </div>
+    </div>
+{% endif %}

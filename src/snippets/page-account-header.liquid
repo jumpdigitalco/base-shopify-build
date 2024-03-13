@@ -1,0 +1,10 @@
+<div class="account-header">
+    <div class="inner-wrap">
+        <h1>{{ 'customer.account.account_welcome' | t: name: customer.first_name }}</h1>
+        <div class="account-menu">
+            <a href="/account/orders" class="title{% if active == 'orders' %} active{% endif %}">{{ 'customer.orders.title' | t }}</a>
+            {% comment %} <a class="title" href="/account/addresses">{{ 'customer.addresses.title' | t }}</a> {% endcomment %}
+            <a class="title external" href="{{ settings.race_orders_url }}">{{ 'customer.orders.race_orders' | t }}</a>
+        </div>
+    </div>
+</div>

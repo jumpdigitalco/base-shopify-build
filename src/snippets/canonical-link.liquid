@@ -1,0 +1,14 @@
+{% assign canonicalLink = canonical_url %}
+{% if product and settings.product_linked_canonical %}
+    {% for collection in product.collections %}
+        {% assign words = collection.title | downcase | split: '_similars:' %}
+        {% assign hasLinkedCollection = words | size %}
+        {% if hasLinkedCollection > 1 %}
+            {% for sibling in collection.products %}
+                {% assign canonicalLink = shop.url | append: sibling.url %}
+                {% break %}
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+{% endif %}
+<link rel="canonical" href="{{ canonicalLink }}">

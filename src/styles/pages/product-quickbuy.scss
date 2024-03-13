@@ -1,0 +1,174 @@
+//
+//  Typography
+//  _____________________________________________
+.quick-buy-trigger {
+    // @extend .body-font-2;
+}
+
+//
+//  Common
+//  _____________________________________________
+.item {
+    &.qb-active {
+    }
+    .quick-buy-trigger {
+        position: absolute;
+        z-index: 1;
+        width: 40px;
+        height: 40px;
+        top: 40px;
+        left: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        // line-height: 15px;
+        // padding: 10px 0;
+        // background: rgba($white, 0.8);
+        @include icon-fonts-before($icon-bag, inherit, 20px);
+
+        display: none;
+    }
+    // &:hover,
+    // &.qb-active {
+    //     .quick-buy-trigger {
+    //         top: auto;
+    //         bottom: 0;
+    //         @include opacity(1);
+    //     }
+    // }
+    .quick-buy-container {
+        max-height: 0;
+        padding: 0 10px;
+        left: 0;
+        bottom: 0;
+        opacity: 0;
+        visibility: hidden;
+        @include transition(all $slow);
+        background-color: rgba(255, 255, 255, 0.8);
+        .product-title-clone{
+            display: none;
+        }
+        .add-label{
+            display: block;
+            text-align: center;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            margin-bottom: 5px;
+        }
+        .quick-buy-close{
+            position: absolute;
+            z-index: 5;
+            top: 15px;
+            right: 15px;
+            font-size: 18px;
+        }
+        .price-box{
+            display: none;
+        }
+        .selector-wrapper{
+            margin-bottom: 0;
+            .swatches{
+                justify-content: center;
+                .swatch{
+                    border-color: transparent;
+                    min-width: 24px;
+                    height: 22px;
+                    font-size: 12px;
+                    letter-spacing: 0.5px;
+                    line-height: 1;
+                    margin: 0 3px 5px;
+                }
+            }
+        }
+        .variant-selection-availability,
+        .size-chart-trigger,
+        .product-siblings{
+            display: none;
+        }
+        .prod-core-form__footer{
+            padding-top: 0;
+            text-align: center;
+            .qty-wrap{
+                display: none;
+            }
+            .addtocart{
+                width: 100%;
+                padding: 0;
+                border: 0;
+                height: auto;
+                background: 0;
+                text-transform: none;
+                font-weight: 700;
+                font-size: 12px;
+                letter-spacing: 1px;
+                border-bottom: 1px solid;
+                display: inline-flex;
+                width: auto;
+                margin: 0 auto 7px;
+                border-radius: 0;
+                min-width: 0;
+                &:hover{
+                    color: inherit;
+                    opacity: 0.6;
+                }
+            }
+        }
+    }
+}
+
+//
+//  Medium Screens and Smaller
+//  _____________________________________________
+@include query-medium-down {
+    .quick-buy-trigger {
+        // display: none !important;
+    }
+    .quick-buy-container {
+        // display: none;
+        position: fixed;
+        width: 100vw;
+        z-index: 4;
+        &.active{
+            // display: block;
+            border-top: 1px solid #f7f7f7;
+            padding: 15px;
+            max-height: 250px;
+            opacity: 1;
+            visibility: visible;
+        }
+    }
+}
+
+//
+// Large Screens
+//  _____________________________________________
+@include query-large-up {
+    .quick-buy-container {
+        background: rgba(255, 255, 255, 0.9);
+        position: absolute;
+        z-index: 1;
+        width: 100%;
+        @include transform(translateY(100%));
+        @include transition(all $slow);
+        .quick-buy-close{
+            display: none;
+        }
+    }
+    .item{
+        .quick-buy-trigger{
+            display: none;
+        }
+        &:hover{
+            .quick-buy-container {
+                padding: 10px 10px 0;
+                max-height: 250px;
+                z-index: 4;
+                visibility: visible;
+                opacity: 1;
+                @include transform(translateY(0%));
+            }
+        }
+    }
+}

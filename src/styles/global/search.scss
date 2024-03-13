@@ -1,0 +1,110 @@
+/* TYPEAHEAD */
+div.snize-ac-results {
+    .snize-ac-results-content {
+        .snize-label {
+            font-size: 12px;
+            line-height: 16px;
+            font-weight: 600;
+        }
+        .snize-page,
+        .snize-suggestion {
+            font-size: 14px;
+            line-height: 21px;
+            font-weight: 500;
+        }
+
+        .snize-suggestion {
+            b {
+                font-family: $fontFamily-1;
+                font-weight: 700;
+            }
+        }
+        .snize-product-info {
+            .snize-title {
+                font-size: 12px;
+                line-height: 15px;
+                font-weight: bold;
+                text-transform: uppercase;
+                margin-bottom: 5px;
+            }
+        }
+        .snize-view-all-link {
+            text-align: left;
+            padding: 16px;
+            @include cta-font-1;
+            line-height: 17px !important;
+
+            .snize-ac-results-arrow {
+                display: none;
+            }
+        }
+    }
+}
+div.snize-ac-results {
+    left: 50% !important;
+    transform: translateX(-50%);
+
+    &,
+    .snize-ac-results-content {
+        padding: 0;
+    }
+
+    .snize-dropdown-arrow {
+        display: none;
+    }
+
+    .snize-ac-results-content {
+        .snize-ac-results-list {
+            padding-bottom: 8px;
+        }
+        .snize-suggestion,
+        .snize-label,
+        .snize-page {
+            color: $black;
+            padding: 8px 16px;
+        }
+        .snize-label {
+            background-color: #ededed;
+            margin: 0;
+            margin-bottom: 8px;
+        }
+        .snize-ac-over-nodrop {
+            border-radius: 0;
+        }
+        .snize-product-info {
+            justify-content: flex-start;
+        }
+        .snize-description {
+            display: none;
+        }
+    }
+    &.snize-ac-results-mobile {
+        top: $headerSmallScreenHeight !important;
+    }
+}
+
+@include query-medium-down {
+    div.snize-ac-results {
+        transform: translate(-50%, -2px);
+    }
+    div.snize-ac-results-content {
+        border-radius: 0;
+        max-height: calc(
+            100vh - 150px - #{$headerSmallScreenHeight + $utilityHeight}
+        ) !important;
+    }
+}
+
+@include query-medium {
+    div.snize-ac-results {
+        left: 0 !important;
+        transform: translateY(-2px) !important;
+        max-width: 320px;
+    }
+}
+
+body.promo-banner-active {
+    div.snize-ac-results.snize-ac-results-mobile {
+        top: #{$headerSmallScreenHeight + $utilityHeight};
+    }
+}

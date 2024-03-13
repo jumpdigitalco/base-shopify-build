@@ -1,0 +1,48 @@
+{% if settings == blank %}
+    {% assign settings = section.settings %}
+{% endif %}
+
+{% unless settings.collection == blank and section.blocks.size == 0 %}
+<section class="hpmodule hp-featured-products-module simplebar-arrow-scroller {{settings.theme}}">
+    <div class="module-intro" data-aos="fade-up">
+        <div class="headlines-wrap">
+            {% unless settings.subtitle == blank %}<div class="subheadline">{{- settings.subtitle -}}</div>{% endunless %}
+            <h1 class="headline">{{ settings.title }}</h1>
+            {% unless settings.caption == blank %}<div class="caption">{{- settings.caption -}}</div>{% endunless %}
+        </div>
+        {% unless settings.link == blank %}
+            <a href="{{-settings.link-}}" role="button" class="cta {{settings.cta_color}}"><span>{{ settings.cta }}</span></a>
+        {% endunless %}
+    </div>
+
+    <div class="arrow-box">
+        <div class="collections-wrapper">
+            {%- assign block_collection = collections[settings.collection] %}
+            {%- assign col_product_count = block_collection.products_count | times:1 %}
+
+            {% if settings.source == 'collection' and col_product_count > 0 %}
+                <div class="collection-products dragscroll" data-simplebar>
+                    {%- for product in block_collection.products limit: settings.num_items -%}
+                        {% unless product.tags contains 'in-grid-promo' or product.tags contains 'in grid promo' %}
+                            {% render 'product-grid-item', product: product, iscarousel: true, additional_classes: 'simplebar-scroller-item' %}
+                        {% endunless %}
+                    {%- endfor -%}
+                </div>
+            {% elsif settings.source == 'products' %}
+                <div class="collection-products dragscroll" data-simplebar>
+                    {%- for i in (1..10) -%}
+                        {% assign product_handle = 'product_' | append: i %}
+                        {% assign product = all_products[settings[product_handle]] %}
+                        {% unless product == blank or product.tags contains 'in grid promo' %}
+                            {% render 'product-grid-item', product: product, iscarousel: true, additional_classes: 'simplebar-scroller-item' %}
+                        {% endunless %}
+                    {%- endfor -%}
+                </div>
+            {% endif %}
+
+            {% render 'simplebar-scroller-arrows' %}
+
+        </div><!-- .collections-wrapper -->
+    </div>
+</section>
+{% endunless %}

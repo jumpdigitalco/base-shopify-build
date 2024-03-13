@@ -1,0 +1,50 @@
+<!-- Google Tag Manager Put in theme.liquid -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','XXXXXXXXX');</script>
+<!-- End Google Tag Manager -->
+
+
+<!-- DataLayer Update Put in checkout admin -->
+{% if first_time_accessed %}
+<script>
+window.dataLayer = window.dataLayer || [];
+var discountsArray = [];
+var productsArray = [];
+
+{% for discount in order.discounts %}
+discountsArray[{{ forloop.index | minus: 1 }}] = {
+    'code': '{{ discount.code }}',
+    'savings': '{{ discount.savings | money_without_currency }}'
+}
+{% endfor %}
+
+{% for line_item in order.line_items %}
+productsArray[{{ forloop.index | minus: 1}}] = {
+    'sku': '{{ line_item.sku }}',
+    'name': '{{ line_item.title }}',
+    'price': '{{ line_item.price | money_without_currency }}',
+    'quantity': '{{ line_item.quantity }}'
+}
+{% endfor %}
+
+dataLayer.push({
+    'ecommerce': {
+        'purchase': {
+            'actionField': {
+                'id': '{{ order_number }}',
+                'affiliation': 'Online Store',
+                'revenue': '{{ total_price | money_without_currency }}',
+                'tax':'{{ tax_price | money_without_currency }}',
+                'shipping': '{{ shipping_price | money_without_currency }}',
+                'coupon': discountsArray
+            },
+            'products': productsArray
+        }
+    }
+});
+</script>
+{% endif %}
+

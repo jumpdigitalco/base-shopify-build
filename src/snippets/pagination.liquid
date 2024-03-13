@@ -1,0 +1,20 @@
+{%- if infinityScroll == blank -%}
+    {%- assign infinityScroll = true -%}
+{%- endif -%}
+
+<!--infinityScroll:{{infinityScroll}}-->
+{%- if infinityScroll -%}
+    <div class="collection-load-more-wrapper">
+        <button
+            type="button"
+            id="loadmore"
+            class="collection-load-more"
+            data-total-pages="{{ paginate.pages }}">
+            {{ 'collections.general.load_more' | t }}
+        </button>
+    </div>
+{%- endif -%}
+<div class="collection-pagination{%- unless infinityScroll -%} legacy{% endunless %}">
+    {% comment %} <span>PAGE</span> {% endcomment %}
+    {{ paginate | default_pagination | replace: '&laquo; Previous', '' | replace: 'Next &raquo;', '' }}
+</div>

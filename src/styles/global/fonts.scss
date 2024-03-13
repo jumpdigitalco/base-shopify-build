@@ -1,0 +1,259 @@
+/*================ Site Fonts ================*/
+// Base font family setup
+$fontFamilyFallback: 'HelveticaNeue', 'Helvetica Neue', Helvetica, Arial,
+    sans-serif;
+$fontFamily-0: 'MierA';
+$fontFamily-1: 'MierA-Regular';
+$fontFamily-2: 'MierA-Book';
+$fontFamily-3: 'MierA-Light';
+$fontFamily-4: 'MierA-Bold';
+$fontFamily-5: 'MierA-ExtraBold';
+$fontFamily-6: 'MierA-Heavy';
+
+@include font-family-import($fontFamily-0, $fontFamily-1, 400);
+@include font-family-import($fontFamily-0, $fontFamily-2, 500);
+@include font-family-import($fontFamily-0, $fontFamily-3, 300);
+@include font-family-import($fontFamily-0, $fontFamily-4, 700);
+@include font-family-import($fontFamily-0, $fontFamily-5, 800);
+@include font-family-import($fontFamily-0, $fontFamily-5, 900);
+
+[class*='base-font-'] {
+    @include font-smoothing(antialiased);
+    font-weight: normal;
+}
+
+@mixin base-font-1 {
+    font-family: $fontFamily-0, $fontFamilyFallback;
+}
+.base-font-1 {
+    @include base-font-1;
+}
+
+@mixin base-font-2 {
+    font-family: $fontFamily-0, $fontFamilyFallback;
+}
+.base-font-2 {
+    @include base-font-2;
+}
+
+// Start Site font style and typography
+@mixin title-font-1 {
+    @include base-font-1;
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 24px; // Size (small screen)
+    line-height: 1; // Leading (small screen)
+    letter-spacing: 2px; // Letter Spacing (small screen)
+    @include query-large-up {
+        font-size: 28px;
+        letter-spacing: 2.5px;
+        // font-size: 36px; // Size (small screen)
+        // line-height: 44px; // Leading (small screen)
+        // letter-spacing: 1.5px; // Letter Spacing (large screen)
+    }
+}
+.title-font-1 {
+    @include title-font-1;
+}
+
+@mixin title-font-2 {
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    @include query-large-up {
+        font-size: 18px;
+        letter-spacing: 2.4px;
+    }
+}
+.title-font-2 {
+    @include title-font-2;
+}
+
+@mixin title-font-3 {
+    font-size: 14px;
+    font-weight: 500;
+    // text-transform: uppercase;
+    letter-spacing: 1px;
+    @include query-large-up {
+        // font-size: 84px;
+        // line-height: 55px;
+        // letter-spacing: 0.5px;
+    }
+}
+.title-font-3 {
+    @include title-font-3;
+}
+
+@mixin title-font-4 {
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: 1px;
+    line-height: 1.2;
+    text-transform: uppercase;
+    @include query-large-up {
+        
+    }
+}
+.title-font-4 {
+    @include title-font-4;
+}
+
+@mixin title-font-5 {
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    line-height: 1.2;
+    text-transform: uppercase;
+    // font-weight: normal;
+    @include query-large-up {
+        font-size: 26px;
+        letter-spacing: 3px;
+    }
+}
+.title-font-5 {
+    @include title-font-5;
+}
+
+@mixin title-font-6 {
+    font-size: 24px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    font-weight: 800;
+    @include query-large-up {
+        
+    }
+}
+.title-font-6 {
+    @include title-font-6;
+}
+
+@mixin title-font-7 {
+    font-weight: 700;
+    font-size: 22px;
+    @include query-large-up {
+        font-size: 26px;
+    }
+}
+.title-font-7 {
+    @include title-font-7;
+}
+
+@mixin title-font-8 {
+    font-size: 30px;
+    letter-spacing: 3.5px;
+    text-transform: uppercase;
+    font-weight: 500;
+    // font-weight: normal;
+    @include query-large-up {
+        // font-size: 84px;
+        // line-height: 55px;
+        // letter-spacing: 0.5px;
+    }
+}
+.title-font-8 {
+    @include title-font-8;
+}
+
+@mixin cta-font-1 {
+    @include base-font-1;
+    font-size: 14px;
+    line-height: 1.2;
+    font-weight: 500;
+    text-transform: uppercase;
+    @include query-large-up {
+        //font-size: 18px;
+        //letter-spacing: 3px;
+    }
+}
+.cta-font-1 {
+    @include cta-font-1;
+}
+@mixin cta-font-2 {
+    @include base-font-1;
+    text-transform: uppercase;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 14px;
+    letter-spacing: normal;
+    @include query-large-up {
+        font-size: 12px;
+        line-height: 16px;
+        letter-spacing: 2px;
+    }
+}
+.cta-font-2 {
+    @include cta-font-2;
+}
+
+@mixin body-font-1 {
+    @include base-font-1;
+    font-size: 14px;
+    line-height: 1;
+    letter-spacing: normal;
+    @include query-large-up {
+        //font-size: 18px;
+        //line-height: 25px;
+    }
+}
+.body-font-1 {
+    @include body-font-1;
+}
+@mixin body-font-2 {
+    font-size: 14px;
+    line-height: 1.2;
+    letter-spacing: 1.4px;
+    @include query-large-up {
+        //font-size: 18px;
+        //line-height: 25px;
+    }
+}
+.body-font-2 {
+    @include body-font-2;
+}
+
+@mixin body-font-3{
+    font-size: 12px;
+}
+.body-font-3 {
+    @include body-font-3;
+}
+
+@mixin body-font-4{
+    font-style: italic;
+    font-size: 12px;
+    letter-spacing: 0.6px;
+    line-height: 1.2;
+    font-weight: 500;
+    @include query-large-up {
+        //font-size: 18px;
+        //line-height: 25px;
+    }
+}
+
+.body-font-4 {
+    @include body-font-4;
+}
+
+@mixin body-font-5{
+    letter-spacing: 1px;
+    font-weight: 500;
+    @include query-large-up {
+        //font-size: 18px;
+        //line-height: 25px;
+    }
+}
+
+.body-font-5 {
+    @include body-font-5;
+}
+
+/* Labels */
+@mixin label-font {
+    font-size: 14px;
+    line-height: 1.2;
+    letter-spacing: 0.5px;
+    // text-transform: uppercase;
+}
+.label-font {
+    @include label-font;
+}

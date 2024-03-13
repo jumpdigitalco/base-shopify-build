@@ -1,0 +1,203 @@
+//
+//  For search result page and 404 page style
+//  _____________________________________________
+
+//
+//  Typography
+//  _____________________________________________
+.search-results-banner {
+    .search-results-title {
+        @include title-font-1;
+        text-transform: uppercase;
+        color: inherit;
+    }
+    .search-results-description {
+        color: inherit;
+    }
+    input {
+        
+    }
+    a {
+        text-decoration: underline;
+    }
+}
+.page-404-wrapper{
+    .page-404-intro{
+        .title{
+            font-size: 24px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: none;
+        }
+        .subtitle{
+            font-size: 18px;
+            font-weight: 800;
+            font-style: italic;
+        }
+        .caption{
+            font-size: 16px;
+        }
+        .cta-wrap{
+            margin-top: 30px;
+            display: inline-flex;
+            grid-gap: 10px;
+        }
+        @include query-large-up {
+            .title{
+                font-size: 36px;
+            }
+            .subtitle{
+                font-size: 23px;
+            }
+        }
+    }
+}
+//
+//  Common
+//  _____________________________________________
+.search-results {
+    height: 100%;
+    .search-results-banner {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        // &.no-result {
+        //     height: 100%;
+        // }
+        .search-results-title{
+            margin-bottom: 20px;
+        }
+        .search-results-description {
+            margin-bottom: 40px;
+        }
+        .search-form {
+            width: 100%;
+            max-width: 460px;
+            display: flex;
+            flex-wrap: nowrap;
+            justify-content: space-between;
+            position: relative;
+            border-bottom: 1px solid;
+            .icon-close{
+                display: none;
+            }
+            input {
+                width: calc(100% - 20px);
+                padding: 0;
+                height: 30px;
+                border: 0
+            }
+            button {
+                @include icon-btn($icon-search, inherit, 14px);
+                position: absolute;
+                right: 0;
+            }
+        }
+    }
+    .collection-nav {
+        .collection-nav-block {
+            &.mode {
+                // display: none;
+            }
+            &.sorting{
+                // width: 100%;
+            }
+        }
+    }
+
+    .search-empty-results{
+        @include banner-blocks-grid;
+        .module-intro{
+            padding-left: 0;
+            padding-right: 0;
+        }
+    }
+}//.search-results
+
+.page-404-wrapper{
+    position: relative;
+    // padding-bottom: 177%;
+    overflow: hidden;
+    .page-404-intro{
+        position: absolute;
+        display: block;
+        z-index: 1;
+        padding: $smallScreenMargin*2 $smallScreenMargin;
+        left: 0;
+        top: 0;
+        max-width: 600px;
+        .title{
+            margin-bottom: $smallScreenMargin;
+            & + .subtitle{
+                margin-top: $smallScreenMargin;
+            }
+        }
+        .caption{
+            margin-top: $smallScreenMargin;
+        }
+    }
+    .page-404-image-wrapper{
+        // position: absolute;
+        // left: 0;
+        // right: 0;
+        img{
+            width: 100%;
+        }
+    }
+
+	.products-carousel{
+		.module-intro{
+			.headline{
+				text-transform: none;
+			}
+		}
+	}
+}//.page-404-wrapper
+
+//
+//  Medium Screens and Smaller
+//  _____________________________________________
+@include query-medium-down {
+    .search-results-banner {
+        padding: 30px 20px;
+    }
+    .search-results{
+        .collection-nav {
+            .collection-nav-block{
+                &.sorting{
+                    width: 100%;
+                }
+            }
+        }
+    }
+};
+
+
+//
+// Large Screens
+//  _____________________________________________
+@include query-large-up {
+    .search-results-banner {
+        padding: 40px $moduleLargeScreenSidePadding;
+    }
+    .search-results {
+        .collection-products {
+            // @include gridSystemWithPromo(3,16px);
+        }
+    }
+    .page-404-wrapper{
+        position: relative;
+        // padding-bottom: 42%;
+        .page-404-intro{
+            position: absolute;
+            display: block;
+            z-index: 1;
+            padding: $smallScreenMargin*2 $moduleLargeScreenSidePadding;
+            top: 50%;
+            @include transform( translateY(-50%) );
+        }
+        & + .products-carousel{
+            padding: 0 $moduleLargeScreenSidePadding;
+        }
+    }
+};

@@ -1,0 +1,142 @@
+{%- liquid
+    assign show_selectors = false
+    assign currency_selector = false
+    assign locale_selector = false
+  
+    if section.settings.show_currency_selector and shop.enabled_currencies.size > 1
+      assign currency_selector = true
+    endif
+  
+    if section.settings.show_locale_selector and shop.enabled_locales.size > 1
+      assign locale_selector = true
+    endif
+  
+    if currency_selector or locale_selector
+      assign show_selectors = true
+    endif
+-%}
+{%- if show_selectors -%}
+<div class="module locale-selectors">
+{%- assign formId = 'localization_form' | append: location -%}
+{%- form 'localization', id: formId, class: 'multi-selectors', data-disclosure-form: '' -%}
+  {%- if locale_selector -%}
+    <div class="multi-selectors__item language-selector">
+      <h2 class="visually-hidden" id="LangHeading-{{ location }}">
+        {{ 'general.language.dropdown_label' | t }}
+      </h2>
+
+      <div class="disclosure" data-disclosure-locale>
+        <button type="button" class="faux-select disclosure__toggle" aria-expanded="false" aria-controls="LangList-{{ location }}" aria-describedby="LangHeading-{{ location }}" data-disclosure-toggle>
+          <span class="disclosure-list__label">
+            {{ form.current_locale.endonym_name | capitalize }}
+          </span>
+        </button>
+        <ul id="LangList-{{ location }}" class="disclosure-list{% if location == 'toolbar' %} disclosure-list--down disclosure-list--left{% endif %}" data-disclosure-list>
+          {% assign allowed_langs = section.settings.language | downcase %}
+          {%- for locale in form.available_locales -%}
+            {% if allowed_langs contains locale.iso_code %}
+            <li class="disclosure-list__item{% if locale.iso_code == form.current_locale.iso_code %} disclosure-list__item--current{% endif %}">
+              <a class="disclosure-list__option" href="#" lang="{{ locale.iso_code }}"{% if locale.iso_code == form.current_locale.iso_code %} aria-current="true"{% endif %} data-value="{{ locale.iso_code }}" data-disclosure-option>
+                <span class="disclosure-list__label">
+                  {{ locale.endonym_name | capitalize }}
+                </span>
+              </a>
+            </li>
+            {% endif %}
+          {%- endfor -%}
+        </ul>
+        <input type="hidden" name="locale_code" id="LocaleSelector-{{ location }}" value="{{ form.current_locale.iso_code }}" data-disclosure-input/>
+      </div>
+    </div>
+  {%- endif -%}
+
+  {%- if currency_selector -%}
+    <div class="multi-selectors__item currency-selector">
+      <h2 class="visually-hidden" id="CurrencyHeading-{{ location }}">
+        {{ 'general.currency.dropdown_label' | t }}
+      </h2>
+
+      <div class="disclosure" data-disclosure-currency>
+        <button type="button" class="faux-select disclosure__toggle" aria-expanded="false" aria-controls="CurrencyList-{{ location }}" aria-describedby="CurrencyHeading-{{ location }}" data-disclosure-toggle>
+          {%- if show_currency_flags -%}
+            <span class="currency-flag currency-flag--{{ localization.country.iso_code | downcase }}" data-flag="{{ localization.country.currency.iso_code }}" aria-hidden="true"></span>
+          {%- endif -%}
+
+          <span class="disclosure-list__label">
+            {{ localization.country.name }} ({{ localization.country.currency.iso_code }} {{ localization.country.currency.symbol }})
+          </span>
+        </button>
+        <ul id="CurrencyList-{{ location }}" class="disclosure-list{% if location == 'toolbar' %} disclosure-list--down disclosure-list--left{% endif %}" data-disclosure-list>
+          {%- for country in form.available_countries-%}
+            {% if section.settings.currency contains country.currency.iso_code %}
+            <li class="disclosure-list__item{% if country.iso_code == localization.country.iso_code %} disclosure-list__item--current{% endif %}">
+              <a class="disclosure-list__option" href="#"{% if country.iso_code == localization.country.iso_code %} aria-current="true"{% endif %} data-value="{{ country.iso_code }}" data-disclosure-option>
+                {%- if show_currency_flags -%}
+                  <span class="currency-flag currency-flag--{{ country.iso_code | downcase }}" data-flag="{{ country.currency.iso_code }}" aria-hidden="true"></span>
+                {%- endif -%}
+
+                <span class="disclosure-list__label">
+                  {{ country.name }} ({{ country.currency.iso_code }} {{ country.currency.symbol }})
+                </span>
+              </a>
+            </li>
+            {% endif %}
+          {%- endfor -%}
+        </ul>
+        <input type="hidden" name="country_code" value="{{ localization.country.iso_code }}" data-disclosure-input>
+      </div>
+    </div>
+  {%- endif -%}
+{%- endform -%}
+{%- endif -%}
+</div>
+{% schema %}
+{
+    "name": "Locale Selector",
+    "settings": [
+            {
+                "type": "header",
+                "content": "t:sections.footer.settings.header_language_selector",
+                "info": "t:sections.footer.settings.header_language_selector"
+            },
+            {
+                "type": "checkbox",
+                "id": "show_locale_selector",
+                "label": "t:sections.footer.settings.show_locale_selector.label",
+                "default": false
+            },
+            {
+                "type": "header",
+                "content": "t:sections.footer.settings.header_currency_selector",
+                "info": "t:sections.footer.settings.header_currency_selector"
+            },
+            {
+                "type": "checkbox",
+                "id": "show_currency_selector",
+                "label": "t:sections.footer.settings.show_currency_selector.label",
+                "default": false
+            },
+            {
+                "type": "checkbox",
+                "id": "show_currency_flags",
+                "label": "t:sections.footer.settings.show_currency_flags.label",
+                "default": false
+            },
+            {
+                "type": "text",
+                "id": "language",
+                "label": "Allowed Languages",
+                "info": "Type ISO Codes comma separated (no spaces), example: EN,ES,FR"
+            },
+            {
+                "type": "text",
+                "id": "currency",
+                "label": "Allowed Currencies",
+                "info": "Type ISO Codes comma separated (no spaces), example: EUR,USD,COP"
+            }
+    ],
+  "disabled_on": {
+    "groups": ["header", "custom.popups"]
+  }
+}
+{% endschema %}

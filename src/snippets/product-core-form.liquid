@@ -1,0 +1,173 @@
+{% assign mainFormId = 'AddToCartForm' %}
+{% assign mainSelectorId = 'productSelect' %}
+{% assign mainAddToBagCTAId = 'AddToCart' %}
+{% assign mainPreOrderInput = 'pre-order' %}
+{% assign mainFinalSaleInput = 'final-sale' %}
+{% assign mainQuantityInput = 'Quantity' %}
+{% assign variable = value %}
+{%- if layout == 'quickshop' -%}
+{% assign mainFormId = 'AddToCartForm-QS' %}
+{% assign mainSelectorId = 'productSelect-QS' %}
+{% assign mainAddToBagCTAId = 'AddToCart-QS' %}
+{%- elsif plp_quickbuy -%}
+{% assign mainFormId = 'AddToCartForm-' | append: product.id %}
+{% assign mainSelectorId = 'productSelect-' | append: product.id  %}
+{% assign mainAddToBagCTAId = 'AddToCart-' | append: product.id  %}
+{% assign mainPreOrderInput = 'pre-order-' | append: product.id %}
+{% assign mainFinalSaleInput = 'final-sale' | append: product.id %}
+{% assign mainQuantityInput = 'Quantity-' | append: product.id %}
+{%- endif -%}
+
+{%- unless all_tags -%}
+    {% assign all_tags = product.tags | downcase %}
+{%- endunless -%}
+
+{%- assign current_variant = product.selected_or_first_available_variant -%}
+
+{% assign isSingleVariant = false %}
+{% if product.variants.size < 2 %}
+{% assign isSingleVariant = true %}
+{% endif %}
+
+{% assign isSingleOption = false %}
+{% if product.options.size < 2 %}
+{% assign isSingleOption = true %}
+{% endif %}
+
+{% comment %} Is Final Sale {% endcomment %}
+{% assign isFinalSale = false %}
+{% if all_tags contains settings.product_finalsale_tag  %}
+    {% assign isFinalSale = true %}
+    {% assign finalSaleBadge = settings.product_finalsale_badge %}
+    {% assign product_finalsale_msg = settings.product_finalsale_message %}
+{% endif %}
+
+{% comment %} Custom neceser {% endcomment %}
+{% assign gift_option_products_collection = 'aplica-neceser' %}
+{% assign gift_applies = false %}
+{%- for item_collection in product.collections -%}
+    {%- if item_collection.handle == gift_option_products_collection -%}
+        {%- assign gift_applies = true -%}
+    {%- endif -%}
+{%- endfor -%}
+
+{% comment %}
+ID addToCartForm is a selector for the ajax cart plugin
+{% endcomment %}
+<form
+    action="/cart/add"
+    method="post"
+    enctype="multipart/form-data"
+    id="{{- mainFormId -}}"
+    class="add-to-cart-form">
+
+    <script type="application/json" data-product-json >
+        {{ product | json }}
+    </script>
+
+    <div class="product-title-clone">{{ product.title | replace: 'Maaji', '' }}</div>
+
+    <div class="product-properties hide hidden-wrapper">
+        {%- if isPreOrder -%}
+        <input type="text" id="{{- mainPreOrderInput -}}" name="properties[{{ preOrderBadge }}]" value="{{ product_preorder_msg }}"/>
+        {%- endif -%}
+        {%- if isFinalSale -%}
+        <input type="text" id="{{- mainFinalSaleInput -}}" name="properties[{{ finalSaleBadge }}]" value="{{ product_finalsale_msg }}"/>
+        {%- endif -%}
+    </div>
+    
+    {%- render 'product-price', product: product, product_info: true -%}
+
+    {%- if isFinalSale -%}
+        <div class="product-badge product-finalsale-badge">
+            <span>{{ finalSaleBadge }}</span>
+        </div>
+    {%- endif -%}
+    
+    <div class="product-attribute-container{% if isSingleVariant %} single-variant{% endif %}{% if isSingleOption %} one-option{% endif %}">
+
+        {% render 'product-swatches', product: product, layout: layout %}
+
+        {% comment %}  input-wrapper select {% endcomment %}
+        <div class="product-select-wrapper">
+            <select name="id" id="{{- mainSelectorId -}}" class="product-single__variants">
+                <option value=""></option>
+                {% for variant in product.variants %}
+                    {%- if variant.available -%}
+                        {% comment %}
+                        Note: if you use option_selection.js, your <select> tag will be overwritten, meaning what you have inside <option> will not reflect what you coded below.
+
+                        Add the following if you want to preselect
+                        {% if variant == product.selected_or_first_available_variant %} selected="selected" {% endif %}
+                        {% endcomment %}
+                        <option data-sku="{{ variant.sku }}" value="{{ variant.id }}">
+                            {{- variant.title -}}
+                        </option>
+                    {%- else -%}
+                        <option disabled="disabled">
+                            {{- variant.title -}} - {{- 'products.product.sold_out' | t -}}
+                        </option>
+                    {%- endif -%}
+                {% endfor %}
+            </select>
+        </div>
+
+        {%- unless plp_quickbuy -%}
+        {% render 'product-siblings', product: product %}
+        {%- endunless -%}
+
+        <div class="variant-selection-availability"><span class="qty"></span> <span class="units"></span> {{- 'products.product.available' | t -}}</div>
+
+        <div class="variant-selection-error-msg">{{- 'products.product.select_option_html' | t -}}</div>
+
+    </div>
+
+    {% if isFinalSale %}<div class="desktop-only"></div>{% endif %}
+    
+
+    <div class="prod-core-form__footer">
+
+        <div class="qty-wrap">
+            <button type="button" class="qty-btn qty-down" data-offset="qty-down"></button>
+            <input type="number" id="{{- mainQuantityInput -}}" name="quantity" value="1" min="1" class="">
+            <button type="button" class="qty-btn qty-up" data-offset="qty-up"></button>
+        </div>
+
+        {% comment %} disabled {% endcomment %}
+        {% assign button_class = 'addtocart btn cta-1 add-to-cart-btn' %}
+        {% if isPreOrder %}
+            {% assign button_class = button_class | append: ' pre-order' %}
+        {% endif %}
+        {% unless product.available %}
+            {% assign button_class = button_class | append: ' sold-out' %}
+        {% endunless %}
+
+        <button
+            id="{{- mainAddToBagCTAId -}}"
+            data-variant-title=" an Option"
+            data-gift-applies="{{gift_applies}}"
+            class="{{ button_class }} loading"
+            type="submit"
+            name="add">
+            <span class="add-to-cart-text" >
+                {% if isPreOrder %}
+                    {{ 'products.product.pre_order' | t }}
+                {% elsif product.available == false %}
+                    {{ 'products.product.sold_out' | t }} 
+                {% else %}
+                    {{ 'products.product.add_to_cart' | t }} 
+                {% endif %}
+            </span>
+        </button>
+
+        {%- unless plp_quickbuy -%}
+            {% comment %} Wishlist {% endcomment %}
+        {% endunless%}
+
+        {%- if layout == 'quickshop' -%}
+        <a class="view-full" href="{{ product.url }}">{{- 'products.product.view_full' | t -}}</a>    
+        {%- endif -%}
+            
+    </div><!--.prod-core-form__footer-->
+
+</form>

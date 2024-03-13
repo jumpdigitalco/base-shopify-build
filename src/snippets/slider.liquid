@@ -1,0 +1,77 @@
+{%- unless sliderStyle -%}
+    {% assign sliderStyle = "style-1" %}
+{%- endunless -%}
+
+{% if sliderStyle == "style-1" %}
+
+    <div class="container">
+        {% if section.settings.headline != blank %}
+            <h2 class="headline title-font-1">{{ section.settings.headline }}</h2>
+        {% endif %}
+        {% if section.settings.subheadline != blank %}
+            <p class="subheadline body-font-1">{{ section.settings.subheadline }}</p>
+        {% endif %}
+    </div>
+
+    {% comment %} <div class="scrollable scrollable-x"> {% endcomment %}
+        <div class="collection-products items product-slider slick">
+            {% for block in section.blocks %}
+                {% if block.settings.product != blank and block.type == "product" %}
+                    {% assign product = all_products[block.settings.product] %}
+                    {% render 'product-grid-item', product: product, list_image_size: '500x', product: product %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% comment %} </div> {% endcomment %}
+
+    {% if section.settings.cta != blank %}
+        <div class="cta-wrap">
+            <a href="{{ section.settings.link }}" class="cta-1"><span>{{ section.settings.cta }}</span></a>
+        </div>
+    {% endif %}
+
+{% else %}
+
+    <div class="editorial-slider slick">
+
+        {% for block in section.blocks %}
+            {% if block.settings.image != blank and block.type == "image" %}
+                <div class="editorial-block {{ block.settings.text_color }}">
+                    <span class="absolute-image" role="img" aria-label="{{  block.settings.image.alt }}" style="background-image:url('{{  block.settings.image | img_url: '1024x' }}');"></span>
+
+                    <div class="inner-wrapper">
+                        {% if block.settings.headline != blank %}
+                            <h2 class="headline title-font-2">{{ block.settings.headline }}</h2>
+                        {% endif %}
+                        {% if block.settings.cta != blank %}
+                            <div class="cta-wrap">
+                                <a href="{{ block.settings.link }}" class="cta-link-1"><span>{{ block.settings.cta }}</span></a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    
+    </div>
+
+    <div class="editorial-title-slider slick hide-medium-up">
+
+        {% for block in section.blocks %}
+            {% if block.settings.image != blank and block.type == "image" %}
+                <div class="editorial-title">
+                    <div class="inner-wrapper">
+                        {% if block.settings.headline != blank %}
+                            <h2 class="headline title-font-4">{{ block.settings.headline }}</h2>
+                        {% endif %}
+                        {% if block.settings.cta != blank %}
+                            <div class="cta-wrap">
+                                <a href="{{ block.settings.link }}" class="cta-link-1"><span>{{ block.settings.cta }}</span></a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+
+{% endif %}

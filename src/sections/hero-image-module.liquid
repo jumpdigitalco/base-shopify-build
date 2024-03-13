@@ -1,0 +1,475 @@
+{% if section.blocks.size > 0 %}
+    <section class="module module-hero{% if section.settings.img_style == 'standard' %} img-style-standard{% endif %}{% if section.settings.add_gutter %} with-gutter{% endif %}" data-section="{{section.id}}">
+        <div class="slides-wrapper{% if section.blocks.size > 1 %} slick{% endif %}{% if section.settings.hide_arrows %} hide-arrows{% endif %}{% if section.settings.hide_dots %} hide-dots{% endif %}" data-speed="{{section.settings.autoplay_speed}}">
+        {% for block in section.blocks %}
+            {% liquid
+                assign isScheduled = block.settings.schedule
+                assign canDisplay = true
+
+                if isScheduled
+                    assign currentDate = 'now' | date: '%s'
+                    assign pastDate = block.settings.active_from | date: '%s'
+                    assign futureDate = block.settings.active_to | date: '%s'
+                    if block.settings.active_from != blank
+                        if currentDate < pastDate
+                            assign canDisplay = false
+                            continue
+                        endif
+                    endif
+                    if block.settings.active_to != blank
+                        if currentDate >= futureDate
+                            assign canDisplay = false
+                            continue
+                        endif
+                    endif
+                    if block.settings.active_from != blank and block.settings.active_to != blank
+                        if currentDate < pastDate or currentDate >= futureDate
+                            assign canDisplay = false
+                            continue
+                        endif
+                    endif
+
+                endif
+
+                assign mobile_image = block.settings.image
+                if block.settings.image_mobile != blank
+                    assign mobile_image = block.settings.image_mobile
+                endif
+
+                comment
+                <!-- Promo Banner debug: -->
+                <!-- {{currentDate}} -->
+                <!-- {{pastDate}} -->
+                <!-- {{futureDate}} -->
+                <!-- {{block.settings.show}} -->
+                <!-- {{block.settings.text}} -->
+                endcomment
+            %}
+            {% if canDisplay %}
+            <div class="slide-wrapper" data-index="{{forloop.index}}">
+                {% if block.settings.image_width_height != blank and block.settings.mobile_image_width_height != blank %}
+                <div class="hidden">
+                    <!--block.settings.image_width_height: {{block.settings.image_width_height}}-->
+                    {% assign image_dimensions = block.settings.image_width_height | split: 'x' %}
+                    {% assign image_width = image_dimensions[0] | times: 1.00 %}
+                    {% assign image_height = image_dimensions[1] | times: 1.00 %}
+                    {% assign image_aspect_ratio = image_height | divided_by: image_width | times: 100.00 %}
+    
+                    {% assign mobile_image_dimensions = block.settings.mobile_image_width_height | split: 'x' %}
+                    {% assign mobile_image_width = mobile_image_dimensions[0] | times: 1.00 %}
+                    {% assign mobile_image_height = mobile_image_dimensions[1] | times: 1.00 %}
+                    {% assign mobile_image_aspect_ratio = mobile_image_height | divided_by: mobile_image_width | times: 100.00 %}
+                    <!--image_aspect_ratio: {{image_aspect_ratio}}-->
+                    <!--mobile_image_aspect_ratio: {{mobile_image_aspect_ratio}}-->
+                    <style>
+                        .module-hero[data-section="{{section.id}}"] .slide-wrapper[data-index="{{forloop.index}}"] .slide-image{
+                            padding-bottom: {{image_aspect_ratio}}%;
+                        }
+                        @media(max-width: 1024px){
+                            .module-hero[data-section="{{section.id}}"] .slide-wrapper[data-index="{{forloop.index}}"] .slide-image{
+                                padding-bottom: {{mobile_image_aspect_ratio}}%;
+                            }
+                        }
+                    </style>
+                </div>
+                {% endif %}
+                <div class="block-container {{ block.settings.text_align }} {{ block.settings.text_color }}{% if block.settings.video != blank %} video-block{% endif %}{% if block.settings.stack_mobile %} stack-mobile{% endif %}{% if block.settings.background_color != 'transparent' or block.settings.background_color != blank %} with-bg-color{% endif %}">
+
+                    {% if block.settings.link != blank %}
+                    <a href="{{block.settings.link}}" class="hero-link" aria-label="Hero Link for {{ block.settings.headline }}">
+                        <span class="visually-hidden">{{ block.settings.image.alt }}<span>
+                    </a>
+                    {% endif %}
+
+                    {% if section.settings.img_style == 'standard' and block.settings.image != blank %}
+                        <picture class="slide-image">
+                            <source media="(max-width: 414px)" srcset="{{ mobile_image | img_url: '414x' }}, {{ mobile_image | img_url: '414x', scale: 2 }} 2x" />
+                            <source media="(max-width: 767px)" srcset="{{ mobile_image | img_url: '767x' }}, {{ mobile_image | img_url: '767x', scale: 2 }} 2x" />
+                            <source media="screen" srcset="{{ block.settings.image | img_url: '1440x' }}, {{ block.settings.image | img_url: '1440x', scale: 2 }} 2x" />
+                            <img {% unless section.settings.disable_lazy %}loading="lazy" fetchpriority="high" data-{% endunless %}src="{{ block.settings.image | img_url: '1440x' }}" alt="{{ block.settings.image.alt }}" />
+                        </picture>
+                    {% else %}
+                        <span class="absolute-image desktop-image" role="img" aria-label="{{ block.settings.image.alt }}" style="background-image:url({{ block.settings.image | img_url: '1440x' }})"></span>
+                        <span class="absolute-image mobile-image" role="img" aria-label="{{ mobile_image.alt }}" style="background-image:url({{ mobile_image | img_url: '768x' }})"></span>
+                    {% endif %}
+
+                    {% if block.settings.video != blank %}
+                        {% assign settings = block.settings %}
+                        {% assign mobile_video = block.settings.video %}
+                        {% if block.settings.video_mobile != blank %}
+                            {% assign mobile_video = block.settings.video_mobile %}
+                        {% endif %}
+                        {% render 'video-module', settings: settings, is_bg_video: true, mobile_video: mobile_video %}
+                    {% endif %}
+                    
+                    {% comment %} Add .bottom to .inner-wrapper to push text to bottom of container {% endcomment %}
+                    {% capture imgOverlayClass %}class="image-overlay {{ block.settings.text_align }} {{ block.settings.mobile_text_align }} {{ block.settings.vertical_text_position }} {{ block.settings.mobile_vertical_text_position }} {{ block.settings.text_position }} {{ block.settings.bg_shadow_color }}"{% endcapture %}
+
+                    {% if block.settings.show_content %}
+                    <div {{imgOverlayClass}}>
+                    <div class="inner-wrapper" data-aos="fade-up" data-aos-duration="1500" style="background-color: {{block.settings.background_color}}">
+
+                        {% if block.settings.subheadline != blank %}
+                            <h3 class="subheadline{% if block.settings.hide_subheadline %} hide-desktop{% endif %}{% if block.settings.hide_subheadline_mobile %} hide-mobile{% endif %}">{{ block.settings.subheadline }}</h3>
+                        {% endif %}
+                        {% if block.settings.headline != blank %}
+                            <h2 class="headline{% if block.settings.bigger_title %} bigger-title{% endif %}">{{ block.settings.headline }}</h2>
+                        {% endif %}
+                        {% if block.settings.caption != blank %}
+                            <p class="caption">{{ block.settings.caption }}</p>
+                        {% endif %}
+                        {% if block.settings.cta != blank or block.settings.cta_2 != blank %}
+                            <div class="cta-wrap">
+                                {% assign cta_link = block.settings.link %}
+                                {% if block.settings.cta_link != blank %}
+                                    {% assign cta_link = block.settings.cta_link %}
+                                {% endif %}
+                                <a href="{{ cta_link }}" title="View {{ block.settings.headline }}" class="cta-{{-block.settings.cta_style-}}"><span>{{ block.settings.cta }}</span></a>
+
+                                {% if block.settings.cta_link_2 != blank %}
+                                <a href="{{ block.settings.cta_link_2 }}" title="View {{ block.settings.headline }}" class="cta-{{-block.settings.cta_style_2-}}"><span>{{ block.settings.cta_2 }}</span></a>
+                                {% endif %}
+                                {% comment %} <button class="cta-{{-block.settings.cta_style-}}"><span>{{ block.settings.cta }}</span></button> {% endcomment %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    </div>
+                    {% endif %}
+
+                </div>
+            </div><!--.slide-wrapper-->
+            {% endif %}
+        {% endfor %}
+        </div>
+    </section>
+{% endif %}
+
+{% schema %}
+{
+    "name": "Hero Image module",
+    "max_blocks": 5,
+    "settings": [
+        {
+            "type": "checkbox",
+            "default": false,
+            "id": "disable_lazy",
+            "label": "Disable Lazy Load"
+        },
+        {
+            "type": "checkbox",
+            "default": false,
+            "id": "hide_arrows",
+            "label": "Hide arrows?"
+        },
+        {
+            "type": "checkbox",
+            "default": false,
+            "id": "hide_dots",
+            "label": "Hide dots?"
+        },
+        {
+            "type": "checkbox",
+            "default": false,
+            "id": "add_gutter",
+            "label": "Add gutter?"
+        },
+        {
+            "type": "radio",
+            "options": [
+                { "value": "standard", "label": "Standard" },
+                { "value": "bg", "label": "as Background Images" }
+            ],
+            "default": "standard",
+            "id": "img_style",
+            "label": "Image presentation"
+        },
+        {
+            "type": "range",
+            "id": "autoplay_speed",
+            "min": 0,
+            "max": 9000,
+            "step": 1000,
+            "unit": "sec",
+            "label": "Autoplay Speed (in miliseconds)",
+            "info": "Inactive when at zero",
+            "default": 3000
+        }
+    ],
+    "blocks": [
+        {
+            "type": "slide",
+            "name": "Image Block",
+            "settings": [
+                {
+                    "type": "header",
+                    "content": "Image settings"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Image"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image_mobile",
+                    "label": "Mobile Image"
+                },
+                {
+                    "type": "text",
+                    "id": "image_width_height",
+                    "label": "Image Width x Height",
+                    "info": "Type original Width / Height in pixels for the Default Image. This will define the placeholder space for it when the layout loads. Default is 1600x793, Do not leave it empty",
+                    "default": "1600x793"
+                },
+                {
+                    "type": "text",
+                    "id": "mobile_image_width_height",
+                    "label": "Mobile Image Width x Height",
+                    "info": "Type original Width / Height in pixels for the Mobile Image. This will define the placeholder space for it when the layout loads. Default is 650x975, Do not leave it empty",
+                    "default": "650x975"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Link"
+                },
+                {
+                    "type": "text",
+                    "id": "video",
+                    "label": "Video URL (Optional)",
+                    "info": "Grab the URL from the browser bar, make sure is not the shortened version."
+                },
+                {
+                    "type": "text",
+                    "id": "video_mobile",
+                    "label": "Mobile Video URL (Optional)",
+                    "info": "Grab the URL from the browser bar, make sure is not the shortened version."
+                },
+                {
+                    "type": "header",
+                    "content": "Content settings"
+                },
+                {
+                    "type": "checkbox",
+                    "default": true,
+                    "id": "show_content",
+                    "label": "Show text content"
+                },
+                {
+                    "type": "checkbox",
+                    "default": false,
+                    "id": "stack_mobile",
+                    "label": "Stack Content in Mobile",
+                    "info": "IMPORTANT: Make sure all other slides use the same structure. Otherwise slides height will be uneven."
+                },
+                {
+                    "type": "checkbox",
+                    "default": false,
+                    "id": "hide_subheadline",
+                    "label": "Hide Sub-Headline on desktop"
+                },
+                {
+                    "type": "checkbox",
+                    "default": false,
+                    "id": "hide_subheadline_mobile",
+                    "label": "Hide Sub-Headline on mobile"
+                },
+                {
+                    "type": "checkbox",
+                    "default": true,
+                    "id": "bigger_title",
+                    "label": "Bigger Headline"
+                },
+                {
+                    "type": "text",
+                    "id": "subheadline",
+                    "label": "Sub Headline"
+                },
+                {
+                    "type": "text",
+                    "id": "headline",
+                    "label": "Headline Text"
+                },
+                {
+                    "type": "textarea",
+                    "id": "caption",
+                    "label": "Caption"
+                },
+                {
+                    "type": "color",
+                    "id": "background_color",
+                    "label": "Background Color",
+                    "default": "transparent"
+                },
+                {
+                    "type": "radio",
+                    "options": [
+                        { "value": "theme-dark", "label": "Light" },
+                        { "value": "theme-light", "label": "Dark" }
+                    ],
+                    "default": "theme-light",
+                    "id": "text_color",
+                    "label": "Font Color"
+                },
+                {
+                    "type": "radio",
+                    "options": [
+                        { "value": "dark-shadow", "label": "Dark" },
+                        { "value": "light-shadow", "label": "Light" },
+                        { "value": "no-shadow", "label": "None" }
+                    ],
+                    "default": "no-shadow",
+                    "id": "bg_shadow_color",
+                    "label": "Background shadow Color"
+                },
+                {
+                    "type": "header",
+                    "content": "Call to action"
+                },
+                {
+                    "type": "text",
+                    "id": "cta",
+                    "label": "CTA Text",
+                    "default": "Shop Now"
+                },
+                {
+                    "type": "url",
+                    "id": "cta_link",
+                    "label": "CTA Link",
+                    "info": "CTA not shown if empty"
+                },
+                {
+                    "type": "radio",
+                    "options": [
+                        { "value": "outline", "label": "Outline" },
+                        { "value": "solid", "label": "Solid Color" },
+                        { "value": "solid-2", "label": "Solid Dark/Light" },
+                        { "value": "link", "label": "Link" }
+                    ],
+                    "default": "solid",
+                    "id": "cta_style",
+                    "label": "CTA Style"
+                },
+                {
+                    "type": "header",
+                    "content": "Call to action #2"
+                },
+                {
+                    "type": "text",
+                    "id": "cta_2",
+                    "label": "CTA 2 Text",
+                    "default": "Shop Now"
+                },
+                {
+                    "type": "url",
+                    "id": "cta_link_2",
+                    "label": "CTA Link",
+                    "info": "CTA 2 not shown if empty"
+                },
+                {
+                    "type": "radio",
+                    "options": [
+                        { "value": "outline", "label": "Outline" },
+                        { "value": "solid", "label": "Solid Color" },
+                        { "value": "solid-2", "label": "Solid Dark/Light" },
+                        { "value": "link", "label": "Link" }
+                    ],
+                    "default": "outline",
+                    "id": "cta_style_2",
+                    "label": "CTA 2 Style"
+                },
+                {
+                    "type": "header",
+                    "content": "Text Alignment"
+                },
+                {
+                    "type": "radio",
+                    "options": [
+                        { "value": "text-left", "label": "Left" },
+                        { "value": "text-center", "label": "Center" },
+                        { "value": "text-right", "label": "Right" }
+                    ],
+                    "default": "text-center",
+                    "id": "text_align",
+                    "label": "Text Alignment"
+                },
+                {
+                    "type": "radio",
+                    "options": [
+                        { "value": "mobile-text-left", "label": "Left" },
+                        { "value": "mobile-text-center", "label": "Center" },
+                        { "value": "mobile-text-right", "label": "Right" }
+                    ],
+                    "default": "mobile-text-center",
+                    "id": "mobile_text_align",
+                    "label": "Mobile Text Alignment"
+                },
+                {
+                    "type": "radio",
+                    "options": [
+                        { "value": "text-pos-left", "label": "Left" },
+                        { "value": "text-pos-center", "label": "Center" },
+                        { "value": "text-pos-right", "label": "Right" }
+                    ],
+                    "default": "text-pos-center",
+                    "id": "text_position",
+                    "label": "Horizontal text position"
+                },
+                {
+                    "type": "radio",
+                    "options": [
+                        { "value": "vertical-pos-top", "label": "Top" },
+                        { "value": "vertical-pos-center", "label": "Center" },
+                        { "value": "vertical-pos-bottom", "label": "Bottom" }
+                    ],
+                    "default": "vertical-pos-center",
+                    "id": "vertical_text_position",
+                    "label": "Vertical text position"
+                },
+                {
+                    "type": "radio",
+                    "options": [
+                        { "value": "mobile-vertical-pos-top", "label": "Top" },
+                        { "value": "mobile-vertical-pos-center", "label": "Center" },
+                        { "value": "mobile-vertical-pos-bottom", "label": "Bottom" }
+                    ],
+                    "default": "mobile-vertical-pos-center",
+                    "id": "mobile_vertical_text_position",
+                    "label": "Mobile Vertical text position"
+                },
+                {
+                    "type": "header",
+                    "content": "Slide schedule"
+                },
+                {
+                    "type": "checkbox",
+                    "id": "schedule",
+                    "label": "Schedule slide?",
+                    "default": false
+                },
+                {
+                    "id": "active_from",
+                    "label": "Active from (YYYY-MM-DDD H:M)",
+                    "type": "text",
+                    "placeholder": "Optional"
+                },
+                {
+                    "id": "active_to",
+                    "label": "Active up to (YYYY-MM-DDD H:M)",
+                    "type": "text",
+                    "placeholder": "Optional"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Hero Image module",
+            "category": "Homepage",
+            "settings": {
+
+            }
+        }
+    ]
+}
+{% endschema %}

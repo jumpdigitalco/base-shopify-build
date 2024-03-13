@@ -1,0 +1,41 @@
+
+{% comment %}
+Params:
+block_title
+block_caption
+block_link
+block_color
+block_alignment
+block_image
+block_mobile_image
+block_cta
+article_layout
+{% endcomment %}
+
+{% if article_layout == blank %}
+  {% assign article_layout = 'layout-default' %}
+{% endif %}
+
+<article class="blog-post {{article_layout}} {{block_color}} align-{{block_alignment}} object-type-custom{% unless block_image %} no-image{% endunless %}">
+    
+    {% assign article_image_size = '414x' %}
+    {% if article_layout == 'layout-fullw' %}
+      {% assign article_image_size = '1200x' %}
+    {% endif %}
+
+    {% if block_image %}
+    <a class="article-image" href="{{ block_link }}">
+        <span class="absolute-image desktop-image" role="img" aria-label="{{ block_title }}" data-bg="{{ block_image | img_url: article_image_size, scale: 2, format: 'pjpg' }}"></span>
+        <span class="absolute-image mobile-image" role="img" aria-label="{{ block_title }}" data-bg="{{ block_mobile_image | img_url: article_image_size, scale: 2, format: 'pjpg' }}"></span>
+    </a>
+    {% endif %}
+    <div class="article-info">
+      <h3 class="article-title"><a href="{{ block_link }}">{{ block_title }}</a></h3>
+
+      {% if block_caption != blank and article_layout != 'layout-black-bg' %}
+      <div class="article-caption">{{- block_caption -}}</div>
+      {% endif %}
+    
+      <a class="article-cta cta-link-1" href="{{ block_link }}" role="button"><span>{{ block_cta }}</span></a>
+    </div>
+</article>

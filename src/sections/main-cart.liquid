@@ -1,0 +1,223 @@
+<div class="cart-inner{% if cart.item_count < 1 %} cart-empty{% endif %}">
+	{% if cart.item_count > 0 %}
+		<div class="module-intro">
+			<div class="headlines-wrap">
+				<h1 class="headline">
+					{{ 'cart.general.title' | t }}
+				</h1>
+				<div class="caption">
+					{% assign cart_count = cart.item_count | divided_by: 1 %}
+					<span class="count">( {{ cart_count }} {{ cart_count | pluralize: 'item', 'items' }} )</span>
+				</div>
+			</div>
+		</div>
+
+		<form action="{{ routes.cart_url }}" method="post" novalidate>
+			<div class="cart-products">
+
+				<div class="cart-table">
+
+					<div class="cart-heading row">
+						<div class="column product-image-heading"></div>
+						<div class="column product-price-heading">{{ 'cart.label.price' | t }}</div>
+						<div class="column product-qty-heading">{{ 'cart.label.quantity' | t }}</div>
+						<div class="column product-total-heading">{{ 'cart.label.total' | t }}</div>
+					</div>
+
+					{% for item in cart.items %}
+
+						{% assign all_tags = item.product.tags | join | downcase %}
+						{% capture product_flags %}
+							{% if all_tags contains settings.product_preorder_tag %}
+								<div class="flag pre-order"><span>Pre-Order</span></div>
+							{% endif %}
+							{% if all_tags contains settings.product_finalsale_tag %}
+								<div class="flag final-sale"><span>Final Sale</span></div>
+							{% endif %}
+						{% endcapture %}
+
+						{% assign product_index = forloop.index %}
+
+						<article class="cart-item row animated fadeIn">
+
+							<div class="column product-image">
+								{% if item.image != blank %}
+									<a href="{{ item.url }}">
+										<img src="{{ item | img_url: '240x' }}" alt="{{ item.product.title }}" />
+									</a>
+								{% endif %}
+							</div>
+
+							<div class="column product-info">
+
+								<div class="product-title">
+									<a href="{{ item.url }}">{{ item.product.title | replace: 'Maaji', '' }}</a>
+									<div class="product-remove">
+										<a href="{{ routes.cart_change_url }}?line={{ product_index }}&amp;quantity=0" class="remove">
+											<span class="visually-hidden">{{ 'cart.general.remove' | t }}</span>
+										</a>
+									</div>
+								</div>
+
+								{% unless item.product.has_only_default_variant %}
+								<div class="item-variant">
+									{{ item.variant.title | replace: 'SM','S' | replace: 'MD','M' | replace: 'LG','L' }}									
+								</div>
+								{% endunless %}
+
+								{%- assign property_size = item.properties | size -%}
+								{%- if property_size > 0 -%}
+								<div class="item-properties">
+									{% for p in item.properties %}
+									<dl class="item-property {{ p.first | handleize }}">
+										<dt>{{ p.first }} :</dt>
+										{% if p.last contains '/uploads/' %}
+											<dd><a href="{{ p.last }}">{{ p.last | split: '/' | last }}</a></dd>
+										{% else %}
+											<dd>{{ p.last }}</dd>
+										{% endif %}
+									</dl>
+									{% endfor %}
+								</div>
+								{%- endif -%}
+
+							</div>
+
+							<div class="product-summary">
+
+								<div class="product-price">
+									<span class="label">{{ 'cart.label.price' | t }}</span>
+									{%- if item.original_line_price != item.original_price -%}
+										<span class="visually-hidden">{{ 'cart.label.discounted_price' | t }}</span>
+										{{- price | money_without_trailing_zeros -}}
+										<span class="visually-hidden">{{ 'cart.label.original_price' | t }}</span>
+										<s>{{- item.original_price | money_without_trailing_zeros -}}</s>
+									{%- else -%}
+										{{- item.price | money_without_trailing_zeros -}}
+									{%- endif -%}
+								</div>
+
+								<div class="product-quantity">
+									<span class="label">{{ 'cart.label.quantity' | t }}</span>
+									<input type="number"
+											class="enable-qty-selector"
+											name="updates[]"
+											id="updates_{{ product_index }}"
+											value="{{ item.quantity }}"
+											min="0"
+											aria-label="{{ 'cart.general.item_quantity' | t }}">
+									<button type="submit" name="update" class="update-cart"><span>{{ 'cart.general.update' | t }}</span></button>
+								</div>
+								
+								<div class="product-total" data-label="{{ 'cart.label.total' | t }}">
+									<span class="label">{{ 'cart.label.total' | t }}</span>
+									{{- item.line_price | money_without_trailing_zeros -}}
+								</div>
+
+							</div>
+
+						</article>
+
+					{% endfor %}
+
+				</div>
+
+				{% comment %} <a href="{{ shop.secure_url }}" class="continue"><span>{{ 'cart.general.continue_browsing' | t }}</span></a> {% endcomment %}
+			
+			</div>
+
+			<div class="cart-summary-wrapper">
+				<div class="cart-summary">
+					<h2 class="summary-title">{{ 'cart.general.summary' | t }}</h2>
+
+					<div class="totals-table">
+						<div class="row subtotal">
+							<div class="column cart__subtotal-title">{{ 'cart.general.subtotal' | t }}</div>
+							<div class="column cart__subtotal">{{ cart.total_price | money_without_trailing_zeros }}</div>
+						</div>
+						{% if cart.total_discounts > 0 %}
+							{% assign savings = cart.total_discounts | money_without_trailing_zeros %}
+							<div class="row savings">
+								<div class="column">{{ 'cart.general.savings' | t }}</div>
+								<div class="column">{{ cart.total_discounts | money_without_trailing_zeros }}</div>
+							</div>
+						{% endif %}
+						<div class="row shipping">
+							<div class="column shipping">{{ 'cart.general.shipping_at_checkout' | t }}</div>
+							<div class="column"> — </div>
+						</div>
+						<div class="row total">
+							<div class="column">{{ 'cart.label.order_total' | t }}</div>
+							<div class="column h4">
+								<span>{{ cart.total_price | money_without_trailing_zeros }}</span>
+								<span class="visually-hidden">{{ cart.total_price | money_without_trailing_zeros }}</span>
+							</div>
+						</div>
+					</div>
+
+					{% if settings.cart_notes_enable %}
+						<div class="cart-notes">
+							<label for="note">Special instructions for seller</label>
+							<textarea name="note" id="CartSpecialInstructions">{{ cart.note }}</textarea>
+						</div>
+					{% endif %}
+
+					<div class="cart-actions">
+						<div class="discounts-message">{{ 'cart.general.discounts_message' | t }}</div>
+						<button type="submit" name="checkout" class="cta-2-dark checkout-button" value="{{ 'cart.general.checkout' | t }}">{{ 'cart.general.checkout' | t }}</button>
+
+						<a href="{{ settings.continue_shopping_link }}" class="continue cta-outline"><span>{{ 'cart.general.continue_browsing' | t }}</span></a>
+
+						<button type="submit" name="update" class="cta-link update-cart-btn" value="{{ 'cart.general.update' | t }}">{{ 'cart.general.update' | t }}</button>
+						
+						{% if additional_checkout_buttons %}
+						<div class="additional-checkout-buttons">
+							{% comment %} {{ content_for_additional_checkout_buttons }} {% endcomment %}
+						</div>
+						{% endif %}
+					</div>
+
+				</div>
+			</div>
+		</form>
+	{% else %}
+		<div class="cart-empty-wrapper">
+			<div class="module-intro theme-light">
+				<div class="headlines-wrap">
+					<h1 class="headline">{{ 'cart.general.title' | t }}</h1>
+					<div class="caption">{{ 'cart.general.empty' | t }}</div>
+
+					<a href="{{ shop.secure_url }}" class="module-cta cta-1 continue-shopping" role="button">{{ 'cart.general.continue_browsing' | t }}</a>
+				</div>
+			</div>
+		</div>
+	{% endif %}
+
+	{%- assign block_collection = collections[settings.cart_recom_collection] %}
+	{%- assign col_product_count = block_collection.products_count | times:1 %}
+	{% if col_product_count > 0 %}
+	{% render 'products-carousel',
+		intro_title: settings.cart_recom_title,
+		data_aos: 'fade-up',
+		offset_right: true,
+		carousel_type: 'product'
+		arrow_box_class: 'collections-wrapper',
+		wrapper_class: 'collection-products slick-carousel',
+		scroller_class: '',
+		intro_link: block_collection.url,
+		intro_cta: 'View More',
+		iterables: block_collection.products %}
+	{% endif %}
+
+	<div class="product-recommend limespot">
+		<limespot></limespot>
+	</div>
+</div>
+
+{% comment %} {%- render 'sezzle', product: product -%} {% endcomment %}
+
+{% schema %}
+{
+  "name": "Cart page"
+}
+{% endschema %}

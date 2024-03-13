@@ -1,0 +1,61 @@
+{% if collection.metafields.plp.banner_block_activate %}
+    {% assign blocks_limit = 4 %}
+    {% assign all_blocks = '' %}
+    {% for i in (1..blocks_limit) %}
+        {% assign block_info_handle = 'banner_block_' | append: i %}
+        {% assign block_info = collection.metafields.plp[block_info_handle] %}
+
+        {% if block_info.value.block_image.value == blank %}{% continue %}{% endif %}
+        {% capture single_block %}
+        <div class="banner-block{% if block_info.value.block_image_hover.value != blank %} with-hover{% endif %}">              
+            <div class="image-container">
+              {% if block_info.value.block_link.value != blank %}
+                <a href="{{block_info.value.block_link.value}}" class="banner-link" title="Go to {{ block_info.value.block_title.value }}">
+              {% endif %}
+    
+                {% render 'responsive-image', image: block_info.value.block_image.value, class: 'main-image', img_alt_prefix: block_info.value.block_image.value.alt %}
+    
+                {% comment %} Hover image {% endcomment %}
+                {% if block_info.value.block_image_hover.value != blank %}
+                {% render 'responsive-image', image: block_info.value.block_image_hover.value, class: 'hover-image', img_alt_prefix: block_info.value.block_image_hover.value.alt %}
+                {% endif %}
+    
+                {% if block_info.value.block_link.value != blank %}
+                  </a>
+              {% endif %}
+            </div>
+    
+            <div class="block-content" data-aos="fade-up" data-aos-duration="200">
+              {% if block_info.value.block_link.value != blank %}
+                <a href="{{block_info.value.block_link.value}}" class="banner-link" title="Go to {{ block_info.value.block_title.value }}">
+              {% endif %}
+    
+                {% if block_info.value.block_title.value != blank %}
+                <div class="headline">{{ block_info.value.block_title.value }}</div>
+                {% endif %}
+                {% if block_info.value.block_link.value != blank and block_info.value.block_cta.value != blank %}
+                <div class="cta-wrap">
+                    <button class="cta-link-1"><span>{{ block_info.value.block_cta.value }}</span></button>
+                </div>
+                {% endif %}
+    
+              {% if block_info.value.block_link.value != blank %}
+                  </a>
+              {% endif %}
+            </div>
+        </div>
+        {% endcapture %}
+
+        {% assign all_blocks = all_blocks | append: single_block %}
+        {% assign counter = counter | plus: 1 %}
+    {% endfor %}
+
+    <section class="module banner-blocks-grid">
+        {% render 'module-heading', title: collection.metafields.plp.banner_block_title %}
+        {% if all_blocks != '' %}
+        <div class="banner-blocks block-size-{{counter}} small-grid-2 large-grid-4">
+            {{ all_blocks }}
+        </div>
+        {% endif %}
+    </section>
+{% endif %}

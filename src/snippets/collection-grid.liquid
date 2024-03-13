@@ -1,0 +1,229 @@
+{% comment %} In grid promos {% endcomment %}
+{%- if collection.metafields.plp.in_grid_promo_1 != blank-%}
+
+    {% assign block_info = collection.metafields.plp.in_grid_promo_1 %}
+
+    {% assign image_title = block_info.value.title.value %}
+    {% assign image_link = block_info.value.link.value %}
+    {% assign image_file = block_info.value.image.value %}
+    {% assign image_cta = block_info.value.cta.value %}
+    {% assign promo_pos_1 = block_info.value.position.value %}
+
+    {%- capture in_grid_promo_1 -%}
+    <article class="item promo-item in-grid-promo">
+
+        <div class="product-image-wrapper">
+            <a class="product-link" href="{{ image_link }}">
+            {% render 'responsive-image',
+                image: image_file,
+                lazy_load: true,
+                class: 'promo-item-image',
+                img_class: 'promo-image' %}
+            </a>
+        </div>
+
+        <div class="product-info-wrapper">
+            <a href="{{image_link}}" class="product-link cta-2">
+                {{image_cta}}
+            </a>
+        </div>
+    </article>
+    {%- endcapture -%}
+{%- endif -%}
+
+{%- if collection.metafields.plp.in_grid_promo_2 != blank-%}
+
+    {% assign block_info = collection.metafields.plp.in_grid_promo_2 %}
+
+    {% assign image_title = block_info.value.title.value %}
+    {% assign image_link = block_info.value.link.value %}
+    {% assign image_file = block_info.value.image.value %}
+    {% assign image_cta = block_info.value.cta.value %}
+    {% assign promo_pos_2 = block_info.value.position.value %}
+
+    {%- capture in_grid_promo_2 -%}
+    <article class="item promo-item in-grid-promo">
+
+        <div class="product-image-wrapper">
+            <a class="product-link" href="{{ image_link }}">
+            {% render 'responsive-image',
+                image: image_file,
+                lazy_load: true,
+                class: 'promo-item-image',
+                img_class: 'promo-image' %}
+            </a>
+        </div>
+
+        <div class="product-info-wrapper">
+            <a href="{{image_link}}" class="product-link cta-2">
+                {{image_cta}}
+            </a>
+        </div>
+    </article>
+    {%- endcapture -%}
+{%- endif -%}
+
+{%- if collection.metafields.plp.in_grid_promo_3 != blank-%}
+
+    {% assign block_info = collection.metafields.plp.in_grid_promo_3 %}
+
+    {% assign image_title = block_info.value.title.value %}
+    {% assign image_link = block_info.value.link.value %}
+    {% assign image_file = block_info.value.image.value %}
+    {% assign image_cta = block_info.value.cta.value %}
+    {% assign promo_pos_3 = block_info.value.position.value %}
+
+    {%- capture in_grid_promo_3 -%}
+    <article class="item promo-item in-grid-promo">
+
+        <div class="product-image-wrapper">
+            <a class="product-link" href="{{ image_link }}">
+            {% render 'responsive-image',
+                image: image_file,
+                lazy_load: true,
+                class: 'promo-item-image',
+                img_class: 'promo-image' %}
+            </a>
+        </div>
+
+        <div class="product-info-wrapper">
+            <a href="{{image_link}}" class="product-link cta-2">
+                {{image_cta}}
+            </a>
+        </div>
+    </article>
+    {%- endcapture -%}
+{%- endif -%}
+{%- liquid 
+    for tag in current_tags
+        assign downcase_tag = tag | downcase
+        if downcase_tag contains 'size'
+            assign size_tag = downcase_tag
+            break
+        endif
+    endfor
+
+    assign active_filters = ''
+    for filter in collection.filters
+        if filter.label == 'Size'
+            for value in filter.values
+                if value.active
+                    assign active_filters = active_filters | append: value.value | append: ','
+                endif
+            endfor
+        endif
+    endfor
+
+    if active_filters != blank
+        assign active_filters = active_filters | split: ','
+    endif
+    
+    assign products_in_grid = 0
+    assign product_count = collection.products_count | times: 1
+-%}
+{% comment %} <!--active_size_filters: {{active_filters}}--> {% endcomment %}
+<div class="collection-listing-wrapper">
+    {% capture collection_empty %}
+        <div class="collection-empty">
+            <h3>{{ 'collections.general.no_matches' | t }}</h3>
+            <div class="collection-actions">
+                <a href="#" class="clear-filters" role="button">{{ 'collections.empty.clear' | t }}</a>
+                <a href="javascript:window.history.back();" class="cta-1" role="button">{{ 'collections.empty.go_back' | t }}</a>
+                <a href="{{ settings.empty_col_explore_url | default: '/' }}" role="button">{{ settings.empty_col_explore_cta }}</a>
+            </div>
+        </div>
+    {% endcapture %}
+    <div
+        {% unless current_tags == blank %}data-collection-current-tags{% endunless %}
+        data-pagination-page="{% if paginate.current_page != blank %}{{ paginate.current_page }}{% else %}1{% endif %}"
+        class="collection-products{% if product_count < 1 %} is-empty{% endif %} items{% unless settings.collection_show_alt_product_image %} alt-image-disabled{% endunless %}">
+
+        {%- assign promo1_shown = false -%}
+        {%- assign promo2_shown = false -%}
+        {%- assign promo3_shown = false -%}
+        {%- for product in collection.products -%}
+            {% comment %}
+                Variant availability check will only occur if size filter is active on collection page
+            {% endcomment %}
+            
+            {% comment %} <!--product.title: {{product.title}}--> {% endcomment %}
+            {% comment %} <!--active_filters: {{active_filters}}--> {% endcomment %}
+            
+            {% if active_filters != blank %}
+                {% assign variant_available = false %}
+                {% for variant in product.variants %}
+                    {% comment %} <!--variant.title: {{variant.title}}--> {% endcomment %}
+                    {% comment %} <!--variant.inventory_quantity: {{variant.inventory_quantity}}--> {% endcomment %}
+                    {% for from_active in active_filters %}
+                        <!--from_active:{{from_active}}-->
+                        {% if variant.title contains from_active and variant.inventory_quantity > 0 %}
+                            {% assign variant_available = true %}
+                            {% break %}
+                        {% endif  %}
+                    {%  endfor %}
+                    {% if variant_available %}
+                        {% break %}
+                    {% endif %}
+                {% endfor %}
+                {% comment %} <!--variant_available:{{variant_available}}--> {% endcomment %}
+            {% else %}
+                {% assign variant_available = true %}
+            {% endif  %}
+
+            {% comment %} <!--variant_available:{{variant_available}}--> {% endcomment %}
+            {%- unless variant_available == false -%}
+                {%- if paginate.current_page == 1 -%}
+                {%- if promo_pos_1 == 1 and in_grid_promo_1 != blank and promo1_shown == false -%}
+                    {{- in_grid_promo_1 -}}
+                    {% assign products_in_grid = products_in_grid | plus: 2 %}
+                    {%- assign promo1_shown = true -%}
+                {%- endif -%}
+                {%- if promo_pos_2 == 1 and in_grid_promo_2 != blank and promo2_shown == false -%}
+                    {{- in_grid_promo_2 -}}
+                    {% assign products_in_grid = products_in_grid | plus: 2 %}
+                    {%- assign promo2_shown = true -%}
+                {%- endif -%}
+                {%- if promo_pos_3 == 1 and in_grid_promo_3 != blank and promo3_shown == false -%}
+                    {{- in_grid_promo_3 -}}
+                    {% assign products_in_grid = products_in_grid | plus: 2 %}
+                    {%- assign promo3_shown = true -%}
+                {%- endif -%}
+                {%- endif -%}
+
+                {% assign lazy_load = true %}
+                {% if forloop.index < 5 %}
+                    {% assign lazy_load = false %}
+                {% endif %}
+
+                {% render 'product-grid-item', product: product, plp_quickshop: plp_quickshop,  plp_quickbuy: plp_quickbuy, include_alt_view: true, index: forloop.index, lazy_load: lazy_load %}
+                {% assign products_in_grid = products_in_grid | plus: 1 %}
+                
+                {% comment %} <!--forloop.index: {{forloop.index}}--> {% endcomment %}
+                {% comment %} <!--promo_pos_1: {{promo_pos_1}}--> {% endcomment %}
+                {%- if paginate.current_page == 1 -%}
+                {%- if forloop.index == promo_pos_1 and in_grid_promo_1 != blank and promo1_shown == false -%}
+                    {{- in_grid_promo_1 -}}
+                    {% assign products_in_grid = products_in_grid | plus: 2 %}
+                    {%- assign promo1_shown = true -%}
+                {%- endif -%}
+                {%- if forloop.index == promo_pos_2 and in_grid_promo_2 != blank and promo2_shown == false -%}
+                    {{- in_grid_promo_2 -}}
+                    {% assign products_in_grid = products_in_grid | plus: 2 %}
+                    {%- assign promo2_shown = true -%}
+                {%- endif -%}
+                {%- if forloop.index == promo_pos_3 and in_grid_promo_3 != blank and promo3_shown == false -%}
+                    {{- in_grid_promo_3 -}}
+                    {% assign products_in_grid = products_in_grid | plus: 2 %}
+                    {%- assign promo3_shown = true -%}
+                {%- endif -%}
+                {%- endif -%}
+            {%- endunless -%}            
+        {%- else -%}
+            {{ collection_empty }}
+        {%- endfor -%}
+
+        {%- unless products_in_grid > 0 -%}
+            {% comment %} {{ collection_empty }} {% endcomment %}
+        {%- endunless -%}
+    </div>
+</div>

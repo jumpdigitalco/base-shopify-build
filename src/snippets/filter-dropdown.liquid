@@ -1,0 +1,73 @@
+{% if filters != blank and filters.size > 0 %}
+    {%- assign _current_tags = current_tags | handle -%}
+    {%- assign filters = filters | split: ',' %}
+
+    {% assign collection_contains_tag = false %}
+    {% for filter in filters %}
+        {% if collection.all_tags contains filter %}
+            {% assign collection_contains_tag = true %}
+            {% break %}
+        {% endif %}
+    {% endfor %}
+
+    {% if collection_contains_tag %}
+        <div class="filter" data-filter-type="filter-{{ filter_type | handle }}{{ id_string }}">
+            <select class="filter-select coll-filter hide" id="filter-{{ filter_type | handle }}{{ id_string }}">
+                <option value="">choose</option>
+                {% for filter in filters %}
+                    {% assign filter_val = filter | split: ':' %}
+                    {% assign filter_val = filter_val[1] %}
+                    {% assign data_link = filter_type | append: '-' | append: filter_val | handle %}
+                    <option value="{{ data_link }}" {% if _current_tags contains data_link %} selected{% endif %}>{{ filter_val }}
+                    </option>
+                {% endfor %}
+            </select>
+            {% assign active_check = filter_type | append: '-' %}
+            <div class="filter-title{% if _current_tags contains active_check %} active{% endif %}">{{ filter_type }}</div>
+            <div class="filter-swatches filter-wrapper nav-accordion-content" data-select="filter-{{ filter_type }}">
+                <div class="dropdown-header">
+                    <button {% unless _current_tags contains filter_type %}disabled{% endunless %}
+                        class="cta-link-1 clear-all clear-all-filters filter-swatch" data-link="">
+                        {{ 'collections.filter.clear_all' | t }}
+                    </button>
+                    <button class="filter-apply">Apply</button>
+                </div>
+                <div class="body-font-subdued">{{ filter_type }}</div>
+                <div class="filter-swatches-wrapper">
+                    {% for filter in filters %}
+                        {% unless collection.all_tags contains filter %}{% continue %}{% endunless %}
+                        {% assign filter_val = filter | split: ':' %}
+                        {% assign filter_val = filter_val[1] %}
+                        {% assign data_link = filter_type | append: '-' | append: filter_val | handle %}
+                        {% assign filterTitle = filter | downcase | replace: filter_type | replace: ':' %}
+                        {% assign filter_is_active = false %}
+
+                        {% for current_tag in current_tags %}
+                            {% assign the_current_tag = current_tag
+                                | downcase
+                                | replace: '.', '-'
+                                | replace: '/', '-'
+                                | replace: ':', '-'
+                                | replace: ': ', '-' %}
+                            <script>console.log('current_tag: {{ the_current_tag }} == {{ data_link }}')</script>
+                            {% if data_link == the_current_tag %}
+                                {% assign filter_is_active = true %}
+                                {% break %}
+                            {% endif %}
+                        {% endfor %}
+
+                        <div class="filter-swatch-wrap">
+                            <button
+                                class="filter-swatch{% if filter_is_active %} active{% endif %}"
+                                type="button"
+                                data-link="{{ data_link }}">
+                                {% if filter_type contains 'color' %}<div class="filter-swatch-badge" style="background-color: {{ filterTitle }};"></div>{% endif %}
+                                {{ filterTitle }}
+                            </button>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endif %}

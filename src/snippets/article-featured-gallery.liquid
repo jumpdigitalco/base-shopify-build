@@ -1,0 +1,18 @@
+{% if files != blank %}
+{% assign theimages = files | split: ',' %}
+<div class="featured-gallery {{layout}}">
+    {% if headline != blank %}<h3>{{headline}}</h3>{% endif %}
+    <div id="gallery-main-{{gal_id}}" class="gallery-main"{% if layout == 'dark' %} data-simplebar{% endif %}>
+        {% for image in theimages %}
+        <div class="gallery-image"><img {% if layout == 'default' %}data-lazy{% else %}src{% endif %}="{{image}}" alt="Image {{forloop.index}}" /></div>
+        {% endfor %}
+    </div>
+    {% if layout == 'default' %}
+    <div id="gallery-thumbs-{{gal_id}}" class="gallery-thumbs">
+        {% for image in theimages %}
+        <div class="gallery-thumb"><img data-lazy="{{image}}" alt="Image {{forloop.index}}" /></div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div><!--.featured-gallery-->
+{% endif %}

@@ -1,0 +1,21 @@
+<article class="blog-post">
+    <!--article.image : {{article.image}}-->
+    {% if article.image %}
+        <a class="article__featured-image" href="{{ article.url }}">
+        <picture class="article-hero">
+          <source media="(max-width: 768px)" srcset="{{ article.image | img_url: '200x' | format: 'pjpg' }}, {{ article.image | img_url: '200x', scale: 2, format: 'pjpg' }} 2x">
+          <source media="only screen" srcset="{{ article.image | img_url: '400x' | format: 'pjpg' }}, {{ article.image | img_url: '400x', scale: 2, format: 'pjpg' }} 2x">
+          <img src="{{ article.image | img_url: '400x' | format: 'pjpg' }}" alt="{{ article.title | escape }}">
+        </picture>
+        </a>
+    {% endif %}
+    <div class="article-info">   
+        <h3 class="article-title"><a href="{{ article.url }}">{{ article.title }}</a></h3>
+        
+        <div class="article-meta">
+            {% comment %} {% render 'article-tags' %} {% endcomment %}
+            <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time>
+        </div>
+        <a class="article-cta" href="{{ article.url }}">{{settings.article_view_more}}</a>
+    </div>
+</article>

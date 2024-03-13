@@ -1,0 +1,31 @@
+<section class="module module-image-tiles" data-aos="fade-up">
+        <div class="slides-wrapper">
+        {% for i in (1..3) %}
+            {% assign image_selector = 'image_' | append: i %}
+            {% assign image = settings[image_selector] %}
+            {% assign image_mobile = settings[image_selector] %}
+
+            {% assign image_url_selector = 'image_url_' | append: i %}
+            {% assign image_url = settings[image_url_selector] %}
+
+            {% if image == blank %}{% continue %}{% endif %}
+            
+            <div class="slide-wrapper">
+                {% if image_url != blank %}
+                <a href="{{ image_url }}" class="slide-link">
+                {% endif %}
+
+                <picture class="slide-image">
+                    <source media="(max-width: 414px)" data-srcset="{{ image_mobile | img_url: '414x' }}, {{ image_mobile | img_url: '414x', scale: 2 }} 2x" />
+                    <source media="(max-width: 767px)" data-srcset="{{ image_mobile | img_url: '767x' }}, {{ image_mobile | img_url: '767x', scale: 2 }} 2x" />
+                    <source media="screen" data-srcset="{{ image | img_url: '1440x' }}, {{ image | img_url: '1440x', scale: 2 }} 2x" />
+                    <img data-src="{{ image | img_url: '1440x' }}" alt="{{ image.alt }}" />
+                </picture>
+
+                {% if image_url != blank %}
+                </a>
+                {% endif %}
+            </div>
+        {% endfor %}
+        </div>
+</section>

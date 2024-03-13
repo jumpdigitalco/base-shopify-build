@@ -1,0 +1,913 @@
+[
+    {
+        "name": "theme_info",
+        "theme_name": "Maaji",
+        "theme_version": "2.0.0",
+        "theme_author": "Jump Digital",
+        "theme_documentation_url": "https:\/\/jumpdigital.co",
+        "theme_support_url": "https:\/\/jumpdigital.co"
+    },
+    {
+        "name": "Global Settings",
+        "settings": [
+            {
+                "type": "image_picker",
+                "id": "favicon",
+                "label": "Favicon image",
+                "info": "Will be scaled down to 32 x 32px"
+            },
+            {
+                "type": "header",
+                "content": "Global Code Placement"
+            },
+            {
+                "type": "html",
+                "id": "custom_head_code",
+                "label": "Custom code in <head>",
+                "info": "Must be valid HTML, useful for inject code snippets for head"
+            },
+            {
+                "type": "html",
+                "id": "custom_body_code",
+                "label": "Custom code after <body> begin",
+                "info": "Must be valid HTML, useful for inject code snippets for body"
+            },
+            {
+                "type": "html",
+                "id": "custom_footer_code",
+                "label": "Custom code after <footer> begin",
+                "info": "Must be valid HTML, useful for inject code snippets for footer"
+            },
+            {
+                "type": "text",
+                "id": "gtm_id",
+                "label": "Google Tag Manager ID",
+                "info": "Must be valid GTM ID, e.g.: GTM-XXXXXXX. Do not leave it empty!."
+            },
+            {
+                "type": "header",
+                "content": "Redirect Pop up"
+            },
+            {
+                "type": "text",
+                "id": "allowed_countries",
+                "label": "Allowed navigation countries",
+                "default": "US",
+                "info": "Use Country 2 letter ISO code separated by comma. e.g. US,CA,MX"
+            },
+            {
+                "type": "text",
+                "id": "redirect_popup_title",
+                "label": "Pop up title",
+                "default": "HI THERE, WELCOME"
+            },
+            {
+                "type": "textarea",
+                "id": "redirect_popup_info",
+                "label": "Pop up info",
+                "default": "Shopping outside {country_name}? Need help finding the International site?"
+            },
+            {
+                "type": "text",
+                "id": "redirect_popup_continue_btn",
+                "label": "Continue button title",
+                "default": "Continue browsing"
+            },
+            {
+                "type": "text",
+                "id": "redirect_popup_redirect_btn",
+                "label": "Redirect button title",
+                "default": "Go to international site"
+            },
+            {
+                "type": "header",
+                "content": "DEVELOPMENT ONLY - BE CAUTIOUS"
+            },
+            {
+                "id": "webpack_dev_server_enable",
+                "label": "Enable webpack dev server",
+                "type": "checkbox",
+                "info": "Serve css/js assets via webpack dev server",
+                "default": false
+            },
+            {
+                "id": "async_load_theme_js",
+                "label": "async load js",
+                "type": "checkbox",
+                "default": false
+            },
+            {
+                "id": "async_load_theme_css",
+                "label": "async load css",
+                "type": "checkbox",
+                "default": false
+            },
+            {
+                "id": "async_load_third_party_js",
+                "label": "async load third party js",
+                "type": "checkbox",
+                "default": true
+            }
+        ]
+    },
+    {
+        "name": "Header",
+        "settings": [
+            {
+                "type": "header",
+                "content": "Logo"
+            },
+            {
+                "type": "image_picker",
+                "id": "logo",
+                "label": "Logo image"
+            },
+            {
+                "type": "text",
+                "id": "logo_max_width",
+                "label": "Custom logo width (in pixels)",
+                "default": "250"
+            },
+            {
+                "type": "link_list",
+                "id": "header_utility_linklist",
+                "label": "Header Utility Links"
+            },
+            {
+                "type": "link_list",
+                "id": "mobile__nav_utility_linklist",
+                "label": "Mobile Nav Utility Links"
+            }
+        ]
+    },
+    {
+        "name": "Footer",
+        "settings": [
+            {
+                "type": "image_picker",
+                "id": "footer_logo",
+                "label": "Logo image"
+            },
+            {
+                "type": "image_picker",
+                "id": "footer_mobile_logo",
+                "label": "Mobile Logo image"
+            },
+            {
+                "type": "text",
+                "id": "footer_mega_title_1",
+                "label": "Footer 1st Menu Title",
+                "default": "About Us"
+            },
+            {
+                "type": "link_list",
+                "id": "footer_mega_linklist_1",
+                "label": "Footer 1st Menu"
+            },
+            {
+                "type": "text",
+                "id": "footer_mega_title_2",
+                "label": "Footer 2nd Menu Title",
+                "default": "Customer Service"
+            },
+            {
+                "type": "link_list",
+                "id": "footer_mega_linklist_2",
+                "label": "Footer 2nd Menu"
+            },
+            {
+                "type": "text",
+                "id": "footer_mega_title_3",
+                "label": "Footer 3rd Menu Title",
+                "default": "Customer Service"
+            },
+            {
+                "type": "link_list",
+                "id": "footer_mega_linklist_3",
+                "label": "Footer 3rd Menu"
+            },
+            {
+                "type": "link_list",
+                "id": "footer_slim_linklist",
+                "label": "Footer Slim Menu"
+            },
+            {
+                "type": "text",
+                "id": "footer_newletter_title",
+                "label": "Newsletter Title",
+                "default": "Subscribe"
+            },
+            {
+                "type": "url",
+                "id": "footer_newletter_link",
+                "label": "Subscribe to Newsletter Link",
+                "info": "If no link is provided, it will display the pop up instead"
+            },
+            {
+                "type": "link_list",
+                "id": "footer_social_linklist",
+                "label": "Footer Social Menu"
+            },
+            {
+                "type": "checkbox",
+                "id": "show_payment_icons",
+                "label": "Show payment icons",
+                "default": false
+            },
+            {
+                "type": "text",
+                "id": "footer_copyright",
+                "label": "Footer Copyright",
+                "default": "All Rights Reserved",
+                "info": "© {current year} will prefix the copyright text"
+            }
+        ]
+    },
+    {
+        "name": "Newsletter",
+        "settings": [
+            {
+                "type": "text",
+                "id": "newsletter_title",
+                "label": "Newsletter Title",
+                "default": "Stay connected"
+            },
+            {
+                "type": "richtext",
+                "id": "newsletter_description",
+                "label": "Newsletter description",
+                "default": "<p>*By entering my email address, I agree to the terms and policy.<\/p>"
+            },
+            {
+                "type": "text",
+                "id": "newsletter_confirmation_title",
+                "label": "Newsletter confirmation title",
+                "default": "Thank you!"
+            },
+            {
+                "type": "richtext",
+                "id": "newsletter_confirmation",
+                "label": "Newsletter confirmation",
+                "default": "<p>You are now part of our email list</p><p>Check your email to get your discount code</p>"
+            }
+        ]
+    },
+    {
+        "name": "Cookie Banner",
+        "settings": [
+            {
+                "type": "checkbox",
+                "id": "cookie_banner_enable",
+                "label": "Enable Cookie Banner",
+                "default": true
+            },
+            {
+                "type": "richtext",
+                "id": "cookie_banner_text",
+                "label": "Cookie Banner Message",
+                "default": "<p>We use cookies on our site to give you the best experience. To continue using our site, please accept cookies.</p>"
+            },
+            {
+                "type": "text",
+                "id": "cookie_banner_cookiedays",
+                "label": "Modal won't show up for X day(s) if user accept cookie terms",
+                "info": "Must enable cookie for this to work",
+                "default": "365"
+            }
+        ]
+    },
+    {
+        "name": "Subscription Modal",
+        "settings": [
+            {
+                "type": "header",
+                "content": "General"
+            },
+            {
+                "type": "checkbox",
+                "id": "sub_modal_enable",
+                "label": "Enable",
+                "default": false
+            },
+            {
+                "type": "text",
+                "id": "sub_modal_mc_action",
+                "label": "Default Signup form action link"
+            },
+            {
+                "type": "text",
+                "id": "sub_modal_delay",
+                "label": "Delay showing the modal after page load (ms)",
+                "default": "2000"
+            },
+            {
+                "type": "checkbox",
+                "id": "sub_modal_cookieenable",
+                "label": "Enable Cookie",
+                "default": false
+            },
+            {
+                "type": "text",
+                "id": "sub_modal_cookiedays",
+                "label": "Modal won't show up for X day(s) if user submitted or closed the modal",
+                "info": "Must enable cookie for this to work",
+                "default": "1"
+            },
+            {
+                "id": "sub_modal_image",
+                "label": "image",
+                "type": "image_picker"
+            },
+            {
+                "type": "header",
+                "content": "Messaging"
+            },
+            {
+                "type": "radio",
+                "options": [
+                    { "value": "theme-dark", "label": "Light" },
+                    { "value": "theme-light", "label": "Dark" }
+                ],
+                "default": "theme-light",
+                "id": "text_color",
+                "label": "Font Color"
+            },
+            {
+                "type": "text",
+                "id": "sub_modal_heading",
+                "label": "Modal Title",
+                "default": "SUBSCRIBE TO OUR NEWSLETTER"
+            },
+            {
+                "type": "text",
+                "id": "sub_modal_subheading",
+                "label": "Modal Sub Title"
+            },
+            {
+                "type": "richtext",
+                "id": "sub_modal_caption",
+                "label": "Modal Caption"
+            },
+            {
+                "type": "richtext",
+                "id": "sub_modal_terms",
+                "label": "Modal Terms message",
+                "default": "<p>By checking this box, you are agreeing to our terms of service.</p>"
+            },
+            {
+                "type": "text",
+                "id": "sub_modal_errormsg",
+                "label": "General Error Message",
+                "default": "Oops, something wrong happened, please try again later"
+            },
+            {
+                "type": "text",
+                "id": "sub_modal_successmsg",
+                "label": "Success Message",
+                "default": "Thank you! You will receive an email to confirm your subscription shortly."
+            },
+            {
+                "type": "text",
+                "id": "sub_modal_requiredmsg",
+                "label": "Required fields error message",
+                "default": "Error: required field"
+            },
+            {
+                "type": "text",
+                "id": "sub_modal_erroremail",
+                "label": "Email format error message",
+                "default": "Error: please ensure formatting is correct"
+            }
+        ]
+    },
+    {
+        "name": "Product",
+        "settings": [
+            {
+                "type": "header",
+                "content": "Visual Pre-Order"
+            },
+            {
+                "type": "select",
+                "id": "product_preorder_tag",
+                "label": "Pre-Order tag",
+                "options": [
+                    {
+                        "value": "pre-order",
+                        "label": "pre-order"
+                    },
+                    {
+                        "value": "preorder",
+                        "label": "preorder"
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "id": "product_alt_view_tag",
+                "label": "Alternate image ALT Text",
+                "default": "3D"
+            },
+            {
+                "type": "text",
+                "id": "product_sibling_view_tag",
+                "label": "Color picker image ALT Text",
+                "default": "Color_Swatch"
+            },
+            {
+                "type": "text",
+                "id": "product_preorder_badge",
+                "label": "Pre-Order badge and CTA text",
+                "default": "Pre Order"
+            },
+            {
+                "type": "text",
+                "id": "product_preorder_message",
+                "label": "Pre-Order delivery message",
+                "default": "Pre-order delivers in 4 weeks"
+            },
+            {
+                "type": "header",
+                "content": "Visual Final Sale"
+            },
+            {
+                "type": "select",
+                "id": "product_finalsale_tag",
+                "label": "Final Sale Tag",
+                "default": "finalsale",
+                "options": [
+                    {
+                        "value": "final-sale",
+                        "label": "final-sale"
+                    },
+                    {
+                        "value": "finalsale",
+                        "label": "finalsale"
+                    }
+                ]
+            },
+            {
+                "type": "text",
+                "id": "product_finalsale_badge",
+                "label": "Final Sale badge text",
+                "default": "Final Sale"
+            },
+            
+            {
+                "type":      "range",
+                "id":        "product_inventory_display",
+                "min":       3,
+                "max":       10,
+                "step":      1,
+                "unit":      "prd",
+                "label":     "Display available units when inventory is X",
+                "default":   3
+            },
+            {
+                "type": "text",
+                "id": "product_finalsale_message",
+                "label": "Final sale policy message",
+                "default": "No returns"
+            },
+            {
+                "type": "text",
+                "id": "product_sale_badge_exclude",
+                "label": "Sale badge exclude when product has this tag",
+                "default": "badge-exclude"
+            },
+            {
+                "type": "checkbox",
+                "id": "show_sale_when_discounted",
+                "label": "Display Sale badge when product has a discount",
+                "default": false
+            },
+            {
+                "type": "header",
+                "content": "Product Swatches"
+            },
+            {
+                "type": "checkbox",
+                "id": "image_swatches_enable",
+                "label": "Enable (None linked collection) Image Swatches on PDP",
+                "default": false
+            },
+            {
+                "type": "header",
+                "content": "Linked Product"
+            },
+            {
+                "type": "checkbox",
+                "id": "product_linked_canonical",
+                "label": "Use Linked Canonical",
+                "info": "Using the default linked product canonical fallback, all linked product will have same canonical link as the first product within the linked collection"
+            },
+            {
+                "id": "enable_review",
+                "label": "Enable Product Reviews",
+                "type": "checkbox",
+                "default": true
+            },
+            {
+                "type": "text",
+                "id": "product_recommendations_title",
+                "label": "Recommended product tabs title",
+                "default": "You may also Like"
+            },
+            {
+                "type": "text",
+                "id": "product_default_recommendation_title",
+                "label": "Default recommendations title",
+                "default": "For you"
+            },
+            {
+                "type": "header",
+                "content": "Product Global Accordions"
+            },
+            {
+                "type": "text",
+                "id": "product_metafields",
+                "label": "Metafields used in product detail page",
+                "info": "Separate each metafield handle by comma"
+            },
+            {
+                "type": "header",
+                "content": "All Products Information Box - 1"
+            },
+            {
+                "type": "checkbox",
+                "id": "product_global_info_activate_1",
+                "label": "Activate this information box in all products"
+            },
+            {
+                "type": "text",
+                "id": "product_global_info_title_1",
+                "label": "Product information box title"
+            },
+            {
+                "type": "richtext",
+                "id": "product_global_info_content_1",
+                "label": "Product information box description"
+            },
+            {
+                "type": "header",
+                "content": "All Products Information Box - 2"
+            },
+            {
+                "type": "checkbox",
+                "id": "product_global_info_activate_2",
+                "label": "Activate this information box in all products"
+            },
+            {
+                "type": "text",
+                "id": "product_global_info_title_2",
+                "label": "Product information box title"
+            },
+            {
+                "type": "richtext",
+                "id": "product_global_info_content_2",
+                "label": "Product information box description"
+            }
+        ]
+    },
+    {
+        "name": "Collection Pages",
+        "settings": [
+            {
+                "id": "enable_collection_infinity_scroll",
+                "type": "checkbox",
+                "label": "Enable Infinity Scroll?",
+                "default": false
+            },
+            {
+                "id": "collection_pagination",
+                "label": "Showing how many product per page",
+                "type": "text",
+                "default": "18",
+                "info": "Number Only"
+            },
+            {
+                "type": "header",
+                "content": "Passkey requirement settings"
+            },
+            {
+                "type": "text",
+                "id": "passkey_title",
+                "label": "Passkeey Title",
+                "default": "Please enter the passcode to continue:"
+            },
+            {
+                "type": "textarea",
+                "id": "passkey_caption",
+                "label": "Passkeey Caption"
+            },
+            {
+                "type": "text",
+                "id": "passkey_cta",
+                "label": "Passkeey CTA",
+                "default": "Continue"
+            },
+            {
+                "type": "header",
+                "content": "Empty Collection Link"
+            },
+            {
+                "type": "text",
+                "id": "empty_col_explore_cta",
+                "label": "Empty Collection Explore CTA",
+                "default": "Explore the Shop"
+            },
+            {
+                "type": "url",
+                "id": "empty_col_explore_url",
+                "label": "Empty Collection Explore Link"
+            }
+        ]
+    },
+    {
+        "name": "Gift Card Landing page",
+        "settings": [
+            {
+                "label": "Gift card landing page image",
+                "id": "gift_card_image",
+                "type": "image_picker"
+            }
+        ]
+    },
+    {
+        "name": "404 Error Page",
+        "settings": [
+            {
+                "id": "utility_404_background_image_desktop",
+                "label": "404: Desktop BG Image",
+                "type": "image_picker"
+            },
+            {
+                "id": "utility_404_background_image_mobile",
+                "label": "404: Mobile BG Image",
+                "type": "image_picker"
+            },
+            {
+                "id": "utility_404_title",
+                "label": "404: Title",
+                "type": "text",
+                "default": "Error 404"
+            },
+            {
+                "id": "utility_404_subtitle",
+                "label": "404: Sub Title",
+                "type": "text",
+                "default": "The page you're looking found is not available"
+            },
+            {
+                "id": "utility_404_caption",
+                "label": "404: body (paragraph)",
+                "type": "textarea",
+                "default": "Keep browsing our site, explore our categories"
+            },
+            {
+                "type": "radio",
+                "options": [
+                    { "value": "theme-dark", "label": "Light" },
+                    { "value": "theme-light", "label": "Dark" }
+                ],
+                "default": "theme-light",
+                "id": "utility_404_text_color",
+                "label": "Font Color"
+            },
+            {
+                "type": "header",
+                "content": "Call to action"
+            },
+            {
+                "type": "text",
+                "id": "utility_404_cta",
+                "label": "CTA Text",
+                "default": "Shop Now"
+            },
+            {
+                "type": "url",
+                "id": "utility_404_cta_link",
+                "label": "CTA Link",
+                "info": "CTA not shown if empty"
+            },
+            {
+                "type": "radio",
+                "options": [
+                    { "value": "outline", "label": "Outline" },
+                    { "value": "solid", "label": "Solid Color" },
+                    { "value": "solid-2", "label": "Solid Dark/Light" },
+                    { "value": "link", "label": "Link" }
+                ],
+                "default": "solid",
+                "id": "utility_404_cta_style",
+                "label": "CTA Style"
+            },
+            {
+                "type": "header",
+                "content": "Call to action 2"
+            },
+            {
+                "type": "text",
+                "id": "utility_404_cta_2",
+                "label": "CTA 2 Text",
+                "default": "Shop Now"
+            },
+            {
+                "type": "url",
+                "id": "utility_404_cta_link_2",
+                "label": "CTA 2 Link",
+                "info": "CTA not shown if empty"
+            },
+            {
+                "type": "radio",
+                "options": [
+                    { "value": "outline", "label": "Outline" },
+                    { "value": "solid", "label": "Solid Color" },
+                    { "value": "solid-2", "label": "Solid Dark/Light" },
+                    { "value": "link", "label": "Link" }
+                ],
+                "default": "outline",
+                "id": "utility_404_cta_style_2",
+                "label": "CTA 2 Style"
+            },
+            {
+                "id": "utility_404_recom_title",
+                "label": "404: Recommended Title",
+                "type": "text",
+                "default": "But You May Like This"
+            },
+            {
+                "type": "collection",
+                "id": "utility_404_collection",
+                "label": "404: Collection",
+                "info": "Recommended products carousel"
+            }
+        ]
+    },
+    {
+        "name": "Cart",
+        "settings": [
+            {
+                "type": "header",
+                "content": "Free Shipping Bar at Minicart"
+            },
+            {
+                "type": "text",
+                "id": "minicart_free_shipping_minimum",
+                "label": "Free shipping minimum",
+                "default": "100"
+            },
+            {
+                "type": "text",
+                "id": "minicart_free_shipping_remaining_value_message",
+                "label": "Remaining value message",
+                "info": "Message shown when free shipping minimum has not been reached. Use [value] for it to be replaced dynamically by the actual remaining cart value to earn free shipping.",
+                "default": "You're [value] away from free shipping!"
+            },
+            {
+                "type": "text",
+                "id": "minicart_free_shipping_completed_value_message",
+                "label": "Completed value message",
+                "info": "Message shown when free shipping minimum has been reached.",
+                "default": "Congratulations! You've got free shipping!"
+            },
+            {
+                "type": "header",
+                "content": "Cart pages"
+            },
+            {
+                "type": "checkbox",
+                "id": "cart_notes_enable",
+                "label": "Enable cart notes",
+                "default": false
+            },
+            {
+                "id": "continue_shopping_link",
+                "label": "Continue Shopping Link",
+                "type": "url"
+            },          
+            {
+                "id": "cart_recom_title",
+                "label": "Recommended Products Title",
+                "type": "text",
+                "default": "But You May Like This"
+            },
+            {
+                "type": "collection",
+                "id": "cart_recom_collection",
+                "label": "Recommended Products Collection"
+            }
+        ]
+    },
+    {
+        "name": "Search",
+        "settings": [
+            {
+                "id": "search_categories",
+                "type": "text",
+                "label": "Search categories to filter by (comma separated)",
+                "default": "page,article,product"
+            },
+            {
+              "type": "checkbox",
+              "id": "predictive_search_enabled",
+              "default": true,
+              "label": "Enable predictive search"
+            }
+        ]
+    },
+    {
+        "name": "Utility Pages",
+        "settings": [
+        {
+            "id": "utility_title",
+            "label": "Utility Pages Title",
+            "type": "text"
+        },
+        {
+            "id": "utility_nav_linklist",
+            "label": "Utility Nav Menu",
+            "type": "link_list"
+        },
+        {
+            "id": "utility_nav_enable",
+            "label": "Display Utility Nav Menu?",
+            "type": "checkbox",
+            "default": false
+        }
+        ]
+    },
+    {
+        "name": "Holding page",
+        "settings": [
+            {
+                "type": "checkbox",
+                "id": "holding_page_enable",
+                "label": "Enable holding page styling?",
+                "info": "When checked, the below custom layout will be shown using the Shopify's password page template. Only available when password page is shown.",
+                "default": true
+            },
+            {
+                "id": "holding_page_bg_image",
+                "label": "Background image",
+                "type": "image_picker"
+            },
+            {
+                "id": "holding_page_bg_image_mobile",
+                "label": "Background mobile image",
+                "type": "image_picker"
+            },
+            {
+                "id": "holding_page_overlay_image",
+                "label": "Overlay image",
+                "type": "image_picker"
+            },
+            {
+                "id": "holding_page_overlay_image_mobile",
+                "label": "Overlay image for mobile",
+                "type": "image_picker"
+            },
+            {
+                "type": "checkbox",
+                "id": "holding_page_overlay",
+                "label": "Show image overlay",
+                "default": true
+            },
+            {
+                "type": "text",
+                "id": "holding_page_title",
+                "label": "Title"
+            },
+            {
+                "type": "text",
+                "id": "holding_page_subtitle",
+                "label": "Subtitle"
+            },
+            {
+                "type": "checkbox",
+                "id": "holding_page_socials",
+                "label": "Show socials",
+                "default": true
+            }
+        ]
+    },
+    {
+        "name": "Transaction Emails",
+        "settings": [
+            {
+                "type": "text",
+                "id": "transaction_email_returns",
+                "label": "Transaction Email Returns",
+                "default": "<p>We'll gladly accept for return or exchange within 31 days of purchase any merchandise purchased from The Company. online store that has not been worn or altered and is accompanied by its original price tag, original packaging, and receipt or packing slip.<\/p><p>Items may be returned for a full refund.<\/p><p>If an exchange is due to a shipping error or product defect caused by The Company. then the cost to reship a replacement item will be covered by The Company. Certain products may have different policies or requirements associated with them.<\/p><p>Gift Cards are not eligible for returns or exchanges.<\/p>",
+                "info": "Leave empty to hide"
+            },
+            {
+                "type": "richtext",
+                "id": "transaction_email_contact",
+                "label": "Transaction Email Contact info",
+                "default": "<p>Questions or concerns about your order? Contact customer service.<\/p>",
+                "info": "Leave empty to hide"
+            }
+        ]
+    }
+]

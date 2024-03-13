@@ -1,0 +1,84 @@
+{% assign templateType = template | replace: '.', ' ' | truncatewords: 1, '' | handle %}
+{% assign page_title_handle = page_title | handle %}
+<!doctype html>
+<html class="no-js supports-no-cookies html-template-{{ templateType }}" lang="{{ shop.locale }}">
+  <head>
+    {% comment %} Meta tags {% endcomment %}
+    {% render 'head-code' %}
+
+    {% comment %}
+      Template specific overides
+    {% endcomment %}
+    {{ content_for_header }}
+
+    {% comment %} Framework including CSS {% endcomment %}
+    {% render 'head-framework' %}
+
+    {%- assign apply_transparent_header = false -%}
+
+    {%- if template contains 'page' -%}
+      {%- if page.metafields.custom.transparent_header -%}
+        {%- assign apply_transparent_header = true -%}
+      {%- endif -%}
+    {%- endif -%}
+
+    {% assign extraLinks = linklists.extra-links %}
+    {% if settings.header_utility_linklist != blank %}
+      {% assign extraLinks = linklists[settings.header_utility_linklist] %}
+    {% endif %}
+
+    {% if settings.gtm_id != blank %}
+    <!-- Google Tag Manager -->
+    <script>
+      (function(w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({'gtm.start': new Date().getTime(), event: 'gtm.js'});
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer'
+            ? '&l=' + l
+            : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer','{{settings.gtm_id}}');
+    </script>
+    <!-- End Google Tag Manager -->
+    {% endif %}
+    
+  </head>
+  <body id="{{ page_title | handle }}" class="{% if customer %}customer-logged-in {% endif %}template-{{ template | replace: '.', ' ' | truncatewords: 1, '' | handle }}{% if template.suffix %} template-suffix-{{ template.suffix }}{% endif %} page-{{ page_title | handle }}{% if apply_transparent_header %} transparent-header{% endif %}{% if extraLinks != blank and extraLinks.links.size > 0 %} extra-links-active{% endif %}" data-tempsuffix="{{ template.suffix }}">
+
+    <a class="skip-to-content-link in-page-link visually-hidden skip-link" href="#MainContent" aria-hidden="true" tabindex="0">{{ 'general.accessibility.skip_to_content' | t }}</a>
+    
+    <button id="global-overlay" class=""><span class="visually-hidden">{{ 'general.accessibility.close_drawer' | t }}</span></button>
+
+    {% if settings.custom_body_code != blank %}
+      {{ settings.custom_body_code }}
+    {% endif %}
+
+    {%- render 'header', apply_transparent_header: apply_transparent_header -%}
+
+    <main role="main" id="MainContent">
+      {{ content_for_layout }}
+    </main>
+
+    <div class="to-top-btn">
+      <button><span class="visually-hidden">{{ 'general.site.to_top' | t }}</span></button>
+    </div>
+
+    {% render 'footer' %}
+
+    {%- if settings.sub_modal_enable and templateType == 'index' -%}
+      {% render 'subscribe-modal' %}
+    {%- endif -%}
+
+    {%- if settings.cookie_banner_enable -%}
+      {% render 'cookie-banner' %}
+    {%- endif -%}
+    
+    {% section 'app-optimization' %}
+    {% render 'theme-footer-includes' %}
+
+  </body>
+</html>

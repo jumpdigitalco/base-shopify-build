@@ -1,0 +1,139 @@
+//
+//  Common
+//  _____________________________________________
+.lookbook-main {
+    margin-top: 60px;
+    .lookbook-header {
+        text-align: center;
+        margin-top: 40px;
+        margin-bottom: 40px;
+    }
+    .lookbook-products {
+        @include clear-box;
+        & > .item {
+            float: left;
+            position: relative;
+            cursor: pointer;
+            @extend .animated, .fadeIn;
+            @include grid-col-with-margin(3);
+
+            .sibling-product-container {
+                display: none;
+            }
+        }
+    }
+    #quick-view-modal {
+        // display: none;
+        background: white;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        z-index: 2000;
+        top: 0;
+        left: 0;
+        visibility: hidden;
+        opacity: 0;
+        @include transition(all $slow);
+
+        &.active {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .close {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            display: inline-block;
+            text-align: center;
+            z-index: 200;
+            @include transform(translateX(-50%));
+        }
+
+        .slider-wrapper {
+            width: 100%;
+            height: 100%;
+            .slide-item {
+                height: 100%;
+                position: relative;
+                margin: 0 200px;
+                img {
+                    height: 100%;
+                    display: block;
+                    margin: 0 auto;
+                }
+                p {
+                    position: absolute;
+                    bottom: 10px;
+                    left: 50%;
+                    @include transform(translateX(-50%));
+                }
+                .sibling-product-container {
+                    position: absolute;
+                    width: 50%;
+                    left: 0;
+                    bottom: 10px;
+                }
+            }
+
+            .slick-arrow {
+                position: absolute;
+                z-index: 200;
+                top: 50%;
+                @include transform(translateY(-50%));
+                &.slick-prev {
+                    left: 0;
+                }
+                &.slick-next {
+                    right: 0;
+                }
+            }
+
+            .slick-list,
+            .slick-track {
+                height: 100%;
+            }
+        }
+    }
+}
+
+//
+// Small Screens Only
+//  _____________________________________________
+@include query-small {
+}
+
+//
+//  Medium Screens and Smaller
+//  _____________________________________________
+@include query-medium-down {
+}
+
+//
+// Medium Screens Only
+//  _____________________________________________
+@include query-medium {
+}
+
+//
+//  Small Desktop
+//  _____________________________________________
+@include query-large {
+}
+
+//
+// Large Screens
+//  _____________________________________________
+@include query-large-up {
+    // .lookbook-main {
+    //     .lookbook-products {
+    //         & > .item {
+    //             width: 7.69230769%;
+    //             margin-right: 7.69230769%;
+    //             &:nth-child(7n) {
+    //                 margin-right: 0;
+    //             }
+    //         }
+    //     }
+    // }
+} ;

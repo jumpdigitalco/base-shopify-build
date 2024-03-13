@@ -1,0 +1,25 @@
+{%- comment -%}
+@param css_url{String} - css url (non asset-url)
+@param webpack_dev_server{Srting} - Webpack dev server url prefix
+{%- endcomment -%}
+
+{%- comment -%} Add file extension {%- endcomment -%}
+{% unless css_url contains '.css' %}
+    {% assign css_url = css_url | append: '.css' %}
+{% endunless %}
+
+<!-- DEV SERVER? {{ settings.webpack_dev_server_enable }} -->
+{% if settings.webpack_dev_server_enable %}
+    {% assign css_url = css_url | prepend: webpack_dev_server %}
+{% else %}
+    {% assign css_url = css_url | asset_url %}
+{% endif %}
+
+{% assign date_hash = 'now' | date | md5 %}
+{%- comment -%} For dev/staging, cache bust {%- endcomment -%}
+{% if shop.url contains 'staging' and !content_for_header.contains 'designMode' %}
+    {% assign css_url = css_url | append: '&ver=' | append: date_hash %}
+{% endif %}
+
+<link rel="preload" href="{{ css_url }}" as="style" />
+<link rel="stylesheet" href="{{ css_url }}" />

@@ -1,0 +1,35 @@
+<div class="landing-page page-stores">
+        
+    <div class="module module-heading">
+        <div class="module-intro">
+            <div class="headlines-wrap">
+                <h2 class="headline">{{page.title}}</h2>
+                {% if page.description != blank %}<div class="caption">{{page.description}}</div>{% endif %}
+            </div>
+        </div>
+    </div>
+
+    {% assign default_locale = 'storesInfo.json' | asset_url %}
+    <section class="module store-locator" data-aos="fade-up" data-stores-info="{{section.settings.stores_info | default: default_locale }}">
+        <div class="list-container">
+            <div class="location-options-container"></div>
+            <div class="stores-list" id="stores-list"></div>
+        </div>
+        <div class="map-container"></div>
+    </section>
+
+</div>
+
+{% schema %}
+{
+    "name": "Stores Locator",
+    "class": "main-store-locator",
+    "settings": [
+        {
+            "type": "text",
+            "id": "stores_info",
+            "label": "Store Info URL"
+        }
+    ]
+}
+{% endschema %}

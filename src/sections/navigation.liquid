@@ -1,0 +1,228 @@
+<nav class="nav-bar" role="presentation">
+    <div class="inner-wrapper">
+        <div class="site-nav">
+            <div class="site-nav__wrap">
+                {% assign menu = linklists[section.settings.nav_menu_handle] %}
+                {% for link in menu.links %}
+
+                    {%- capture targetId -%}
+                    {{- forloop.index | prepend: link.title | handleize -}}
+                    {%- endcapture -%}
+
+                    {%- assign link_highlight = false -%}
+                    {%- assign link_color = false -%}
+                    {%- for block in section.blocks -%}
+                        {%- if block.type == 'highlight_block' and block.settings.link_handle == link.url -%}
+                            {%- assign link_highlight = block.settings.highlight_bold -%}
+                            {%- assign link_color = false -%}
+                            {% if block.settings.highlight_with_color != blank %}
+                                {%- assign link_color = block.settings.highlight_with_color -%}
+                            {% endif %}
+                        {%- endif -%}
+                    {%- endfor -%}
+
+                    <div class="level-1{% if link.levels > 0 %} has-children has-dropdown{% endif %}" {% if link.levels > 0 %}aria-haspopup="true"{% endif %} data-link-levels="{{ link.levels }}">
+                        <a class="nav-link {{ link.title | handleize }}{% if link_highlight %} as-bold{% endif %}" href="{{ link.url }}" {% if link.levels > 0 %}data-trigger="{{ targetId }}"{% endif %} role="button"{% if link_color %} style="color: {{link_color}}"{% endif %}><span>{{ link.title | escape }}</span></a>
+                        {% if link.levels > 0 %}
+                            <div class="dropdown-wrapper" aria-hidden="true">
+                                <ul class="children dropdown{% unless link.levels > 2 %} column-layout{% endunless %}" data-target="{{ targetId }}">
+                                    <li class="back-to"><a href="#">{{ 'general.navigation.back' | t }}</a></li>
+                                    {% assign counter = 1 %}
+                                    {% assign column_opened = false %}
+                                    {% for sublink_1 in link.links %}
+                                        {%- assign mod = forloop.index | modulo: section.settings.nav_divider -%}
+                                        {%- assign link_highlight_2 = false -%}
+                                        {%- assign link_color_2 = false -%}
+
+                                        {% comment %} sublink_1.levels < 1 or  {% endcomment %}
+                                        {% if mod == 0 %}
+                                            {% assign column_opened = true %}
+                                        {% else %}
+                                            {% assign column_opened = false %}
+                                        {% endif %}
+
+                                        {% comment %} sublink_1.levels < 1 or  {% endcomment %}
+                                        {% if mod == 1 and column_opened == false %}
+                                        <li class="level-2 column-wrapper"><ul class="level-2-no-drop">
+                                        <!--OPEN COLUMN -->
+                                        {% endif %}
+
+                                        <!--forloop.index: {{forloop.index}}-->
+                                        <!--column_opened: {{column_opened}}-->
+                                        {%- for block in section.blocks -%}
+                                            {%- if block.type == 'highlight_block' and block.settings.link_handle == sublink_1.url -%}
+                                                {%- assign link_highlight_2 = block.settings.highlight_bold -%}
+                                                {% if block.settings.highlight_with_color != blank %}
+                                                    {%- assign link_color_2 = block.settings.highlight_with_color -%}
+                                                {% endif %}
+                                            {%- endif -%}
+                                        {%- endfor -%}
+
+                                        <li class="level-2 column-{{ counter }}{% if sublink_1.levels > 0 %} has-children expandable{% endif %}" data-column="{{ counter }}" data-parent="{{ sublink_1.title | handleize }}">
+                                            <a class="nav-link {{ sublink_1.title | handleize }}{% if link_highlight_2 %} as-bold{% endif %}" href="{{ sublink_1.url }}"{% if link_color_2 %} style="color: {{link_color_2}}"{% endif %}><span>{{ sublink_1.title | escape }}</span></a>
+                                            {% if sublink_1.levels > 0 %}
+                                                <ul class="children">
+                                                    {% for sublink_2 in sublink_1.links %}
+                                                        {%- assign link_highlight_3 = false -%}
+                                                        {%- for block in section.blocks -%}
+                                                            {%- if block.type == 'highlight_block' and block.settings.link_handle == sublink_2.url -%}
+                                                                {%- assign link_highlight_3 = true -%}
+                                                            {%- endif -%}
+                                                        {%- endfor -%}
+                                                        <li class="level-3 {{ sublink_2.title | handleize }}{% if link_highlight_3 %} highlight{% endif %}">
+                                                            <a class="nav-link {{ sublink_2.title | handleize }}" href="{{ sublink_2.url }}" ><span>{{ sublink_2.title | escape }}</span></a>
+                                                        </li>
+                                                    {% endfor %}
+                                                    {% if sublink_1.url != '#' %}
+                                                    <li class="level-3 view-all">
+                                                        <a class="nav-link" href="{{ sublink_1.url }}" ><span>{{ "general.navigation.see_all" | t }} {{ sublink_1.title | escape }}</span></a>
+                                                    </li>
+                                                    {% endif %}
+                                                </ul>
+                                            {% endif %}
+                                        </li>
+                                        
+                                        {% if forloop.last and link.url != '#' %}
+                                        <li class="level-2 view-all">
+                                            <a class="nav-link" href="{{ link.url }}" ><span>{{ "general.navigation.see_all" | t }} {{ link.title | escape }}</span></a>
+                                        </li>
+                                        {% endif %}
+    
+                                        {% comment %} sublink_1.levels < 1 or  {% endcomment %}
+                                        {% if mod == 0 or forloop.last %}
+                                        </ul></li>
+                                        <!-- CLOSE 2 .column-wrapper-->
+                                        {% endif %}
+
+                                        <!--mod: {{mod}}-->
+
+                                        {% if mod == 0 %}
+                                            {% assign counter = counter | plus: 1 %}
+                                        {% endif %}
+
+                                    {% endfor %}
+
+                                    {% assign custom_block_count = 0 %}
+                                    {%- for block in section.blocks -%}
+                                    {%- if block.settings.id == targetId and block.type == 'image_block' -%}
+                                        {% assign custom_block_count = custom_block_count | plus: 1 %}
+                                    {%- endif -%}
+                                    {%- endfor -%}
+
+                                    {%- if custom_block_count > 0 -%}
+                                        {%- for block in section.blocks -%}
+                                        {%- if block.settings.id == targetId and block.type == 'image_block' -%}
+                                        <li class="level-2 image-banner">
+                                            <div class="image-wrapper">
+                                                <div class="nav-image-container">
+                                                    <a href="{{ block.settings.link }}">
+                                                    <img loading="lazy" class="nav-image" src="{{ block.settings.image | img_url: '400x' }}" alt="{{ block.settings.title }}" />
+                                                    </a>
+                                                </div>
+                                                <div class="image-actions">
+                                                    <span class="nav-image-title">{{ block.settings.title }}</span>
+                                                    <a href="{{ block.settings.link }}" class="nav-image-cta cta-2">{{ block.settings.cta }}</a>
+                                                </div>
+                                            </div>
+                                        </li>
+                                        {%- endif -%}
+                                        {%- endfor -%}
+                                    {%- endif -%}
+                                </ul>
+                            </div>
+                        {% endif %}
+                    </div>
+
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</nav>
+
+{% schema %}
+{
+    "name": "Navigation",
+    "settings": [
+        {
+          "type": "text",
+          "id": "nav_divider",
+          "label": "Items / Navi Column",
+          "default": "2"
+        },
+        {
+            "type": "text",
+            "id": "nav_menu_handle",
+            "label": "Nav Menu Handle",
+            "default": "main-menu"
+        }
+    ],
+    "blocks": [
+        {
+            "type": "image_block",
+            "name": "Navigation Image Block",
+            "settings": [
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Image"
+                },
+                {
+                    "type": "text",
+                    "id": "id",
+                    "label": "Associated top level link id",
+                    "info": "Use top level handleized link title and the associated index, e.g. shop1. You can find this by inspecting top level link, use the value from data-trigger attribute."
+                },
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Title"
+                },
+                {
+                    "type": "text",
+                    "id": "cta",
+                    "label": "CTA",
+                    "default": "Shop Now"
+                },
+                {
+                    "type": "url",
+                    "id": "link",
+                    "label": "Link"
+                }
+            ]
+        },
+
+        {
+            "type": "highlight_block",
+            "name": "Navigation Item highlight",
+            "settings": [
+                {
+                    "type": "url",
+                    "id": "link_handle",
+                    "label": "Link Handle",
+                    "info": "Add the link handle to match it within the link list from the menu"
+                },
+                {
+                    "type": "checkbox",
+                    "default": false,
+                    "id": "highlight_bold",
+                    "label": "Highlight Bold"
+                },
+                {
+                    "type": "color",
+                    "id": "highlight_with_color",
+                    "label": "Highlight Color"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Navigation",
+            "category": "Header",
+            "settings": {
+
+            }
+        }
+    ]
+}
+{% endschema %}

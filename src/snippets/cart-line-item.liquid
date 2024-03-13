@@ -1,0 +1,63 @@
+{% assign item = all_products[ product ] %}
+
+<article class="cart-item row animated fadeIn">
+
+	<div class="column product-image">
+		{% if item.images[0] != blank %}
+			<a href="{{ item.url }}">
+				<img src="{{ item.images[0].src | img_url: '240x' }}" alt="{{ item.title }}" />
+			</a>
+		{% endif %}
+	</div>
+	<div class="column product-info">
+		<a href="{{ item.url }}" class="product-title">{{ item.title }}</a>
+		{% unless item.has_only_default_variant %}
+		<div class="item-variant">{{ item.variant.title }}</div>
+		{% endunless %}
+		{%- assign property_size = item.properties | size -%}
+		{%- if property_size > 0 -%}
+		<div class="item-properties">
+			{% for p in item.properties %}
+			<dl class="item-property {{ p.first | handleize }}">
+				<dt>{{ p.first }} :</dt>
+				{% if p.last contains '/uploads/' %}
+					<dd><a href="{{ p.last }}">{{ p.last | split: '/' | last }}</a></dd>
+				{% else %}
+					<dd>{{ p.last }}</dd>
+				{% endif %}
+			</dl>
+			{% endfor %}
+		</div>
+		{%- endif -%}
+		<div class="product-price">
+			{%- if item.original_line_price != item_line_price -%}
+				<span class="visually-hidden" aria-hidden="true">{{ 'cart.label.discounted_price' | t }}</span>
+				{{- item_line_price | money_without_trailing_zeros -}}
+				<span class="visually-hidden" aria-hidden="true">{{ 'cart.label.original_price' | t }}</span>
+				<s>{{- item.original_price | money_without_trailing_zeros -}}</s>
+			{%- else -%}
+				{{- item_price | money_without_trailing_zeros -}}
+			{%- endif -%}
+		</div>
+		<div class="product-quantity">
+			<span class="label">{{ 'cart.label.quantity' | t }}:</span>
+			<input type="number"
+					class="enable-qty-selector"
+					name="updates[]"
+					id="updates_{{ item_index }}"
+					value="{{ quantity }}"
+					min="0"
+					aria-label="{{ 'cart.general.item_quantity' | t }}">
+			<button type="submit" name="update" class="update-cart"><span>{{ 'cart.general.update' | t }}</span></button>
+		</div>
+		
+		<div class="product-total" data-label="{{ 'cart.label.total' | t }}">
+			{{- item_line_price | money_without_trailing_zeros -}}
+		</div>
+		<div class="product-remove">
+			<a href="{{ routes.cart_change_url }}?line={{ item_index }}&amp;quantity=0" class="remove">
+				<span>{{ 'cart.general.remove' | t }}</span>
+			</a>
+		</div>
+	</div>
+</article>

@@ -1,0 +1,14 @@
+/*============================================================================
+  [replace with theme name] | Built with Slate
+    - You cannot use native CSS/Sass @imports in this file without a build script
+==============================================================================*/
+
+@import 'App/global.scss';
+
+/*================ SETTINGS ================*/
+@import 'Styles/settings/variables-noliquid.scss';
+@import 'Styles/settings/variables-light.scss';
+
+@import 'Styles/pages/blog.scss';
+@import 'Styles/pages/blog-article.scss';
+@import 'Styles/pages/blog-article-content-types.scss';

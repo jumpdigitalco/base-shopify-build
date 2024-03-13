@@ -1,0 +1,171 @@
+
+{% if section.blocks.size > 0 %}
+<section class="module split-image-content-module{% if section.blocks.size > 1 %} as-slider{% endif %} {{ section.settings.text_color }}" style="background-color: {{section.settings.bg_color}}">
+
+{% for block in section.blocks %}
+<div class="split-block">
+<div class="split-block-wrap{% if section.settings.flip_content %} flip-large{% endif %}">
+    <div class="block-image">
+        {% if block.settings.image != blank %}
+        {% render 'responsive-image',
+            image: block.settings.image,
+            class: 'block-image-wrap',
+            img_class: 'block-img' %}
+        {% else %}
+          {{ 'lifestyle-1' | placeholder_svg_tag: 'placeholder-svg' }}
+        {% endif %}
+    </div>
+    <div class="block-content">
+
+        <div class="block-content-wrap">
+        {% if block.settings.highlight_title != blank %}<div class="highlight-title">{{block.settings.highlight_title}}</div>{% endif %}
+        {% if block.settings.title != blank %}<h3 class="headline">{{block.settings.title}}</h3>{% endif %}
+        {% if block.settings.caption != blank %}<div class="caption">{{block.settings.caption}}</div>{% endif %}
+        {% if block.settings.links_list != blank %}<div class="links-list">{{block.settings.links_list}}</div>{% endif %}
+
+        {% if block.settings.cta != blank or block.settings.cta_2 != blank %}
+            <div class="cta-wrap">
+                {% assign cta_link = block.settings.link %}
+                {% if block.settings.cta_link != blank %}
+                    {% assign cta_link = block.settings.cta_link %}
+                {% endif %}
+                <a href="{{ cta_link }}" title="View {{ block.settings.headline }}" class="cta-{{-block.settings.cta_style-}}"><span>{{ block.settings.cta }}</span></a>
+
+                {% if block.settings.cta_link_2 != blank %}
+                <a href="{{ block.settings.cta_link_2 }}" title="View {{ block.settings.headline }}" class="cta-{{-block.settings.cta_style_2-}}"><span>{{ block.settings.cta_2 }}</span></a>
+                {% endif %}
+            </div>
+        {% endif %}
+        </div>
+
+    </div>
+</div>
+</div>
+{% endfor %}
+</section>
+{% endif %}
+
+{% schema %}
+{
+    "name": "Split Image and Content",
+    "class": "split-image-content",
+    "settings": [
+        {
+            "type": "radio",
+            "options": [
+                { "value": "theme-dark", "label": "Light" },
+                { "value": "theme-light", "label": "Dark" }
+            ],
+            "default": "theme-light",
+            "id": "text_color",
+            "label": "Font Color"
+        },
+        {
+          "type": "color",
+          "id": "bg_color",
+          "label": "Content Background Color",
+          "default": "transparent"
+        }
+    ],
+    "blocks": [
+        {
+          "type": "slide",
+          "name": "Slide",
+          "settings": [
+                {
+                    "type": "checkbox",
+                    "default": false,
+                    "id": "flip_content",
+                    "label": "Flip Content in Desktop?"
+                },
+                {
+                    "type": "text",
+                    "id": "highlight_title",
+                    "label": "Title Hightlight"
+                },
+                {
+                    "type": "text",
+                    "id": "title",
+                    "label": "Title"
+                },
+                {
+                    "type": "textarea",
+                    "id": "caption",
+                    "label": "Caption"
+                },
+                {
+                    "type": "richtext",
+                    "id": "links_list",
+                    "label": "Links List"
+                },
+                {
+                    "type": "image_picker",
+                    "id": "image",
+                    "label": "Image"
+                },
+                {
+                    "type": "header",
+                    "content": "Call to action"
+                },
+                {
+                    "type": "text",
+                    "id": "cta",
+                    "label": "CTA Text",
+                    "default": "Shop Now"
+                },
+                {
+                    "type": "url",
+                    "id": "cta_link",
+                    "label": "CTA Link",
+                    "info": "CTA not shown if empty"
+                },
+                {
+                    "type": "radio",
+                    "options": [
+                        { "value": "outline", "label": "Outline" },
+                        { "value": "solid", "label": "Solid Color" },
+                        { "value": "solid-2", "label": "Solid Dark/Light" },
+                        { "value": "link", "label": "Link" }
+                    ],
+                    "default": "solid",
+                    "id": "cta_style",
+                    "label": "CTA Style"
+                },
+                {
+                    "type": "header",
+                    "content": "Call to action #2"
+                },
+                {
+                    "type": "text",
+                    "id": "cta_2",
+                    "label": "CTA 2 Text",
+                    "default": "Shop Now"
+                },
+                {
+                    "type": "url",
+                    "id": "cta_link_2",
+                    "label": "CTA Link",
+                    "info": "CTA 2 not shown if empty"
+                },
+                {
+                    "type": "radio",
+                    "options": [
+                        { "value": "outline", "label": "Outline" },
+                        { "value": "solid", "label": "Solid Color" },
+                        { "value": "solid-2", "label": "Solid Dark/Light" },
+                        { "value": "link", "label": "Link" }
+                    ],
+                    "default": "outline",
+                    "id": "cta_style_2",
+                    "label": "CTA 2 Style"
+                }
+            ]
+        }
+    ],
+    "presets": [
+        {
+            "name": "Split Image and Content"
+        }
+    ]
+}
+{% endschema %}

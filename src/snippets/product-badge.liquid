@@ -1,0 +1,11 @@
+{% assign badgeValuePart = '' %}
+{% assign all_product_tags = product.tags | join: '|' | append: '|' %}
+{% assign parts = all_product_tags | split: 'badge:' %}
+{%- if parts -%}
+    {% assign badgeValuePart = parts[1] | split: '|' %}
+{%- endif -%}
+{%- if badgeValuePart != blank -%}
+    <div class="product-badge">
+        <span>{{ badgeValuePart[0] }}</span>
+    </div>
+{%- endif -%}

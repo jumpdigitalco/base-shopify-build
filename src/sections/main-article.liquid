@@ -1,0 +1,290 @@
+{% comment %}
+  When a comment is submitted, the browser is redirected to a page that includes 
+  the new comment id in its URL.
+  #comments is a required ID and is used as an anchor link by Shopify.
+{% endcomment %}
+
+{%- assign number_of_comments = article.comments_count -%}
+
+{% comment %}
+  If a comment was just submitted but requires moderation, we have an extra comment to count.
+{% endcomment %}
+{% if comment and comment.status != 'published' %}
+  {% assign number_of_comments = article.comments_count | plus: 1 %}
+{% endif %}
+
+{% comment %} Article options {% endcomment %}
+{% assign enable_social = '' %}
+{% assign article_image = '' %}
+{% assign featured_article_id = article.id %}
+{% assign article_content = article.content %}
+{% assign article_caption = article.metafields["global"]["special-caption"] %}
+
+
+{% assign hide_hero = false %}
+{% assign tags_ignore_count = 0 %}
+{% assign author_tag = false %}
+{% for tag in article.tags %}
+  {% if tag == 'hide-hero' %}
+    {% assign hide_hero = true %}
+  {% endif %}
+  {% assign lowerCaseTag = tag | downcase %}
+  {%- if lowerCaseTag contains "wp:" or lowerCaseTag contains "wp_" or lowerCaseTag contains "author:" or lowerCaseTag contains "dev:" -%}
+    {% assign tags_ignore_count = tags_ignore_count | plus: 1 %}
+    {% if tag contains "Author:" %}
+      {% assign author_tag = tag %}
+    {% endif %}  
+  {% endif %}
+{% endfor %}
+
+{% comment%}
+
+  Assign author for displaying bio
+
+  1. Name is required
+  2  Either bio or image is required
+  2. If a global author metafield exists on the article, use the author metafields
+  3. If there's no global author metafield, use article.author
+
+{% endcomment%}
+
+
+{% if article.metafields["global"]["author"] != blank %}
+
+  {%- assign author_name = article.metafields["author.author"]["name"] -%}
+  {%- assign author_image = article.metafields["author.author"]["image"] -%}
+  {%- assign author_bio = article.metafields["author.author"]["bio"] -%}
+  {%- assign author_source = 'metafield' -%}
+
+{% elsif author_tag %}
+
+  {%- assign author_name = author_tag | remove:  "Author:" | remove:  "author:" -%}
+  {%- assign author_source = 'tag' -%}
+
+{% else %}
+
+  {%- assign author_name = article.author -%}
+  {%- assign author_image = article.user.image -%}
+  {%- assign author_bio = article.user.bio -%}
+  {%- assign author_source = 'user' -%}
+
+{% endif %}
+
+
+{% assign author_search_string = author_name | url_encode %}
+
+<div class="article-wrap">
+
+<article class="article-container" role="article" itemscope itemtype="http://schema.org/Article">
+
+  {%- render 'breadcrumb' -%}
+
+  <div class="article-body rte" itemprop="articleBody">
+    <header role="banner">
+      {% assign article_image = article.image %}
+      {% if article_image != blank and hide_hero == false %}
+      <picture class="article-hero">
+          <source media="(max-width: 414px)" srcset="{{ article_image | img_url: '414x' | format: 'pjpg' }}, {{ article_image | img_url: '414x', scale: 2, format: 'pjpg' }} 2x">
+          <source media="(max-width: 768px)" srcset="{{ article_image | img_url: '768x' | format: 'pjpg' }}, {{ article_image | img_url: '768x', scale: 2, format: 'pjpg' }} 2x">
+          <source media="(max-width: 1440px)" srcset="{{ article_image | img_url: '768x' | format: 'pjpg' }}, {{ article_image | img_url: '768x', scale: 2, format: 'pjpg' }} 2x">
+          <source media="(min-width: 1440px)" srcset="{{ article_image | img_url: '1200x' | format: 'pjpg' }}, {{ article_image | img_url: '1200x', scale: 2, format: 'pjpg' }} 2x">
+          <source media="only screen" srcset="{{ article_image | img_url: '1200x' | format: 'pjpg' }}, {{ article_image | img_url: '1200x', scale: 2, format: 'pjpg' }} 2x">
+          <img src="{{ article_image | img_url: '1200x' | format: 'pjpg' }}" alt="{{ article.title | escape }}">
+      </picture>
+      {% endif %}
+
+      <h1 class="article-title">{{ article.title }}</h1>
+      {% if article_caption != blank %}
+      <div class="article-caption">{{- article_caption -}}</div>
+      {% endif %}
+      <div class="article-meta bio">
+        <address class="article-author">By <a rel="author" href="/search?q={{ author_search_string }}&tab_filter=article">{{ author_name }}</a></address>
+        <span class="sep">·</span>
+        <time pubdate class="article-date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time>
+      </div>
+    </header>
+
+    <div class="article-share">
+    {% if settings.social_sharing_blog %}
+      {% assign article_absolute_url = shop.url | append: article.url %}
+      {% render 'social-sharing',
+        share_title: article.title,
+        share_permalink: article_absolute_url,
+        share_image: article.image %}
+    {% endif %}
+    </div>
+
+    <div class="article-content">
+        {% assign content_modules = article_content %}
+
+        {% assign gallery_loop = 'one,two,three' | split: ',' %}
+        {% for i in gallery_loop %}
+            {% comment %} Gallery Items processing {% endcomment %}
+            {% assign gal_key = 'gallery-' | append: i %}
+            {% assign gal_title_key = 'gallery-' | append: i | append: '-title' %}
+            {% assign gal_layout_key = 'gallery-' | append: i | append: '-layout' %}
+
+            {% assign gallery = article.metafields["global"][gal_key] %}
+            {% assign gallery_title = article.metafields["global"][gal_title_key] %}
+            {% assign gallery_layout = article.metafields["global"][gal_layout_key] %}
+
+            {% capture gallery_info %}
+                {% render 'article-featured-gallery', files: gallery, headline: gallery_title, layout: gallery_layout, gal_id: forloop.index %}
+            {% endcapture %}
+
+            {% assign replacement = '[gallery-' | append: forloop.index | append: ']' %}
+            {% assign content_modules = content_modules | replace: replacement, gallery_info %}
+        {% endfor %}
+
+        {% assign product_loop = 'one,two,three,four,five,six,seven,eight,nine,ten,eleven,twelve,thirteen,fourteen,fifteen' | split: ',' %}
+        {% for i in product_loop %}
+            {% comment %} Featured product processing {% endcomment %}
+            {%- assign prod = 'featured-product-' | append: i -%}
+            {%- assign product_pos = 'featured-product-' | append: i | append: '-pos' -%}
+            {%- assign the_product = article.metafields["global"][prod] | strip -%}
+            <!-- ARTICLE INFO:: prod: {{ prod }} ; product_pos: {{ product_pos }} ; the_product: {{the_product}} -->
+            {%- assign product_pos = article.metafields["global"][product_pos] -%}
+            {% capture product_info %}
+                {% render 'article-featured-product', handle: the_product, layout: product_pos %}
+            {% endcapture %}
+
+            {% assign replacement = '[product-' | append: forloop.index | append: ']' %}
+            {% assign content_modules = content_modules | replace: replacement, product_info %}
+        {% endfor %}
+
+        {{ content_modules }}
+    </div><!--.article-content-->
+
+    {% assign tagExclusionArray = 'featured,author:,dev:,wp:,category:,wp_author:,' | append: settings.article_excluded_tags | downcase | split: "," %}
+    {% for tag in article.tags %}
+      {% assign lowerCaseTag = tag | downcase %}
+      {% assign includeTag = true %}
+      {% comment %} Exclude per tag {% endcomment %}
+      {% for excludedTag in tagExclusionArray %}
+        {% if lowerCaseTag contains excludedTag %}
+          {% assign includeTag = false %}
+          {% break %}
+        {% endif %}
+      {% endfor %}
+
+      {% if includeTag %}
+        {% assign tagsToShow = tagsToShow | append: tag | append: ',' %}
+      {% endif %}
+    
+    {% endfor %}
+
+    {% assign tagsToShow = tagsToShow | split: ',' %}
+
+    {% if tagsToShow.size > 0 %}
+    <div class="article-tag-cloud" data-aos="fade-up">
+        <ul>
+          {% for tag in tagsToShow %}
+            <li>
+              <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    {% endif %}
+
+    {% if author_name != blank and author_bio != blank or author_image != blank %}
+
+      {% render 'author',
+      author_name: author_name,
+      author_bio: author_bio,
+      author_image: author_image,
+      title: article.title,
+      currently_viewing: featured_article_id,
+      author_source: author_source %}
+
+    {% endif %}
+
+  </div><!--articleBody-->
+
+  <aside class="article-sidebar">
+
+    {% comment %} 4. SignUp module - Downloadable content {% endcomment %}
+    {% assign download_module_title = 'Download Your Plan' %}
+    {% if blog.metafields["global"]["download-title"] != blank %}
+      {% assign download_module_title = blog.metafields["global"]["download-title"] %}
+    {% endif %}
+    {% if blog.metafields['global']['download-file-url'] != blank %}
+      {% assign download_module_url = blog.metafields["global"]["download-file-url"] %}
+    {% endif %}
+
+    {% if blog.metafields["global"]["download-show"] == 'true' %}
+      
+      <div class="article-feature-block">
+
+        <article class="blog-post layout-signup yesmail-download-container">
+
+          {% if download_module_url != blank %}
+          <a href="{{ download_module_url }}" target="_blank">
+          <img src="{{ blog.metafields['global']['download-cta-image'] }}" alt="{{- download_module_title -}}">
+          </a>
+          {% endif %}
+          <h3 class="article-title">{{- download_module_title -}}</h3>
+
+          {% comment %} {%- render 'yesmail-download', cta: blog.metafields["global"]["download-cta"], success: blog.metafields["global"]["download-success"], yesmail_campaign_id: blog.metafields["global"]["yesmail-campaign-id" ] -%} {% endcomment %}
+
+          {% if download_module_url != blank %}
+          <a href="{{ download_module_url }}" class="cta-link-1 direct-download" target="_blank">{{ blog.metafields["global"]["download-cta"] }}</a>
+          {% endif %}
+
+        </article>
+
+      </div>
+
+    {% endif %}
+
+    {% render 'article-related',
+        blog: blog,
+        title: settings.article_recent_title ,
+        currently_viewing: featured_article_id %}
+
+    {% comment %} Email signup {% endcomment %}
+    {% assign source_desc = blog.metafields.global.email_source_desc %}
+    {% assign source = blog.metafields.global.email_source %}
+    {% assign header = blog.metafields.global.email_capture_header %}
+    {% assign disclaimer = blog.metafields.global.email_capture_disclaimer %}
+    {% assign success = blog.metafields["global"]["email_capture_success_msg"] %}
+
+    {% unless source_desc == blank %}
+        <div class="article-subscribe">
+            {% if header != blank %}
+                <h4 class="email-capture-header">
+                    {{ header }}
+                </h4>
+            {% endif %}
+            <div class="yesmail-form-wrap">
+                {% render 'yesmail-subscribe',
+                placeholder: 'EMAIL ADDRESS',
+                yesmail_source_desc: source_desc,
+                yesmail_source: source,
+                cta: 'Subscribe',
+                cta_class: 'cta-2',
+                success: success,
+                disclaimer: disclaimer %}
+            </div>
+        </div>
+    {% endunless %}
+  </aside>
+
+</article>
+
+<div class="article-bottom">
+
+{% if article.metafields["global"]["featured-collection"] != '' %}
+  {% assign shop_collection = article.metafields["global"]["featured-collection"] %}
+  {% render 'article-featured-collection',
+    offset_right: true,
+    full_width_scrollbar: true,
+    shop_collection: shop_collection %}
+{% endif %}
+
+{% comment %} {% render 'article-related', currently_viewing: featured_article_id %} {% endcomment %}
+{% comment %} {% render 'article-comments' %} {% endcomment %}
+
+</div>
+
+</div>

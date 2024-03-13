@@ -1,0 +1,436 @@
+
+{% assign paginateby = 24 | times: 1 %}
+{% paginate blog.articles by paginateby %}
+{% comment %} <!--paginate.current_page: {{paginate.current_page}}--> {% endcomment %}
+
+{% if paginate.current_page == 1 %}
+
+{% assign articleSearchPrefix = blog.handle | append: '/' %}
+{% comment %} Capture custom modules {% endcomment %}
+
+{% comment %} Get customizations from section blocks {% endcomment %}
+{% assign split_module_counter = 0 | times: 1 %}
+{% assign promo_module_counter = 0 | times: 1 %}
+{% for block in section.blocks %}
+  {% case block.type %}
+
+    {% when 'fullw_module' %}
+        {% comment %} 1. Full Width module {% endcomment %}
+        {% assign full_width_module_article = block.settings.article_one %}
+        {% assign full_width_module_index = block.settings.index %}
+        {% if block.settings.show and full_width_module_article != blank %}
+          {% assign article = articles[full_width_module_article] %}
+          {% assign article_image = article.image %}
+
+          {% capture fullw_module %}
+            {% if block.settings.show_custom and block.settings.image != blank  %}
+              {% render 'article-grid-custom-content', 
+                block_title: block.settings.headline,
+                block_caption: block.settings.caption,
+                block_link: block.settings.link,
+                block_color: block.settings.text_color,
+                block_alignment: block.settings.text_align,
+                block_image: block.settings.image,
+                block_mobile_image: block.settings.image_mobile,
+                block_cta: block.settings.cta,
+                article_layout: 'layout-fullw' %}
+            {% elsif article.title != blank and article_image != blank %}
+              {% render 'article-grid-item', article_data: article, article_layout: 'layout-fullw' %}
+            {% endif %}
+          {% endcapture %}
+        {% endif %}
+
+    {% when 'split_module' %}
+        {% comment %} 2. Split module {% endcomment %}
+        {% assign split_module_first_article = block.settings.article_one %}
+        {% assign split_module_second_article = block.settings.article_two %}
+
+        {% comment %} and split_module_first_article != blank and split_module_second_article != blank {% endcomment %}
+        {% if block.settings.show %}
+          {% assign article_1 = articles[split_module_first_article] %}
+          {% assign article_image = article_1.image %}        
+          {% assign article_2 = articles[split_module_second_article] %}
+          {% assign article_image_2 = article_2.image %}        
+          {% if article_1.title != blank and article_image != blank and article_2.title != blank and article_image_2 != blank %}
+          {% endif %}
+
+            {% unless split_module_counter > 0 %}
+                {% assign split_module_counter = split_module_counter | plus: 1 %}
+                {% assign split_module_index = block.settings.index %}
+                {% capture split_module %}
+                  {% if block.settings.show_custom and block.settings.image != blank  %}
+                    {% render 'article-grid-custom-content', 
+                      block_title: block.settings.headline,
+                      block_caption: block.settings.caption,
+                      block_link: block.settings.link,
+                      block_color: block.settings.text_color,
+                      block_alignment: block.settings.text_align,
+                      block_image: block.settings.image,
+                      block_mobile_image: block.settings.image_mobile,
+                      block_cta: block.settings.cta,
+                      article_layout: 'layout-split' %}
+                  {% elsif  article_1 != blank %}
+                    {% render 'article-grid-item', article_data: article_1, article_layout: 'layout-split' %}
+                  {% endif %}
+
+                  {% if block.settings.show_custom and block.settings.image_2 != blank  %}
+                    {% render 'article-grid-custom-content', 
+                      block_title: block.settings.headline_2,
+                      block_caption: block.settings.caption_2,
+                      block_link: block.settings.link_2,
+                      block_color: block.settings.text_color_2,
+                      block_alignment: block.settings.text_align_2,
+                      block_image: block.settings.image_2,
+                      block_mobile_image: block.settings.image_mobile_2,
+                      block_cta: block.settings.cta_2,
+                      article_layout: 'layout-split' %}
+                  {% elsif  article_2 != blank %}
+                    {% render 'article-grid-item', article_data: article_2, article_layout: 'layout-split' %}
+                  {% endif %}
+                {% endcapture %}
+            {% else %}
+                {% assign split_module_counter = split_module_counter | plus: 1 %}
+                {% assign second_split_module_index = block.settings.index %}
+                {% capture second_split_module %}
+                  {% if block.settings.show_custom and block.settings.image != blank  %}
+                    {% render 'article-grid-custom-content', 
+                      block_title: block.settings.headline,
+                      block_caption: block.settings.caption,
+                      block_link: block.settings.link,
+                      block_color: block.settings.text_color,
+                      block_alignment: block.settings.text_align,
+                      block_image: block.settings.image,
+                      block_mobile_image: block.settings.image_mobile,
+                      block_cta: block.settings.cta,
+                      article_layout: 'layout-split' %}
+                  {% elsif  article_1 != blank %}
+                    {% render 'article-grid-item', article_data: article_1, article_layout: 'layout-split' %}
+                  {% endif %}
+
+                  {% if block.settings.show_custom and block.settings.image_2 != blank  %}
+                    {% render 'article-grid-custom-content', 
+                      block_title: block.settings.headline_2,
+                      block_caption: block.settings.caption_2,
+                      block_link: block.settings.link_2,
+                      block_color: block.settings.text_color_2,
+                      block_alignment: block.settings.text_align_2,
+                      block_image: block.settings.image_2,
+                      block_mobile_image: block.settings.image_mobile_2,
+                      block_cta: block.settings.cta_2,
+                      article_layout: 'layout-split' %}
+                  {% elsif  article_2 != blank %}
+                    {% render 'article-grid-item', article_data: article_2, article_layout: 'layout-split' %}
+                  {% endif %}
+                {% endcapture %}
+            {% endunless %}
+          
+        {% endif %}
+
+    {% when 'promo_post_module' %}
+        {% comment %} 3.1 Promo post {% endcomment %}
+        {% assign black_bg_module_article = block.settings.article %}
+
+        {% if block.settings.show and black_bg_module_article != blank %}
+            {% assign promo_headline = block.settings.title %}
+            {% assign promo_cta_text = block.settings.cta_text %}
+            {% assign promo_cta_link = block.settings.cta_link %}
+            {% assign article = articles[black_bg_module_article] %}
+
+            {% if article.title != blank %}
+                {% unless promo_module_counter < 1 %}
+                    {% capture black_bg_module %}
+                        {% assign black_bg_module_index = block.settings.index %}
+                        {% render 'article-grid-item', article: article, article_data: article, article_layout: 'layout-black-bg', promo_headline: promo_headline, promo_cta_text:promo_cta_text, promo_cta_link: promo_cta_link %}
+                    {% endcapture %}
+                    {% assign promo_module_counter = promo_module_counter | plus: 1 %}
+                    {% assign paginateby = paginateby | minus: 1 %}
+                {% else promo_module_counter < 2 %}
+                    {% assign promo_module_counter = promo_module_counter | plus: 1 %}
+                    {% assign black_bg_module_2_index = block.settings.index %}
+                    {% capture black_bg_module_2 %}
+                      {% render 'article-grid-item', article: article, article_data: article, article_layout: 'layout-black-bg', promo_headline: promo_headline, promo_cta_text:promo_cta_text, promo_cta_link: promo_cta_link %}
+                    {% endcapture %}
+                    {% assign paginateby = paginateby | minus: 1 %}
+                {% else promo_module_counter < 3 %}
+                    {% assign promo_module_counter = promo_module_counter | plus: 1 %}
+                    {% assign black_bg_module_3_index = block.settings.index %}
+                    {% capture black_bg_module_3 %}
+                      {% render 'article-grid-item', article: article, article_data: article, article_layout: 'layout-black-bg', promo_headline: promo_headline, promo_cta_text:promo_cta_text, promo_cta_link: promo_cta_link %}
+                    {% endcapture %}
+                    {% assign paginateby = paginateby | minus: 1 %}
+                {% else promo_module_counter < 4 %}
+                    {% assign promo_module_counter = promo_module_counter | plus: 1 %}
+                    {% assign black_bg_module_4_index = block.settings.index %}
+                    {% capture black_bg_module_4 %}
+                      {% render 'article-grid-item', article: article, article_data: article, article_layout: 'layout-black-bg', promo_headline: promo_headline, promo_cta_text:promo_cta_text, promo_cta_link: promo_cta_link %}
+                    {% endcapture %}
+                    {% assign paginateby = paginateby | minus: 1 %}
+                {% endunless %}
+            {% endif %}
+            
+        {% endif %}
+
+    {% when 'sign_up_module' %}
+        {% comment %} 4. SignUp module {% endcomment %}
+        {% assign signup_module_title = 'Sign up and stay connected' %}
+        {% if block.settings.title != blank %}
+          {% assign signup_module_title = block.settings.title %}
+        {% endif %}
+
+        {% assign signup_module_index = block.settings.index %}
+
+        {% assign blog_yesmail_data_prefix = 'blog_yesmail' %}
+        {% if blog.handle == 'unbreakable-training' %}
+            {% assign blog_yesmail_data_prefix = 'blog_ub_yesmail' %}
+        {% elsif blog.handle == 'unbreakable-focus' %}
+            {% assign blog_yesmail_data_prefix = 'blog_ub_focus_yesmail' %}
+        {% elsif blog.handle == 'unbreakable-community' %}
+            {% assign blog_yesmail_data_prefix = 'blog_ub_community_yesmail' %}
+        {% elsif blog.handle == 'unbreakable-nutrition' %}
+            {% assign blog_yesmail_data_prefix = 'blog_ub_nutrition_yesmail' %}
+        {% elsif blog.handle == 'unbreakable-kids' %}
+            {% assign blog_yesmail_data_prefix = 'blog_ub_kids_yesmail' %}
+        {% elsif blog.handle == 'unbreakable-race-stories' %}
+            {% assign blog_yesmail_data_prefix = 'blog_ub_stories_yesmail' %}
+        {% endif %}
+
+        {% assign yesmail_source = blog_yesmail_data_prefix | append: '_source' %}
+        {% assign yesmail_source_desc = blog_yesmail_data_prefix | append: '_source_desc' %}
+
+        {% if block.settings.show %}
+          {% capture signup_module_module %}
+          <article class="blog-post layout-signup">
+            <h3 class="article-title">{{- signup_module_title -}}</h3>
+            <div class="yesmail-form-wrap">
+                {% render 'yesmail-subscribe',
+                    cta: block.settings.cta_text,
+                    cta_class: 'cta-2',
+                    success: block.settings.success,
+                    disclaimer: block.settings.disclaimer,
+                    yesmail_source: settings[yesmail_source],
+                    yesmail_source_desc: settings[yesmail_source_desc],
+                    yesmail_list_keys: block.settings.yes_mail_keys %}
+            </div>
+          </article>
+          {% endcapture %}
+        {% endif %}
+
+    {% when 'download_module' %}
+      {% comment %} NOTHING TO SEE HERE {% endcomment %}
+    {% when 'tagged_split_module' %}
+        <!--tagged_split_module-->
+        {% assign lowerCaseCurrentTags = current_tags | downcase %}
+        {% assign targetedTags = block.settings.tags | downcase | split: ',' %}
+        {% assign targetedTagHasCurrentTag = false %}
+
+        {% for tag in targetedTags %}
+          {% if lowerCaseCurrentTags contains tag %}
+          {% assign targetedTagHasCurrentTag = true %}
+          {% break %}
+          {% endif %}
+        {% endfor %}
+
+        {% if targetedTagHasCurrentTag %}
+        {% comment %} Tagged Split module {% endcomment %}
+        {% assign split_module_first_article = block.settings.article_one %}
+        {% assign split_module_second_article = block.settings.article_two %}
+        {% assign tagged_split_module_index = block.settings.index %}
+
+        {% comment %} and split_module_first_article != blank and split_module_second_article != blank {% endcomment %}
+        {% if block.settings.show %}
+          {% assign article_1 = articles[split_module_first_article] %}
+          {% assign article_image = article_1.image %}        
+          {% assign article_2 = articles[split_module_second_article] %}
+          {% assign article_image_2 = article_2.image %}        
+          {% if article_1.title != blank and article_image != blank and article_2.title != blank and article_image_2 != blank %}
+          {% endif %}
+          {% capture tagged_split_module %}
+            {% if block.settings.show_custom and block.settings.image != blank  %}
+              {% render 'article-grid-custom-content', 
+                block_title: block.settings.headline,
+                block_caption: block.settings.caption,
+                block_link: block.settings.link,
+                block_color: block.settings.text_color,
+                block_alignment: block.settings.text_align,
+                block_image: block.settings.image,
+                block_mobile_image: block.settings.image_mobile,
+                block_cta: block.settings.cta,
+                article_layout: 'layout-split' %}
+            {% elsif  article_1 != blank %}
+              {% render 'article-grid-item', article_data: article_1, article_layout: 'layout-split' %}
+            {% endif %}
+
+            {% if block.settings.show_custom and block.settings.image_2 != blank  %}
+              {% render 'article-grid-custom-content', 
+                block_title: block.settings.headline_2,
+                block_caption: block.settings.caption_2,
+                block_link: block.settings.link_2,
+                block_color: block.settings.text_color_2,
+                block_alignment: block.settings.text_align_2,
+                block_image: block.settings.image_2,
+                block_mobile_image: block.settings.image_mobile_2,
+                block_cta: block.settings.cta_2,
+                article_layout: 'layout-split' %}
+            {% elsif  article_2 != blank %}
+              {% render 'article-grid-item', article_data: article_2, article_layout: 'layout-split' %}
+            {% endif %}
+          {% endcapture %}
+          
+        {% endif %}
+        {% comment %} End if block content should be displayed {% endcomment %}
+        {% endif %}
+        {% comment %} End of targetedTagHasCurrentTag {% endcomment %}
+    {% when 'tagged_fullw_module' %}
+        <!--tagged_fullw_module-->
+        {% assign lowerCaseCurrentTags = current_tags | downcase %}
+        {% assign targetedTags = block.settings.tags | downcase | split: ',' %}
+        {% assign targetedTagHasCurrentTag = false %}
+
+        {% for tag in targetedTags %}
+          {% if lowerCaseCurrentTags contains tag %}
+          {% assign targetedTagHasCurrentTag = true %}
+          {% break %}
+          {% endif %}
+        {% endfor %}
+
+        {% if targetedTagHasCurrentTag %}
+          {% comment %} Tagged Full Width module {% endcomment %}
+          {% assign full_width_module_article = block.settings.article_one %}
+          {% assign tagged_full_width_module_index = block.settings.index %}
+          {% if block.settings.show and full_width_module_article != blank %}
+            {% assign article = articles[full_width_module_article] %}
+            {% assign article_image = article.image %}
+
+            {% capture tagged_fullw_module %}
+              {% if block.settings.show_custom and block.settings.image != blank  %}
+                {% render 'article-grid-custom-content', 
+                  block_title: block.settings.headline,
+                  block_caption: block.settings.caption,
+                  block_link: block.settings.link,
+                  block_color: block.settings.text_color,
+                  block_alignment: block.settings.text_align,
+                  block_image: block.settings.image,
+                  block_mobile_image: block.settings.image_mobile,
+                  block_cta: block.settings.cta,
+                  article_layout: 'layout-fullw' %}
+              {% elsif article.title != blank and article_image != blank %}
+                {% render 'article-grid-item', article_data: article, article_layout: 'layout-fullw' %}
+              {% endif %}
+            {% endcapture %}
+          {% endif %}
+        {% comment %} End if block content should be displayed {% endcomment %}
+        {% endif %}
+        {% comment %} End of targetedTagHasCurrentTag {% endcomment %}
+  {% endcase %}
+{% endfor %}
+
+{% endif %}
+{% comment %} END IF current page = 1 {% endcomment %}
+
+{% assign noCurrentTags = true %}
+{% if current_tags != blank %}
+{% assign noCurrentTags = false %}
+{% endif %}
+
+<section class="article-list">
+  {% comment %}
+  Article Previews
+  ====================
+  {% endcomment %}
+
+  <div class="posts-wrapper">
+  {% assign loop_count = 0 | times: 1 %}
+  {% for article in blog.articles %}
+
+    {% if loop_count == 0 and loop_count == full_width_module_index and noCurrentTags %}
+      {% comment %} {% assign loop_count = loop_count | plus: 1 %} {% endcomment %}
+      {{ fullw_module }}
+    {% endif %}
+
+    {% if loop_count == 0 and loop_count == split_module_index and noCurrentTags %}
+      {% comment %} {% assign loop_count = loop_count | plus: 1 %} {% endcomment %}
+      {{ membership_module }}
+      {{ split_module }}
+    {% endif %}
+
+    {% if loop_count == 0 and loop_count == tagged_full_width_module_index %}
+      {% comment %} {% assign loop_count = loop_count | plus: 1 %} {% endcomment %}
+      <!--Display tagged_fullw_module-->
+      {{ tagged_fullw_module }}
+    {% endif %}
+
+    {% if loop_count == 0 and loop_count == tagged_split_module_index %}
+      {% comment %} {% assign loop_count = loop_count | plus: 1 %} {% endcomment %}
+      <!--Display tagged_split_module-->
+      {{ tagged_split_module }}
+    {% endif %}
+
+    {% if loop_count == 0 and loop_count == second_split_module_index and noCurrentTags %}
+      {% comment %} {% assign loop_count = loop_count | plus: 1 %} {% endcomment %}
+      {{ second_split_module }}
+    {% endif %}
+
+    {% assign loop_count = loop_count | plus: 1 %}
+
+    {% comment %} <!-- TITLE: {{ article }} --> {% endcomment %}
+    {% render 'article-grid-item', article: article, article_layout: 'layout-default', no_excerpt: true %}
+    {% comment %} <!--loop_count:{{loop_count}}--> {% endcomment %}
+
+    {% if loop_count == full_width_module_index and noCurrentTags %}
+      {% comment %} {% assign loop_count = loop_count | plus: 1 %} {% endcomment %}
+      {{ fullw_module }}
+    {% endif %}
+
+    {% if loop_count == split_module_index and noCurrentTags %}
+      {% comment %} {% assign loop_count = loop_count | plus: 1 %} {% endcomment %}
+      {{ membership_module }}
+      {{ split_module }}
+    {% endif %}
+
+    {% if loop_count == second_split_module_index and noCurrentTags %}
+      {% comment %} {% assign loop_count = loop_count | plus: 1 %} {% endcomment %}
+      {{ second_split_module }}
+    {% endif %}
+
+    {% if loop_count == tagged_full_width_module_index %}
+      {% comment %} {% assign loop_count = loop_count | plus: 1 %} {% endcomment %}
+      {{ tagged_fullw_module }}
+    {% endif %}
+
+    {% if loop_count == tagged_split_module_index %}
+      {% comment %} {% assign loop_count = loop_count | plus: 1 %} {% endcomment %}
+      {{ tagged_split_module }}
+    {% endif %}
+
+    {% if loop_count == black_bg_module_index and noCurrentTags %}
+      {% assign loop_count = loop_count | plus: 1 %}
+      {{ black_bg_module }}
+    {% endif %}
+    {% if loop_count == signup_module_index and noCurrentTags %}
+      {% assign loop_count = loop_count | plus: 1 %}
+      {{ signup_module_module }}
+    {% endif %}
+    {% if loop_count == black_bg_module_2_index and noCurrentTags %}
+      {% assign loop_count = loop_count | plus: 1 %}
+      {{ black_bg_module_2 }}
+    {% endif %}
+    {% if loop_count == black_bg_module_3_index and noCurrentTags %}
+      {% assign loop_count = loop_count | plus: 1 %}
+      {{ black_bg_module_3 }}
+    {% endif %}
+    {% if loop_count == black_bg_module_4_index and noCurrentTags %}
+      {% assign loop_count = loop_count | plus: 1 %}
+      {{ black_bg_module_4 }}
+    {% endif %}
+    {% comment %} <!--loop_count:{{loop_count}}--> {% endcomment %}
+
+  {%- else -%}
+        <div class="article-empty"><p>No posts to show</p></div>
+  {% endfor %}
+  </div><!-- .posts -->
+
+  {% if paginate.pages > 1 %}
+    {% render 'pagination', paginate: paginate %}
+  {% endif %}
+</section>
+{% endpaginate %}

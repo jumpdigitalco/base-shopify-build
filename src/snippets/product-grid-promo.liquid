@@ -1,0 +1,49 @@
+{% assign collection_promo_handles = collection.metafields["global"]["in-grid-promo-handles"] %}
+{%- if product != blank and collection_promo_handles contains product.handle -%}
+    {% assign double_width = false %}
+    {% assign promo_style = '' %}
+    {% assign promo_text_style = '' %}
+    {%- for tag in product.tags -%}
+        {%- if tag contains settings.in_grid_promo_position_tag -%}
+            {%- assign promo_index = tag | split: ':' -%}
+            {%- assign promo_index = promo_index[1] -%}
+        {%- endif -%}
+        {%- if tag contains 'promo-style' -%}
+            {%- assign promo_style = tag | split: ':' -%}
+            {%- assign promo_style = promo_style[1] -%}
+        {%- endif -%}
+        {%- if tag contains 'promo-text-style' -%}
+            {% comment %} promo-text-style:1 or promo-text-style:2 {% endcomment %}
+            {%- assign promo_text_style = tag | split: ':' -%}
+            {%- assign promo_text_style = promo_text_style[1] -%}
+        {%- endif -%}
+        {%- if tag contains 'double-column-promo' -%}
+            {%- assign double_width = true -%}
+        {%- endif -%}
+    {%- endfor -%}
+    <div
+        class="item promo{% if double_width %} double{% else %} single{% endif %} promo-{{ forloop.index }} style-{% if promo_style != blank %}{{promo_style}}{% else %}light{% endif %}{% if promo_text_style != blank %} text-style-{{promo_text_style}}{% endif %}"
+        data-product-index="{{ forloop.index }}"
+        data-promo-index="{{ promo_index }}">
+            {% render 'responsive-image',
+                img_class: 'background-image',
+                image: product.featured_image,
+                lazy_load: lazy_load,
+                desktop_image_size: '250x',
+                mobile_image_size: '350x' %}
+        {% comment %}
+        <div
+            {% if product.featured_image != blank %}style="background-image:url('{{ product.featured_image | img_url: '800x' }}');"{% endif %}
+            class="background-image">
+        </div>
+        {% endcomment %}
+        <div
+            {% if product.images[1] != blank %}style="background-image:url('{{ product.images[1] | img_url: '800x' }}');"{% endif %}
+            class="background-image background-image-alt">
+        </div>
+        <div class="promo-inner align-{{ settings.in_grid_promo_alignment }}">
+            <h3 class="promo-title">{{ product.title | replace: 'In Grid Promo: ', '' }}</h3>
+            {{ product.description }}
+        </div>
+    </div>    
+{%- endif -%}

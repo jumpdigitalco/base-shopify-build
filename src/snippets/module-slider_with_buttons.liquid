@@ -1,0 +1,54 @@
+<section class="module module-slider-with-buttons" data-aos="fade-up">
+    <div class="module-container">
+
+        <div class="slides-wrapper">
+        {% for i in (1..5) %}
+            {% assign image_selector = 'image_' | append: i %}
+            {% assign image = settings[image_selector] %}
+            {% assign image_mobile = settings[image_selector] %}
+
+            {% assign image_mobile_selector = 'image_mobile_' | append: i %}
+            {% if settings[image_mobile_selector] != blank %}
+                {% assign image_mobile = settings[image_mobile_selector] %}
+            {% endif %}
+
+            {% assign image_url_selector = 'image_url_' | append: i %}
+            {% assign image_url = setings[image_url_selector] %}
+
+            {% if image == blank %}{% continue %}{% endif %}
+            
+            <div class="slide-wrapper">
+                {% if image_url != blank %}
+                <a href="{{ image_url }}" class="slide-link">
+                {% endif %}
+
+                <picture class="slide-image">
+                    <source media="(max-width: 414px)" srcset="{{ image_mobile | img_url: '414x', format: 'pjpg' }}, {{ image_mobile | img_url: '414x', scale: 2, format: 'pjpg' }} 2x" />
+                    <source media="(max-width: 767px)" srcset="{{ image_mobile | img_url: '767x', format: 'pjpg' }}, {{ image_mobile | img_url: '767x', scale: 2, format: 'pjpg' }} 2x" />
+                    <source media="screen" srcset="{{ image | img_url: '1440x', format: 'pjpg' }}, {{ image | img_url: '1440x', scale: 2, format: 'pjpg' }} 2x" />
+                    <img src="{{ image | img_url: '1440x', format: 'pjpg' }}" alt="{{ settings.title }}" />
+                </picture>
+
+                {% if image_url != blank %}
+                </a>
+                {% endif %}
+            </div>
+        {% endfor %}
+        </div>
+
+        <div class="ctas-wrapper">
+        {% for i in (1..5) %}
+            {% assign cta_text_selector = 'cta_text_' | append: i %}
+            {% assign cta_text = settings[cta_text_selector] %}
+
+            {% assign cta_url_selector = 'cta_url_' | append: i %}
+            {% assign cta_url = setings[cta_url_selector] %}
+
+            {% if cta_url== blank and cta_text == blank %}{% continue %}{% endif %}
+
+            <a href="{{cta_url}}" class="cta-1">{{ cta_text }}</a>
+        {% endfor %}
+        </div>
+
+    </div>
+</section>

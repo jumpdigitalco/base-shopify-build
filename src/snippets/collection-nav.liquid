@@ -1,0 +1,96 @@
+{% liquid 
+    comment
+    Toggle between collection.liquid and collection.list.liquid with the
+    ?view= parameter.
+    endcomment
+    assign results = collection
+    assign sort_by = results.sort_by | default: results.default_sort_by
+
+    if collection.products
+      assign count = collection.products_count
+    endif
+
+    if collection.results
+      assign count = collection.results_count
+    endif
+
+    if search.results
+      assign count = search.results_count
+    endif
+    assign plural_product = 'collections.general.products' | t
+    assign singular_product = 'collections.general.product' | t
+%}
+<div class="collection-nav-block product-count">
+  <div class="nav-title">{{count}} {{ count | pluralize: singular_product, plural_product }}</div>
+</div>
+
+<div class="collection-nav-block view-mode">
+  <div class="nav-title">{{ 'collections.mode.title' | t }}</div>
+  <div class="nav-content">
+
+      <div class="mode view-size">
+        <div data-link="large" class="layout large">
+          <span class="icon-box">  </span>
+          <span class="visually-hidden"> {{ 'collections.mode.large' | t }} </span>
+        </div>
+        
+        <div data-link="small" class="layout small active">
+          <span class="icon-grid">  </span>
+          <span class="visually-hidden"> {{ 'collections.mode.small' | t }} </span>
+        </div>
+      </div>
+
+      <div class="mode view-type">
+        <div data-link="alternate" class="layout alternate">
+          <span class="icon-bikini-top">  </span>
+          <span class="visually-hidden"> {{ 'collections.mode.alternate' | t }} </span>
+        </div>
+        
+        <div data-link="default" class="layout default active">
+          <span class="icon-body">  </span>
+          <span class="visually-hidden"> {{ 'collections.mode.default' | t }} </span>
+        </div>
+      </div>
+
+  </div>
+</div>
+
+<div class="collection-nav-block sorting nav-dropdown">
+    <button type="button" class="nav-title nav-dropdown-title">
+      <span class="nav-label">{{ 'collections.sorting.title' | t }}:</span>
+      {%- for option in results.sort_options -%}
+      {% if option.value == sort_by %}
+          <span class="current-sort"> {{ option.name | escape }}</span>
+      {% endif %}
+      {%- endfor -%}
+    </button>
+    <div class="nav-content nav-dropdown-content">
+      <div class="nav-inner-title">{{ 'collections.sorting.title' | t }}</div>
+        <div class="nav-list-container" data-selected="{{sort_by}}">
+            <div data-link="manual" class="filter{% if 'manual' == sort_by %} active{% endif %}">
+              <span class="check as-radio"></span>
+              <span>{{ 'collections.sorting.featured' | t }}</span>
+            </div>
+            <div data-link="best-selling" class="filter{% if 'best-selling' == sort_by %} active{% endif %}">
+              <span class="check as-radio"></span>
+              <span>{{ 'collections.sorting.best_selling' | t }}</span>
+            </div>
+            <div data-link="price-ascending" class="filter{% if 'price-ascending' == sort_by %} active{% endif %}">
+              <span class="check as-radio"></span>
+              <span>{{ 'collections.sorting.price_ascending' | t }}</span>
+            </div>
+            <div data-link="price-descending" class="filter{% if 'price-descending' == sort_by %} active{% endif %}">
+              <span class="check as-radio"></span>
+              <span>{{ 'collections.sorting.price_descending' | t }}</span>
+            </div>
+            <div data-link="created-ascending" class="filter{% if 'created-ascending' == sort_by %} active{% endif %}">
+              <span class="check as-radio"></span>
+              <span>{{ 'collections.sorting.date_ascending' | t }}</span>
+            </div>
+            <div data-link="created-descending" class="filter{% if 'created-descending' == sort_by %} active{% endif %}">
+              <span class="check as-radio"></span>
+              <span>{{ 'collections.sorting.date_descending' | t }}</span>
+            </div>            
+        </div>
+    </div>
+</div>

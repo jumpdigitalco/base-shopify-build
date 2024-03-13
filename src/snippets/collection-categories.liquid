@@ -1,0 +1,45 @@
+{% assign parent_category_menu = collection.metafields["global"]["parent-category-menu"] %}
+<div id="banner-nav-drawer" class="drawer drawer-modal" role="dialog">
+    {%- render 'breadcrumb', collection: collection -%}
+    <button class="drawer-close as-overlay" type="button"><span class="visually-hidden">{{ 'general.accessibility.close_modal' | t }}</span></button>
+    <div class="drawer-content">
+        <div class="accordion-container tab-accordion-system">
+            {% assign nav_selector = 'category-nav' %}
+            {% assign is_enhanced = false %}
+            {% if the_collection.metafields.global['enhanced-navigation'] != blank %}
+                {% assign is_enhanced = true %}
+                {% assign nav_selector = the_collection.metafields["global"]["enhanced-navigation"] %}
+            {% endif %}
+            {% assign categories = linklists[nav_selector].links %}
+
+            <div class="category-accordion">
+                {% for category in categories %}
+                    {%- assign title_handle = category.title | handle -%}
+                    {% if parent_category_menu == title_handle or is_enhanced %}
+                        {% for link in category.links %}
+                            {% assign sublinkSize = link.links.size %}
+                            <div class="category-item{% if sublinkSize > 0 %} expandable{% endif %} top">
+                                <a
+                                    href="{{ link.url }}"
+                                    class="category-accordion-title"
+                                    data-target="{{ title_handle }}">
+                                    {{ link.title }}
+                                </a>
+                                {% if sublinkSize > 0 %}
+                                    <div class="category-accordion-content" data-target="{{ link.title | handle }}">
+                                        {% for sublink in link.links %}
+                                            <div class="category-item">
+                                                <a class="category-accordion-title" href="{{ sublink.url }}">{{ sublink.title }}</a>
+                                            </div>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endfor %}
+                        {% break %}
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>

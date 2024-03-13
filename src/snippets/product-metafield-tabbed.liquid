@@ -1,0 +1,56 @@
+{% assign activeClass = false %}
+{% assign hasActivatedTitle = false %}
+{% assign hasActivatedContent = false %}
+{% assign counter = 0 %}
+
+{%- for metaKey in allowed_metafields -%}
+    {%- assign metafield = product.metafields['global'][metaKey] -%}
+    {%- assign tabbedTitle = metaKey | replace: '-', ' ' -%}
+
+    {% if tabcontent == true and metafield != blank %}
+
+        {% if hasActivatedContent == false and metafield != blank %}
+            {% assign activeClass = true %}
+        {% endif %}
+        <div class="tabbed-content{% if activeClass and hasActivatedContent == false %} active{% endif %}" data-target="tabbed-{{- counter -}}" id="tabbed-{{- counter -}}">
+            <div class="content-inner">
+                {{ metafield | newline_to_br }}
+            </div>
+            {%- if metaKey contains 'features' -%}
+            {% comment %}
+            include icon feature items
+            {% endcomment %}
+            {% capture feature_list_items %}
+                {%- for tag in product.tags -%}
+                {%- if tag contains 'features:' -%}
+                {%- assign feature = tag | split: ':' -%}
+                <li><i class="icon-{{ feature[1] | handle }}"></i> <span>{{ feature[1] | replace: '-', ' ' }}</span></li>
+                {%- endif -%}
+                {%- endfor -%}
+            {% endcapture %}
+            {% if feature_list_items != blank %}
+                <ul class="feature-list">
+                    {{ feature_list_items }}
+                </ul>
+            {% endif %}
+            {%- endif -%}
+        </div>
+    {% elsif tabtitle == true and metafield != blank %}
+
+        {% if hasActivatedTitle == false and metafield != blank %}
+            {% assign activeClass = true %}
+        {% endif %}
+        <div
+            class="tabbed-title tabbed-title-{{ counter }}{% if forloop.last and with_reviews != true %} tabbed-title-last{% endif %}{% if activeClass and hasActivatedTitle == false %} active{% endif %}"
+            data-target="tabbed-{{- counter -}}">
+            {{ tabbedTitle }}
+        </div>
+    {% endif %}
+
+    {% if activeClass %}
+        {% assign hasActivatedTitle = true %}
+        {% assign hasActivatedContent = true %}
+    {% endif %}
+    {% assign activeClass = false %}
+    {% assign counter = counter | plus: 1 %}
+{%- endfor -%}

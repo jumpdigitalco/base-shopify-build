@@ -1,0 +1,201 @@
+/*================ Color Variables ================*/
+// $color-primary: {{ settings.color_primary }};
+
+/* Variable */
+$isUsingWebpack: true;
+$fontPath: '../styles/fonts/';
+/* Dimensions */
+
+// Small Screens
+// We don't need a small screen breakpoint variable since small is from 0 to $mediumScreen
+// $smallScreen: 768px;
+
+// Medium Screens
+$mediumScreen: 768px;
+
+// Large Screens
+$largeScreen: 1025px;
+$xLargeScreen: 1200px;
+$xxLargeScreen: 1440px;
+$largestScreen: 1900px;
+
+// Constraints
+$min: min-width;
+$max: max-width;
+
+/* Colors */
+// Theme colors
+$black: #000;
+$white: #ffffff;
+
+$lightGrey: #d6d6d6;
+$lightGrey2: #EEE;
+$lightGrey3: #F7F7F7;
+$lightGrey4: #BBB;
+
+$mediumGrey: #9a9a9a;
+$mediumGrey2: #808080;
+
+$lime: #F2FC9E;
+$red: #FF4A4A;
+$orange: #EC7B55;
+$blue: #0047bb;
+
+$styleLight: $white;
+$styleDark: $black;
+
+$primary: $red;
+$primary2: $black;
+
+// Functional block background colors
+$color-body-bg: $white;
+$color-body-font: $black;
+$color-disabled: $lightGrey;
+$color-disabled-bg: $lightGrey;
+$color-disabled-border: $lightGrey;
+$color-error: $red;
+$color-error-bg: #000;
+$color-error-border: $red;
+$color-success: #84bd00;
+$color-success-bg: #000;
+$color-success-border: #84bd00;
+$color-border: $lightGrey;
+
+/* CTAs */
+$color-cta1: $black;
+$color-cta1-bg: transparent;
+$color-cta1-border: $black;
+$color-cta1-active: $white;
+$color-cta1-bg-active: $black;
+$color-cta1-border-active: $black;
+
+$color-cta2: $white;
+$color-cta2-bg: transparent;
+$color-cta2-border: $white;
+$color-cta2-active: $black;
+$color-cta2-bg-active: $white;
+$color-cta2-border-active: $white;
+
+$ctaMinWidth: 150px;
+
+/* Fonts */
+$baseFontSize: 14px;
+$baseFontWeight: 400;
+$baseLineHeight: 1.4;
+
+/* Speeds */
+$quick: 0.1s;
+$quickish: 0.15s;
+$quickLike: 0.19s;
+$fast: 0.25s;
+$slow: 0.45s;
+$slower: 0.8s;
+$animFunction: cubic-bezier(0.25, 0.1, 0.25, 0.1);
+
+/* Sizes */
+$largeScreenMargin: 25px;
+$smallScreenMargin: 20px;
+$sectionGutter: 1px;
+$maxContentWidth: $xxLargeScreen;
+
+/* Forms & Inputs */
+$input-wrapper-border: 1px;
+$input-line-height: 40px;
+$input-line-height-mobile: 40px;
+$input-border-radius: 4px;
+$input-check-radio-size: 14px;
+
+// Hamburger Icon
+$hamburger-layer-width          : 20px;
+$hamburger-layer-height         : 1px;
+$hamburger-layer-border-radius  : 0px;
+$hamburger-padding-x            : 0px;
+$hamburger-padding-y            : 0px;
+$hamburger-layer-color          : var(--default-color);
+$hamburger-hover-opacity        : 1;
+
+/* Header Settings */
+$logoSize: 38px;
+$logoSizeMobile: 38px;
+$headerSidePadding: 20px;
+$headerLargeSidePadding: 80px;
+
+$promoBannerHeight: 30px;
+$headerExtraLinksHeight: 30px;
+$headerLargeScreenHeight: 50px;
+$headerSmallScreenHeight: 50px;
+$headerSmallScreenItemHeight: 50px;
+$headerUtilityBlockGap: 10px;
+
+$utilityHeight: 50px;
+$minicartOffsetTop: $headerSmallScreenHeight;
+
+$promoText: inherit;
+$promoBackground: $primary;
+
+@mixin headerColorStyle() {
+    // More control for overall header text color when not in active state, useful for homepage scrolling.
+    // Apply to header.site-header
+    .header-content {
+        color: $white;
+        .animated-hamburger span {
+            background: $white;
+        }
+        nav .nav-link span {
+            &:before {
+                background-color: $white;
+            }
+        }
+    }
+    &.style-dark {
+        .header-content {
+            color: $black;
+            .animated-hamburger span {
+                background: $black;
+            }
+            nav .nav-link span {
+                &:before {
+                    background-color: $black;
+                }
+            }
+        }
+    }
+}
+
+/* Footer Settings */
+$footerSlimLargeHeight: 55px;
+
+/* Product Settings */
+$productImageRatio: 1200/866;
+$productImageRatioPercentage: $productImageRatio * 100 * 1%;
+$giftcardImageRatio: 340/538;
+$giftcardImageRatioPercentage: $giftcardImageRatio * 100 * 1%;
+$productThumbnailsMax: 6;
+$productThumbnailsPercentage: (1 / $productThumbnailsMax) * 100 * 1%;
+$productMetafieldTabMax: 3;
+$productMetafieldTabMaxPercentage: (1 / $productMetafieldTabMax) * 100 * 1%;
+$sizeChartColumnMax: 6;
+$sizeChartColumnMaxWidth: (1 / $sizeChartColumnMax) * 100 * 1%;
+$sizeChartTabMax: 3;
+$sizeChartTabWidth: (1 / $sizeChartTabMax) * 100 * 1%;
+
+/* Collection Settings */
+
+/* Drawers */
+$drawerWidth: calc(100vw * 0.875);
+
+/* Category Nav */
+$collectionListingWrapperWidth: #{260px * 4};
+$categoryNavWidth: 320px;
+$categoryNavWidthDesktop: calc(100% - #{$collectionListingWrapperWidth});
+
+$moduleLargeScreenSidePadding: 80px;
+$moduleLargeScreenMaxWidth: $xxLargeScreen;
+$moduleLargeScreenWidthwithSidePaddings: $moduleLargeScreenMaxWidth +
+    $moduleLargeScreenSidePadding * 2;
+
+:root{
+    --default-color: #{$black};
+    --main-color: #{$primary};
+    --main-color-2: #{$primary2};
+}

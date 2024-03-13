@@ -1,0 +1,7 @@
+/* Header dark text with light background */
+$headerDarkText: true;
+$headerSmallScreenText: var(--default-color);
+$headerSmallScreenBackground: $white;
+$headerLargeScreenText: var(--default-color);
+$headerLargeScreenBackground: $white;
+$headerDropdownLargeScreenBackground: var(--default-color);

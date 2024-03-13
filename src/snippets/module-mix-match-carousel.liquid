@@ -1,0 +1,85 @@
+{%- assign limit = 15 -%}
+{% if col_product_count > 0 %}
+    <div class="mix-and-match-collection-wrapper" data-carousel="{{ carousel_index }}">
+        <div class="collection-products mix-and-match-collection" data-product-carousel="{{ carousel_index }}">
+        {% for product in block_collection.products limit: limit %}
+            {% unless product.tags contains 'in grid promo' or product.tags contains 'in-grid-promo' %}
+
+            <article
+            class="item product-item object-type-{{ product.object_type | handle }}"
+            data-handle="{{ product.handle }}"
+            data-id="{{ product.id }}"
+            data-page="{{ current_page }}"
+            data-product-index="{{ forloop.index }}">
+                {% assign main_view_img = product.featured_image.src %}
+
+                <div class="product-image-wrapper">
+
+                    {% for image in product.images %}
+                        <!--image.src.alt: {{image.src.alt}}-->
+                        {% if image.src.alt contains "Similar" %}
+                            {% assign main_view_img = image.src %}
+                            {% break %}
+                        {% endif %}
+                    {% endfor %}
+
+                    {% render 'responsive-image',
+                        image: main_view_img,
+                        lazy_load: false,
+                        class: 'main-view',
+                        img_class: 'product-image',
+                        desktop_image_size: '500x',
+                        mobile_image_size: '500x' %}
+
+                    {% render 'responsive-image',
+                        image: product.images[1],
+                        lazy_load: false,
+                        class: 'alt-view',
+                        img_class: 'product-image alt-image',
+                        desktop_image_size: '500x',
+                        mobile_image_size: '500x' %}
+
+                </div>
+
+                <button class="options-selector-toggle">Quick Shop</button>
+
+            </article>
+
+            {% endunless %}
+        {% endfor %}
+        </div>
+        <div class="current-product mix-and-match-product-selection-info" data-info-carousel="{{ carousel_index }}">
+        {% for product in block_collection.products limit: limit %}
+            {% unless product.tags contains 'in grid promo' or product.tags contains 'in-grid-promo' %}
+                <div class="product-options-selector"
+                    data-handle="{{ product.handle }}"
+                    data-id="{{ product.id }}"
+                    data-page="{{ current_page }}"
+                    data-product-index="{{ forloop.index }}">
+                    <div class="product-core-block block-badges">
+                        {%- render 'product-badge', product: product -%}
+                        <div class="product-badges">
+                            {% for tag in product.tags %}
+                                {% if tag contains 'mainBadge:' %}
+                                    {% assign mainProductBadge = tag | replace: 'mainBadge:','' %}
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if mainProductBadge != blank %}
+                                <p class="product-badge main-badge {{mainProductBadge | handleize}}">{{mainProductBadge}}</p>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="product-core-block block-title">
+                        <div class="product-title">{{ product.title }}</div>
+                        <p class="product-vendor">{{ product.vendor }}</p>
+                    </div>
+
+                    {%- render 'product-core-form', product: product, plp_quickbuy: true  -%}
+                </div>
+            {% endunless %}
+        {% endfor %}
+        </div><!--.mix-and-match-product-selection-info-->
+    </div>
+{% endif %}

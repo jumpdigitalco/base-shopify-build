@@ -1,0 +1,62 @@
+<div class="inner-wrapper">
+    
+    <h1 class="title-font-13">{{ page.title }}</h1>
+
+    <h2 class="title-font-14">Email</h2>
+
+    <p>{{ page.content }}</p>
+
+    {% form 'contact' %}
+
+        {% if form.posted_successfully? %}
+        <p class="form-success">{{ 'contact.form.post_success' | t }}</p>
+        {% endif %}
+
+        {{ form.errors | default_errors }}
+
+        <label for="ContactFormName" class="visuallyhidden">{{ 'contact.form.name' | t }}</label>
+        <input type="text"
+            name="contact[name]"
+            id="ContactFormName"
+            placeholder="{{ 'contact.form.name' | t }}"
+            value="{% if form[name] %}{{ form[name] }}{% elsif customer %}{{ customer.name }}{% endif %}" required>
+
+        <label for="ContactFormEmail" class="visuallyhidden">{{ 'contact.form.email' | t }}</label>
+        <input type="email"
+            name="contact[email]"
+            id="ContactFormEmail"
+            placeholder="{{ 'contact.form.email' | t }}"
+            value="{% if form.email %}{{ form.email }}{% elsif customer %}{{ customer.email }}{% endif %}"
+            spellcheck="false"
+            autocomplete="off"
+            autocapitalize="off" required>
+            
+            {% comment %}
+                Removed line breaks and spaces within textarea
+                See: https://stackoverflow.com/questions/10186913/html5-textarea-placeholder-not-appearing
+            {% endcomment %}
+
+        <label for="ContactFormMessage" class="visuallyhidden">{{ 'contact.form.message' | t }}</label>
+        <textarea rows="10" name="contact[body]" id="ContactFormMessage" placeholder="{{ 'contact.form.message' | t }}" required>{% if form.body %}{{ form.body }}{% endif %}</textarea>
+
+        <input type="submit" class="cta-2" value="{{ 'contact.form.send' | t }}">
+    {% endform %}
+</div>
+
+<div class="contact-sidebar">
+    <div class="contact-card call">
+        <h3 class="title-font-14">Call</h3>
+        <p>{{- settings.utility_contact_call_hours | newline_to_br -}}</p>
+        <p>{{- settings.utility_contact_call_phone -}}</p>
+    </div>
+    <div class="contact-card chat">
+        <h3 class="title-font-14">Chat</h3>
+        <p>{{- settings.utility_contact_chat_hours | newline_to_br -}}</p>
+        <p>{{- settings.utility_contact_chat_message | newline_to_br -}}</p>
+    </div>
+    <div class="contact-card engage">
+        <h3 class="title-font-14">Engage</h3>
+        <p>{{- settings.utility_contact_engage_message | newline_to_br -}}</p>
+        
+    </div>
+</div>

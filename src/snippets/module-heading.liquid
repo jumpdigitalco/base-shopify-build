@@ -1,0 +1,45 @@
+{%- liquid 
+    comment
+    Parameters:
+    title,
+    header_position,
+    small_container,
+    caption,
+    cta_url,
+    cta_style,
+    cta_text
+    text_color (dark or light)
+    endcomment
+
+    comment
+    Defaults:
+    endcomment
+    assign title = title | default: settings.title
+    assign header_position = header_position | default: 'top'
+    assign small_container = small_container | default: false
+    if settings.small_container
+        assign small_container = settings.small_container
+    endif 
+    assign caption = caption | default: settings.caption
+    assign cta_url = cta_url | default: settings.cta_url
+    assign cta_style = cta_style | default: 'outline'
+    if settings.cta_style
+        assign cta_style = settings.cta_style
+    endif 
+    assign cta_text = cta_text | default: settings.cta_text
+    assign text_color = text_color | default: 'light'
+    if settings.text_color
+        assign text_color = settings.text_color
+    endif 
+-%}
+{%- if title != blank or caption != blank -%}
+<div class="module-intro theme-{{text_color}} position-{{header_position}}{% if small_container %} small-container{% endif %}">
+    <div class="headlines-wrap">
+    {% if title != blank %}<h3 class="headline">{{title}}</h3>{% endif %}
+    {% if caption != blank %}<div class="caption">{{caption}}</div>{% endif %}
+    {% if cta_url != blank %}
+    <a href="{{cta_url}}" class="module-cta cta-{{cta_style}}">{{ cta_text }}</a>
+    {% endif %}
+    </div>
+</div>
+{%- endif -%}

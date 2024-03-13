@@ -1,0 +1,28 @@
+<button id="product-compare-adding-overlay" class=""></button>
+<button class="product-compare-trigger" type="button"><span class="">{{ 'products.product.compare_open' | t }}</span></button>
+<div id="ProductCompareDrawer" class="product-compare drawer drawer-bottom" >
+    <button class="drawer-close" type="button">{{ 'general.accessibility.close_modal' | t }}</button>
+    <div class="compare-modal-content">
+        <div class="compare-wrapper">
+            <div class="col-wrapper">
+                <div class="col controls">
+                    <p class="title">{{ settings.product_compare_title }}</p>
+                    <button type="button" name="button" class="btn compare-all disabled">
+                        <span 
+                            data-close="{{ 'products.product.compare_close' | t }}" 
+                            data-enable="{{ 'products.product.compare_all' | t }}" 
+                            data-disable="{{ 'products.product.compare_add_more' | t }}" >
+                            {{ 'products.product.compare_add_more' | t }}
+                        </span>
+                    </button>
+                    <button type="button" name="button" class="btn remove-all disabled">
+                        <span>{{ 'products.product.compare_remove_all' | t }}</span>
+                    </button>
+                    <button type="button" name="button" class="btn compare-print"><span>{{ 'products.product.compare_print' | t }}</span></button>
+                </div>
+                <div class="col compare-grid"></div>
+            </div>
+        </div>
+        <div class="compare-all-wrapper"></div>
+    </div>
+</div>

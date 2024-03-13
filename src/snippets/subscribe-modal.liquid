@@ -1,0 +1,100 @@
+<div id="SubscribeModal" class="drawer drawer-bottom" aria-hidden="true" role="dialog">
+    <button class="drawer-close" type="button"><span class="visually-hidden">{{ 'general.accessibility.close_drawer' | t }}</span></button>
+    <div class="subscribe-modal" 
+        data-type="{{ settings.sub_modal_type }}"
+        data-errormsg="{{ settings.sub_modal_errormsg }}" 
+        data-successmsg="{{ settings.sub_modal_successmsg }}" 
+        data-requiredmsg="{{ settings.sub_modal_requiredmsg }}" 
+        data-erroremail="{{ settings.sub_modal_erroremail }}" 
+        data-delay="{{ settings.sub_modal_delay }}" 
+        data-days="{{ settings.sub_modal_cookiedays }}" 
+        data-enabled="{{ settings.sub_modal_enable }}"
+        data-cookieenabled="{{ settings.sub_modal_cookieenable }}"
+        >
+        
+        <div class="form-container" id="subscription-modal-wrapper">
+            {% comment %} <form id="subscribe-modal-form" action="/contact#subscribe-modal-form" method="post" name="subscribe-modal-form" class="validate" validate> {% endcomment %}
+
+            {% form 'customer', id:"subscribe-modal-form", class:"validate" %}
+
+                    {% if form.posted_successfully? %}
+
+                        {{ form.errors | default_errors }}
+                        <div class="subscribe-success text-center">
+
+                            <div class="subscribe-success-title">
+                                {{settings.newsletter_confirmation_title}}
+                            </div>
+                            <div class="subscribe-success-caption">
+                                {{settings.newsletter_confirmation}}
+                            </div>
+
+                            <div class="continue-shopping">
+                                <a href="#close-drawer" title="{{ 'cart.general.continue_browsing' | t }}" class="cta-1">{{ 'cart.general.continue_browsing' | t }}</a>
+                            </div>
+
+                        </div>
+                    {% else %}
+                
+                        <div class="form-intro">
+                            {% render 'responsive-image', image: settings.sub_modal_image, class: 'subscribe-image', img_alt_prefix: settings.sub_modal_image.alt, desktop_image_size: '920x' %}
+
+                            <div class="info-wrapper">
+                            <div class="form-title">{{settings.sub_modal_heading}}</div>
+                            {% if settings.sub_modal_subheading != blank %}<div class="form-subtitle">{{settings.sub_modal_subheading}}</div>{% endif %}
+                            {% if settings.sub_modal_caption != blank %}<div class="form-caption">{{settings.sub_modal_caption}}</div>{% endif %}
+                            </div>
+                        </div>
+
+                    {% endif %}
+
+                    {% unless form.posted_successfully?  %}
+                    <div class="subscribe-form-inner">
+
+                    <div class="hide" aria-hidden="true"></div>
+
+                    <input type="hidden" name="contact[tags]" value="newsletter,subscription-popup">
+                    {%- comment -%} 
+                    <div class="group group-fname">
+                        <input type="text" value="" name="contact[first_name]" class="required" id="subs-NAME" placeholder="Name" required="required">
+                        <span class="error-msg"></span>
+                    </div>
+                    
+                    <div class="group group-lname">
+                        <input type="text" value="" name="customer[last_name]" class="required" id="subs-LNAME" placeholder="Last Name" required="required">
+                        <span class="error-msg"></span>
+                    </div> 
+                    {%- endcomment -%}
+                    
+                    <div class="group group-email">
+                        <input type="email" value="" name="contact[email]" class="required email" id="subs-EMAIL" placeholder="Email" required="required">
+                        <span class="error-msg"></span>
+                    </div>
+                    <div class="group group-phone">
+                        <input type="phone" value="" name="contact[phone]" class="required" id="subs-PHONE" placeholder="Phone Number" required="required">
+                        <span class="error-msg"></span>
+                    </div>
+
+                    <div class="group group-submit">
+                    <button type="submit" class="submit" id="mc-embedded-subscribe">
+                        <span>{{ 'general.newsletter_form.submit' | t }}</span>
+                    </button>
+                    </div>
+                    
+                    <div class="group group-terms">
+                        <label for="subs-accept-terms">
+                            <input type="checkbox" id="subs-accept-terms" name="subs-accept-terms" value="true" required="required">
+                            <span>{{settings.sub_modal_terms}}</span>
+                        </label>
+                        <span class="error-msg"></span>
+                    </div> 
+
+                    </div><!--.subscribe-form-inner-->
+                 {% comment %} </form> {% endcomment %}
+                {% endunless %}
+            {% endform %}
+            <div class="global-message"></div>
+            
+        </div>
+    </div>
+</div><!--#SubscribeModal-->

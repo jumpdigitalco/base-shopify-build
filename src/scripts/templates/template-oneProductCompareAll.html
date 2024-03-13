@@ -1,0 +1,25 @@
+<% console.log(content) %> <% var productsData = content.productdata %> <% if
+(productsData.length) { %> <% _.each(content.specs, function(spec){ %> <% var
+specHandle = spec.spec %> <% var specLable = spec.label %>
+<div class="row col-wrapper">
+    <div class="col compare-all-labels">
+        <div class="label-spec" data-spec="<%= specHandle %>">
+            <%= specLable %>
+        </div>
+    </div>
+    <div class="col compare-all-grid">
+        <% for (var i = 0; i < content.maxCompareNum; i++) { %> <% if ( typeof
+        productsData[i] === 'undefined' ) { %>
+        <div class="item empty"></div>
+        <% } else { %>
+        <div
+            class="item"
+            data-id="<%= productsData[i].id %>"
+            data-spec="<%= specHandle %>"
+        >
+            <p><%= productsData[i][specHandle] %></p>
+        </div>
+        <% } %> <% } %>
+    </div>
+</div>
+<% }) %> <% } %>

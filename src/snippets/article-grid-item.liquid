@@ -1,0 +1,73 @@
+{% if article_data != blank %}
+    {% assign article = article_data %}
+{% endif %}
+
+{% assign article_excerpt = article.excerpt %}
+{% assign article_caption = article.metafields["global"]["special-caption"] %}
+{% assign article_image = article.image %}
+{% if article_layout == blank %}
+  {% assign article_layout = 'layout-default' %}
+{% endif %}
+
+{% comment %} Overrides {% endcomment %}
+{% if promo_headline == blank %}
+    {% assign promo_headline = article.title %}
+{% endif %}
+{% if promo_cta_text == blank %}
+    {% assign promo_cta_text = 'blogs.article.read_more' | t %}
+{% endif %}
+{% if promo_cta_link == blank %}
+    {% assign promo_cta_link = article.url %}
+{% endif %}
+
+<article class="blog-post {{article_layout}} object-type-{{ article.object_type | handle }}{% if search %} search-item{% endif %}{% unless article_image %} no-image{% endunless %}{% if article_caption != blank %} with-special-caption{% endif %} {{ additional_classes }}">
+    
+    {% assign article_image_size = '414x' %}
+    {% if article_layout == 'layout-fullw' %}
+      {% assign article_image_size = '1200x' %}
+    {% endif %}
+
+    {% assign article_image_mobile = article_image | img_url: article_image_size, scale: 2, format: 'pjpg' %}
+    {% if article.metafields["global"]["mobile-main-image"] != blank and article_layout == 'layout-default' %}
+      {% assign article_image_mobile = article.metafields["global"]["mobile-main-image"] | scale: 2, format: 'pjpg' %}
+    {% endif %}
+
+    {% if article_image %}
+    <a class="article-image" href="{{ promo_cta_link }}">
+        <span class="absolute-image desktop-image" role="img" aria-label="{{ promo_headline }}" data-bg="{{ article_image | img_url: article_image_size, scale: 2, format: 'pjpg' }}"></span>
+        <span class="absolute-image mobile-image" role="img" aria-label="{{ promo_headline }}" data-bg="{{ article_image_mobile }}"></span>
+    </a>
+    {% endif %}
+    <div class="article-info">
+      {% if article.tags.size > 0 and article_layout != 'layout-black-bg' %}
+        {%- capture article_category -%}
+        {%- for tag in article.tags -%}
+          {%- if tag contains 'category:' -%}
+            <a href="{{ blog.url }}/tagged/{{ tag | handle }}">{{ tag | remove: 'category:' }}</a>
+            {%- break -%}
+          {%- endif -%}
+        {%- endfor -%}
+        {%- endcapture -%}
+        {% if article_category != blank %}
+        <div class="article-category">{{ article_category }}</div>
+        {% endif %}
+      {% endif %}
+      <h3 class="article-title"><a href="{{ promo_cta_link }}">{{ promo_headline }}</a></h3>
+
+      {% if article_caption != blank and article_layout != 'layout-black-bg' %}
+      <div class="article-caption">{{- article_caption -}}</div>
+      {% endif %}
+    
+      <div class="article-meta">
+        <address class="article-author">By <a rel="author" href="/author/john-doe">{{article.author}}</a></address> 
+        <span class="sep">·</span>
+        <time pubdate class="article-date" datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: format: 'month_day_year' }}</time>
+      </div>
+      <a class="article-cta cta-link-1" href="{{ promo_cta_link }}" role="button"><span>{{ promo_cta_text }}</span></a>
+      {% comment %}
+      {% if article_excerpt %}
+          <div class="article-excerpt">{{ article_excerpt }}</div>
+      {% endif %}
+      {% endcomment %}
+    </div>
+</article>

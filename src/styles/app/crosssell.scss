@@ -1,0 +1,52 @@
+/*============================================================================
+  For Crosssell display in cart and minicart
+==============================================================================*/
+//
+//  Typography
+//  _____________________________________________
+
+//
+//  Common
+//  _____________________________________________
+$crosssellMinicartHeight: 150px;
+$crosssellMinicartSmallScreenHeight: 113px;
+#MiniCart {
+    &.has-cross-sell {
+        .crosssell-text,
+        .product-info-wrapper,
+        .product-badge {
+            display: none;
+        }
+        .quick-shop-trigger {
+            display: none !important;
+        }
+    }
+}
+
+
+//
+//  Small + Medium screen sizes - Prev: Tablet and Mobile
+//  _____________________________________________
+@include query-medium-down {
+    #MiniCart {
+        &.has-cross-sell {
+            .minicart-container {
+                height: calc(100% - #{$headerSmallScreenHeight} - #{$crosssellMinicartSmallScreenHeight});
+            }
+        }
+    }
+};
+
+
+//
+//  Large screen sizes - Prev: Desktop
+//  _____________________________________________
+@include query-large-up {
+    #MiniCart {
+        &.has-cross-sell {
+            .minicart-container {
+                height: calc(100% - #{$headerLargeScreenHeight} - #{$crosssellMinicartHeight});
+            }
+        }
+    }
+};

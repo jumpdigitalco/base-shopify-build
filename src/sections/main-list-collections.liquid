@@ -1,0 +1,103 @@
+{% comment %}
+  This page represents the /collections and /products pages.
+{% endcomment %}
+<div class="product-collection">
+    <div class="collection-intro text-block">
+        {%- render 'breadcrumb' -%}
+        <h1 class="collection-title">{{ section.settings.title | default: page_title }}</h1>
+        {% if section.settings.caption != blank %}
+            <div class="collection-desc">{{ section.settings.caption }}</div>
+        {% endif %}
+    </div>
+</div>
+{% if section.blocks.size > 0 %}
+<section class="module banner-blocks-grid collections-list">
+
+    {% comment %}
+        {% paginate section.blocks by settings.collection_pagination %}
+    {% if paginate.pages > 1 %}
+        <div class="collection-pagination legacy">
+            {{ paginate | default_pagination | replace: '&laquo; Previous', '' | replace: 'Next &raquo;', '' }}
+        </div>
+    {% endif %}
+    {% endpaginate%}
+    {% endcomment %}
+
+    <div class="banner-blocks block-size-{{collections.size}} small-grid-2 large-grid-5">
+    {%- for block in section.blocks -%}
+        {%- assign collection = collections[block.settings.collection_link] %}
+        {% unless collection.title contains '_similars' %}
+
+            {%- assign col_product_count = collection.products_count | times:1 %}
+            {% if col_product_count < 1 %}{% continue %}{% endif %}
+            <div class="banner-block{% if block.settings.image_hover != blank %} with-hover{% endif %}" >
+        
+                <div class="image-container">     
+                <a href="{{collection.url}}" class="banner-link" title="Go to {{ collection.title }}">
+                    {%- if collection.products.first != blank -%}
+                        {% assign collection_img_url = collection.products.first.image[0] %}
+                        {% render 'responsive-image',
+                            image: collection.products.first.images[0].src,
+                            class: 'main-image' %}
+                    {%- elsif collection.image != blank -%}
+                        {% render 'responsive-image',
+                            image: collection.image,
+                            class: 'main-image'%}
+                    {%- else -%}
+                        {% capture current %}{% cycle 1, 2, 3, 4, 5, 6 %}{% endcapture %}
+                        {% assign collection_img_url = 'collection-' | append: current | placeholder_svg_tag: 'placeholder-svg placeholder-svg--small' %}        
+                    {%- endif -%}
+                </a>
+                </div>
+
+                <div class="block-content">
+                    <a href="{{collection.url}}" class="banner-link" title="Go to {{ collection.title }}">
+                    <div class="headline">{{ collection.title }}</div>
+                    <div class="cta-wrap">
+                        <button class="cta-link-1"><span>{{section.settings.cta}}</span></button>
+                    </div>
+                    </a>
+                </div>
+            </div>
+        {% endunless %}
+    {%- endfor -%}
+    </div>
+</div>
+{% endif %}
+
+{% schema %}
+{
+  "name": "List Collections page",
+  "settings": [
+    {
+        "type": "text",
+        "id": "title",
+        "label": "Title"
+    },
+    {
+        "type": "textarea",
+        "id": "caption",
+        "label": "Caption"
+    },
+    {
+        "type": "text",
+        "id": "cta",
+        "label": "Collection CTA",
+        "default": "Shop Collection"
+    }
+  ],
+  "blocks": [
+    {
+        "type": "collection_block",
+        "name": "Collection block",
+        "settings": [
+            {
+                "type": "collection",
+                "id": "collection_link",
+                "label": "Collection"
+            }
+        ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,306 @@
+/*---------- Module Swatches Start ----------*/
+$swatchImageSize: 30px;
+$swatchLineHeight: 30px;
+$swatchBorderSize: 1px;
+$swatchDefaultColor: inherit;
+$swatchDefaultBorderColor: $lightGrey;
+$swatchDefaultBackground: transparent;
+$swatchActiveColor: var(--main-color-2);
+$swatchActiveBorderColor: var(--main-color-2);
+$swatchActiveBackground: transparent;
+
+select.product-single__variants, .product-select-wrapper { 
+    display: none;
+}
+
+.variant-selection-availability{
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: $orange;
+    
+    opacity: 0;
+    visibility: hidden;
+    @include transition(all $fast);
+    &.active{
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+.selector-wrapper {
+    position: relative;
+    text-align: left;
+    line-height: calc(#{$swatchLineHeight} - #{$swatchBorderSize}* 2);
+
+    &.oneswatch {
+        &.oneswatch-color,
+        &.oneswatch-type {
+            display: none;
+        }
+    }
+
+    .swatch-label {
+        @include label-font;
+        text-transform: capitalize;
+        color: inherit;
+        margin-bottom: 5px;
+        display: none; // By default, disable the label display
+    }
+
+    .swatches {
+        display: flex;
+        flex-wrap: wrap;
+        .swatch {
+            cursor: pointer;
+            display: block;
+            // margin-right: 10px;
+            margin-right: 20px;
+            text-align: center;
+            @include transition(all $slow);
+            &:last-child {
+                margin-right: 0;
+            }
+            &.disabled {
+                @include opacity(0.8);
+                color: $mediumGrey;
+            }
+        }
+        .swatch:not(.swatch-linked) {
+            letter-spacing: 1.5px;
+            padding: 0 5px;
+            color: $swatchDefaultColor;
+            border: 1px solid $swatchDefaultBorderColor;
+            border-radius: 2px;
+            background: $swatchDefaultBackground;
+            min-width: 30px;
+            &.active,
+            &:hover {
+                background-color: $swatchActiveBackground;
+                color: $swatchActiveColor;
+                border-color: $swatchActiveBorderColor;
+            }
+            &.disabled {
+                background: linear-gradient(to top right, white, white 49%, $swatchDefaultBorderColor 49%, $swatchDefaultBorderColor 51%, transparent 51%, transparent);
+                cursor: not-allowed;
+            }
+        }
+        .swatch-linked {
+            border: 1px solid $swatchDefaultBackground;
+            padding: 2px;
+            position: relative;
+            width: $swatchImageSize;
+            height: $swatchImageSize;
+            flex: 0 0 auto;
+
+            .swatch-image{
+                border: 1px solid $mediumGrey;
+                border-radius: 50%;
+                overflow: hidden;
+                position: relative;
+                width: 34px;
+                height: 34px;
+            }
+
+            &.active,
+            &:hover {
+                border-color: $swatchActiveBackground;
+                .swatch-image{
+                    border-color: transparent;
+                }
+            }
+            img {
+                display: block;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                @include transform( translate(-50%, -50%) );
+                width: 100%;
+                height: 100%;
+            }
+        }
+    }
+
+    &.single-option {
+        .swatch-label {
+            // padding-left: 0;
+            cursor: default;
+            // background-color: transparent;
+            &:after {
+                opacity: 0;
+            }
+        }
+        .swatches {
+            // display: none;
+        }
+    }
+
+    &.opened {
+        // .swatch-label {
+        //     &:after {
+        //         @include transform(translateY(-50%) rotate(0deg));
+        //     }
+        // }
+        // .swatches {
+        //     top: $smallScreenMargin * 2;
+        //     opacity: 1;
+        //     visibility: visible;
+        //     .swatch {
+        //         opacity: 1;
+        //         padding-top: 10px;
+        //         padding-bottom: 10px;
+        //         height: 36px;
+        //         @include transform(translateX(0%));
+        //     }
+        // }
+    }
+
+    &.oneswatch-color {
+        &:not(.single-option){
+            grid-column-start: 1;
+            grid-column-end: 3;
+            margin-bottom: 15px;
+            .swatch-label{
+                background-color: transparent !important;
+                padding: 0;
+                cursor: default;
+                &:after{
+                    display: none;
+                }
+
+            }
+            .swatches {
+                position: relative;
+                top: inherit;
+                left: inherit;
+                width: auto;
+                background-color: transparent;
+                margin-top: 10px;
+                display: flex;
+                flex-wrap: wrap;
+                opacity: 1;
+                visibility: visible;            
+                .swatch {
+                    background-color: transparent;
+                    color: inherit;
+                    margin: 2px;
+                    position: relative;
+                    padding: 2px;
+                    opacity: 1;
+                    width: auto;
+                    height: auto;
+                    min-width: auto;
+                    @include transform(none);
+
+                    span {
+                        display: none;
+                    }
+                    img {
+                        border-radius: 50%;
+                    }
+                    .swatch-inner{
+                        margin: 3px;
+                        width: 25px;
+                        height: 25px;
+                        min-width: 0;
+                        overflow: hidden;
+                        &:before {
+                            content: '';
+                            border: 2px solid $black;
+                            border-radius: 50%;
+                            position: absolute;
+                            left: 2px;
+                            right: 2px;
+                            top: 2px;
+                            bottom: 2px;
+                            opacity: 0;
+                            @include transition(all $fast);
+                        }
+                    }
+                    &.active,
+                    &:hover {
+                        .swatch-inner{
+                            &:before {
+                                opacity: 1;
+                                left: 0;
+                                right: 0;
+                                top: 0;
+                                bottom: 0;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+} //.selector-wrapper
+
+.variant-selection-error-msg {
+    color: #ff0707;
+    align-items: center;
+    font-size: 14px;
+    display: inline-flex;
+    transition: all $fast;
+    visibility: hidden;
+    opacity: 0;
+
+    &:before {
+        content: '!';
+        width: 18px;
+        height: 18px;
+        display: inline-flex;
+        background-color: #ff0707;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        margin-right: 7px;
+        font-size: 14px;
+        line-height: 1;
+    }
+
+    span {
+        margin-left: 4px;
+    }
+
+    &.active {
+        opacity: 1;
+        visibility: visible;
+        margin-top: 14px;
+        transition: opacity $fast $slow, margin-top $fast;
+
+        @extend .animated, .fadeIn;
+
+        & + .prod-core-form__footer {
+            margin-top: 0;
+            transition: all $fast;
+        }
+    }
+
+    &:not(.active) {
+        display: none;
+    }
+}
+
+//
+//  Medium Screens and Smaller
+//  _____________________________________________
+@include query-medium-down {
+    .selector-wrapper {
+        margin-bottom: $smallScreenMargin;
+    }
+}
+
+//
+// Large Screens and Up
+//  _____________________________________________
+@include query-large-up {
+    .selector-wrapper {
+        .swatch-label {
+            background-color: $white;
+        }
+    }
+}
+
+/*---------- Module Swatch End ----------*/

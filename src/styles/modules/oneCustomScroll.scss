@@ -1,0 +1,91 @@
+.scrollable {
+    overflow: hidden;
+    position: relative;
+    padding-bottom: 30px;
+
+    & > :first-child {
+        -webkit-touch-callout: none;
+        @include prefixer('user-select', 'none');
+        overflow: -moz-scrollbars-none;
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+        &::-webkit-scrollbar {
+            width: 0 !important;
+            display: none;
+        }
+    }
+    &.scrollable-x {
+        & > :first-child {
+            overflow-x: scroll;
+            overflow-y: hidden;
+        }
+    }
+    &.scrollable-y {
+        & > :first-child {
+            overflow-x: hidden;
+            overflow-y: scroll;
+        }
+    }
+    .track {
+        position: absolute;
+        display: block;
+        content: ' ';
+        bottom: 0;
+        right: 5px;
+        height: 90%;
+        width: 5px;
+        background: $lightGrey;
+    }
+    .scroller {
+        z-index: 5;
+        cursor: pointer;
+        position: absolute;
+        width: 5px;
+        background-color: $black;
+        bottom: 0;
+        height: 5px;
+        left: 0;
+        right: 3px;
+        @include prefixer('transition', 'top .08s');
+    }
+    &.scrollable-x {
+        .track {
+            bottom: 0;
+            right: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            width: auto;
+            margin: auto;
+        }
+        .scroller {
+            bottom: 0;
+            right: 0;
+            left: 0;
+            height: 5px;
+            width: unset;
+        }
+    }
+    &.scrollable-y {
+        .track {
+            background-color: $lightGrey;
+            top: 0;
+            bottom: 0;
+            left: unset;
+            right: 3px;
+            width: 5px;
+            height: auto;
+            margin: auto;
+        }
+        .scroller {
+            background-color: $lightGrey;
+            left: unset;
+            height: auto;
+            bottom: unset;
+            right: 3px;
+            width: 5px;
+        }
+    }
+    &.showScroll {
+    }
+}

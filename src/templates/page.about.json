@@ -1,0 +1,14 @@
+{
+    "name": "About",
+    "wrapper": "div.page-about-wrapper",
+    "sections": {
+        "main": {
+            "type": "main-about",
+            "settings": {
+            }
+        }
+    },
+    "order": [
+        "main"
+    ]
+}

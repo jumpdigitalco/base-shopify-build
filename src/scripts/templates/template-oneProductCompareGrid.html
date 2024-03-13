@@ -1,0 +1,28 @@
+<% console.log(content) %> <% var productsData = content.productdata %> <% for
+(var i = 0; i < content.maxCompareNum; i++) { %> <% if ( typeof productsData[i]
+=== 'undefined' ) { %>
+<div class="item empty">
+    <div class="product-image"></div>
+</div>
+<% } else { %>
+<div class="item" data-id="<%= productsData[i].id %>">
+    <div class="product-image">
+        <% if (productsData[i].image) { %>
+        <img
+            src="<%= productsData[i].image %>"
+            alt="<%= productsData[i].alt %>"
+        />
+        <% } %>
+        <button type="button" name="remove" class="remove">X</button>
+    </div>
+    <div class="product-info">
+        <p class="product-name"><%= productsData[i].name %></p>
+        <a
+            href="<%= productsData[i].url %>"
+            target="_blank"
+            title="<%= productsData[i].name %>"
+            >View Details</a
+        >
+    </div>
+</div>
+<% } %> <% } %>

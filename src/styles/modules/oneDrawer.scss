@@ -1,0 +1,155 @@
+//
+//  Common
+//  _____________________________________________
+.drawer:not(.drawer-modal) {
+    $drawerWidth: 400px;
+    width: $drawerWidth;
+    max-width: 360px;
+    height: 100vh;
+    background: $white;
+    overflow: hidden;
+    position: fixed;
+    z-index: 1002;
+    top: 0;
+    opacity: 0;
+    visibility: hidden;
+    @include transition(all $fast);
+
+    &.drawer-right {
+        right: 0;
+        @include transform(translateX(120%));
+    }
+
+    &.drawer-left {
+        left: 0;
+        @include transform(translateX(-100%));
+    }
+
+    &.drawer-top {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        top: 0;
+        left: 0;
+        @include transform(translateY(-100%));
+    }
+
+    &.drawer-bottom {
+        width: 100%;
+        max-width: 100%;
+        height: auto;
+        bottom: 0;
+        left: 0;
+        top: auto;
+        @include transform(translateY(100%));
+    }
+
+    &.opened {
+        opacity: 1;
+        visibility: visible;
+        @include transform(translate(0));
+    }
+
+    .drawer-close {
+        position: absolute;
+        display: block;
+        right: 15px;
+        top: 15px;
+        z-index: 1;
+        @include icon-btn($icon-close2, $black, 20px);
+    }
+}
+
+.drawer.drawer-modal {
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    position: fixed;
+    z-index: -1;
+    visibility: hidden;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    @include opacity(0);
+    @include transition(opacity $slow, visibility $slow, transform $slow);
+
+    .drawer-content {
+        position: absolute;
+        z-index: 2;
+        width: 100%;
+        max-width: 80vw;
+        max-height: 80vh;
+        width: auto;
+        height: auto;
+        background: $white;
+        overflow: auto;
+    }
+
+    .drawer-close.as-overlay {
+        position: absolute;
+        z-index: 1;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .drawer-close:not(.as-overlay) {
+        position: absolute;
+        z-index: 2;
+        right: 15px;
+        top: 15px;
+        display: block;
+        @include icon-btn($icon-close, $black, 14px);
+    }
+
+    &.opened {
+        visibility: visible;
+        @include opacity(1);
+        z-index: 1003 !important;
+    }
+}
+
+//
+// Small Screens Only
+//  _____________________________________________
+@include query-small {
+}
+
+//
+//  Medium Screens and Smaller
+//  _____________________________________________
+@include query-medium-down {
+    // Style for drawer not covering header when opened
+    // .drawer:not(.drawer-modal) {
+    //     height: calc(100% - #{$headerSmallScreenHeight});
+    //     top: auto;
+    //     bottom: 0;
+    // }
+    // .promo-banner-active .drawer:not(.drawer-modal) {
+    //     height: calc(100% - #{$headerSmallScreenHeight} - #{$promoBannerHeight});
+    // }
+}
+
+//
+// Medium Screens Only
+//  _____________________________________________
+@include query-medium {
+}
+
+//
+// Large Screens
+//  _____________________________________________
+@include query-large-up {
+    
+}
+
+//
+//  Small Desktop
+//  _____________________________________________
+@include query-large {
+} ;

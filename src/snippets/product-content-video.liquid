@@ -1,0 +1,74 @@
+{%- assign videoContentStyle = 'light' -%}
+
+{% assign videoThumbnail = product.metafields["global"]["product-content-video-thumb"] %}
+{% assign videoTitle = product.metafields["global"]["product-content-video-title"] %}
+{% assign videoDescription = product.metafields["global"]["product-content-video-descript"] %}
+{% assign videoUrl = product.metafields["global"]["product-content-video"] %}
+{%- assign productContentStyle = product.metafields.global.product-content-video-style -%}
+{%- if productContentStyle != blank -%}
+    {%- assign videoContentStyle = productContentStyle -%}
+{%- endif -%}
+
+{% if videoUrl != blank %}
+
+    {% assign isYoutube = false %}
+    {% assign videoId = '' %}
+
+    {% if videoUrl contains 'youtube' or videoUrl contains 'youtu.be' %}
+        {% assign isYoutube = true %}
+    {% endif %}
+
+    {% if isYoutube %}
+        {% if videoUrl contains 'youtube' %}
+            {% assign videoId = videoUrl | split: 'v=' %}
+        {% elsif videoUrl contains 'youtu.be' %}
+            {% assign videoId = videoUrl | split: '.be/' %}
+        {% endif %}
+        {% assign videoId = videoId[1] %}
+    {% endif %} 
+    <div class="product-content-video {{ videoContentStyle }}">
+        <div class="wrapper">
+            <div class="product-content-video__info">
+                <h2 class="title">{{ videoTitle }}</h2>
+                <div class="description">{{ videoDescription }}</div>
+            </div>
+            <div class="block-container">
+                {%- if videoUrl -%}
+                    <div class="background-image-wrap">
+                        <span
+                            class="background-image video-thumbnail"
+                            role="img"
+                            aria-label=""
+                            data-bg="{{ videoThumbnail }}">
+                        </span>
+                    </div>
+                    {% comment %}
+                    {%- if videoThumbnail != blank -%}
+                    <img src="{{ videoThumbnail }}" alt="{{ videoTitle }}" />
+                    {%- endif -%}
+                    {% endcomment %}
+                    <div id="youtube-video-wrap-{{ videoTitle | handle }}"
+                         class="video-wrapper"
+                         data-video-type="{%- if isYoutube -%}youtube{%- endif -%}"
+                         data-video-id="{{ videoId }}"
+                         data-video-src="{{ videoUrl }}">
+
+                        <div
+                            id="youtube-video-{{id_prefix}}-{{ video_index }}"
+                            class="video-box"
+                            data-video-id="{{ videoId }}"
+                            data-video-src="{{ videoUrl }}"
+                            data-video-type="{%- if isYoutube -%}youtube{%- endif -%}">
+                        </div>
+
+                        <div class="content-wrapper">
+                            <button class="video-ctl paused"></button>
+                        </div>
+                    </div>
+                {%- elsif videoThumbnail != blank -%}
+                    {% render 'responsive-image', image: videoThumbnail, metafields_image: true %}
+                {%- endif -%}
+            </div>
+        </div>
+    </div>    
+{% endif %}
