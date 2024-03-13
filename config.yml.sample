@@ -1,0 +1,32 @@
+# This file contains the information needed for Shopify to authenticate
+# requests and edit/update your remote theme files.
+#
+# 1. Set up a private app (https://help.shopify.com/api/guides/api-credentials#generate-private-app-credentials)
+#    with "Read and write" permissions for "Theme templates and theme assets".
+# 2. Replace the required variables for each environment below.
+# 3. To compile finial minified js bundle go to src/assets dir then use: node r.js -o build.js (Local only, 1r-min.js will be ignored)
+#
+# password, theme_id, and store variables are required.
+#
+# For more information on this config file:
+#   Configuration variables | http://shopify.github.io/themekit/configuration/
+#   Ignore patterns | http://shopify.github.io/themekit/ignores/
+
+development:
+  password: dd2e748dd26033e2c2321900f47fa8d7
+  theme_id: 20863615023
+  store: onerockwell.myshopify.com
+  ignore_files:
+    - node_modules/
+    - upload
+    - deploy.log
+    - config.yml
+    - settings_data.json # Uncomment this line to avoid resetting theme settings
+
+## Production
+# production: 
+#   password: 
+#   theme_id: 
+#   store: onerockwell.myshopify.com
+#   timeout: 60s
+#   readonly: true
